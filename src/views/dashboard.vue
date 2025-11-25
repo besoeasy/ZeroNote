@@ -72,9 +72,13 @@
         v-for="note in filteredNotes"
         :key="note.id"
         @click="note.deletedAt ? undefined : openNote(note)"
-        class="group cursor-pointer rounded-2xl p-5 transition-all duration-300 hover:shadow-xl border border-white/20 flex flex-col relative min-h-[260px] hover:-translate-y-1 shadow-sm"
+        class="group cursor-pointer rounded-2xl p-5 transition-all duration-300 hover:shadow-xl border border-gray-200 flex flex-col relative min-h-[260px] hover:-translate-y-1 shadow-sm bg-white"
+        :style="
+          note.deletedAt
+            ? ''
+            : { borderLeft: `4px solid ${getCardAccentColor(note)}` }
+        "
         :class="[
-          getCardColor(note),
           note.deletedAt
             ? 'opacity-60 grayscale hover:shadow-none hover:translate-y-0 bg-gray-50'
             : '',
@@ -139,7 +143,8 @@
         <!-- Supertags Badges - Bottom Left Corner with Cut-out Effect -->
         <div
           v-if="getSupertags(note).length > 0"
-          class="absolute bottom-0 left-0 flex flex-wrap gap-1 p-2 bg-white rounded-tr-xl rounded-bl-2xl shadow-sm max-w-[70%]"
+          class="absolute bottom-0 left-0 flex flex-wrap gap-1 p-2 rounded-tr-xl rounded-bl-2xl shadow-sm max-w-[70%]"
+          :style="{ backgroundColor: `${getCardAccentColor(note)}15` }"
         >
           <span
             v-for="supertag in getSupertags(note).slice(0, 4)"
@@ -151,7 +156,8 @@
           </span>
           <span
             v-if="getSupertags(note).length > 4"
-            class="text-[10px] text-gray-500 self-center font-semibold"
+            class="text-[10px] self-center font-semibold"
+            :style="{ color: getCardAccentColor(note) }"
           >
             +{{ getSupertags(note).length - 4 }}
           </span>
@@ -295,23 +301,23 @@ const formatDate = (timestamp) => {
   return format(timestamp);
 };
 
-// Color palette for note cards - clean solid colors with excellent readability
-const cardColors = [
-  "bg-sky-200",
-  "bg-violet-200",
-  "bg-pink-200",
-  "bg-emerald-200",
-  "bg-amber-200",
-  "bg-cyan-200",
-  "bg-fuchsia-200",
-  "bg-teal-200",
-  "bg-purple-200",
-  "bg-lime-200",
-  "bg-rose-200",
-  "bg-indigo-200",
+// Color palette for note cards - vibrant accent colors
+const accentColors = [
+  "#0ea5e9", // sky
+  "#8b5cf6", // violet
+  "#ec4899", // pink
+  "#10b981", // emerald
+  "#f59e0b", // amber
+  "#06b6d4", // cyan
+  "#d946ef", // fuchsia
+  "#14b8a6", // teal
+  "#a855f7", // purple
+  "#84cc16", // lime
+  "#f43f5e", // rose
+  "#6366f1", // indigo
 ];
 
-const getCardColor = (note) => {
+const getCardAccentColor = (note) => {
   // Get sorted supertag names for consistent color assignment
   const supertags = getSupertags(note);
   const supertagNames = supertags
@@ -327,8 +333,8 @@ const getCardColor = (note) => {
     return char.charCodeAt(0) + ((acc << 5) - acc);
   }, 0);
 
-  const colorIndex = Math.abs(hash) % cardColors.length;
-  return cardColors[colorIndex];
+  const colorIndex = Math.abs(hash) % accentColors.length;
+  return accentColors[colorIndex];
 };
 
 // Get supertags with their metadata for a note
