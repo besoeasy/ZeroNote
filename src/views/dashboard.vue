@@ -63,111 +63,131 @@
     <!-- Notes Grid -->
     <div
       v-if="!isLoading"
-      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-20"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6 pb-20"
     >
-      <!-- ...existing code... -->
-
       <!-- Note Cards -->
       <div
         v-for="note in filteredNotes"
         :key="note.id"
         @click="note.deletedAt ? undefined : openNote(note)"
-        class="group cursor-pointer rounded-2xl p-5 transition-all duration-300 hover:shadow-xl border border-gray-200 flex flex-col relative min-h-[260px] hover:-translate-y-1 shadow-sm bg-white"
-        :style="
-          note.deletedAt
-            ? ''
-            : { borderLeft: `4px solid ${getCardAccentColor(note)}` }
-        "
+        class="card-interactive group cursor-pointer rounded-2xl p-5 flex flex-col relative min-h-[260px] bg-white overflow-hidden"
         :class="[
-          note.deletedAt
-            ? 'opacity-60 grayscale hover:shadow-none hover:translate-y-0 bg-gray-50'
-            : '',
+          note.deletedAt ? 'opacity-60 grayscale card-deleted' : 'card-active',
         ]"
+        :style="
+          note.deletedAt ? '' : { '--accent-color': getCardAccentColor(note) }
+        "
       >
-        <!-- Pinned & Icon Header -->
-        <div class="flex items-start justify-between mb-3">
-          <div class="flex items-center gap-2">
-            <span
-              v-if="note.parsed.icon"
-              class="text-2xl filter grayscale-[0.2] group-hover:grayscale-0 transition-all transform group-hover:scale-110 duration-300"
-              >{{ note.parsed.icon }}</span
-            >
-          </div>
-          <div class="flex items-center gap-1">
-            <span
-              v-if="note.parsed.pinned"
-              class="text-amber-400 transform rotate-45 drop-shadow-sm text-lg"
-              >📌</span
-            >
-          </div>
-        </div>
-
-        <!-- Content -->
-        <div class="flex-1 mb-4">
-          <h3
-            class="text-base font-bold text-gray-900 mb-2 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors"
-          >
-            {{ note.parsed.title || "Untitled Note" }}
-          </h3>
-          <p
-            class="text-sm text-gray-500 line-clamp-4 leading-relaxed font-normal"
-          >
-            {{ note.parsed.content || "No additional text..." }}
-          </p>
-        </div>
-
-        <!-- Footer -->
+        <!-- Glow Effect on Hover -->
         <div
-          class="flex items-center justify-between text-xs text-gray-400 mt-auto pt-3"
-          :class="{ 'pl-24': getSupertags(note).length > 0 }"
-        >
-          <div class="flex items-center gap-1.5 overflow-hidden">
-            <span
-              v-for="tag in (note.parsed.customTags || []).slice(0, 2)"
-              :key="tag"
-              class="px-2 py-0.5 bg-gray-50 text-gray-600 rounded-full text-[10px] font-medium whitespace-nowrap group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors"
+          v-if="!note.deletedAt"
+          class="card-glow absolute -inset-[1px] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+          :style="{
+            background: `linear-gradient(135deg, ${getCardAccentColor(
+              note
+            )}40, ${getCardAccentColor(note)}10)`,
+          }"
+        ></div>
+
+        <!-- Card Border -->
+        <div
+          v-if="!note.deletedAt"
+          class="absolute inset-0 rounded-2xl border-2 border-gray-100 group-hover:border-gray-200 transition-colors duration-300 pointer-events-none"
+          :style="{
+            borderLeftColor: getCardAccentColor(note),
+            borderLeftWidth: '4px',
+          }"
+        ></div>
+
+        <!-- Content Container -->
+        <div class="relative z-10 flex flex-col h-full">
+          <!-- Pinned & Icon Header -->
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span
+                v-if="note.parsed.icon"
+                class="icon-bounce text-2xl md:text-3xl filter grayscale-[0.3] group-hover:grayscale-0 transition-all duration-300"
+                >{{ note.parsed.icon }}</span
+              >
+            </div>
+            <div class="flex items-center gap-1">
+              <span
+                v-if="note.parsed.pinned"
+                class="pin-wiggle text-amber-400 transform rotate-45 drop-shadow-sm text-lg md:text-xl"
+                >📌</span
+              >
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="flex-1 mb-4">
+            <h3
+              class="text-base md:text-lg font-bold text-gray-900 mb-2 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors duration-300"
             >
-              #{{ tag }}
+              {{ note.parsed.title || "Untitled Note" }}
+            </h3>
+            <p
+              class="text-sm text-gray-500 line-clamp-3 md:line-clamp-4 leading-relaxed font-normal"
+            >
+              {{ note.parsed.content || "No additional text..." }}
+            </p>
+          </div>
+
+          <!-- Footer -->
+          <div
+            class="flex items-center justify-between text-xs text-gray-400 mt-auto pt-3 gap-2"
+            :class="{ 'pl-20 sm:pl-24': getSupertags(note).length > 0 }"
+          >
+            <div
+              class="flex items-center gap-1.5 overflow-hidden flex-1 min-w-0"
+            >
+              <span
+                v-for="tag in (note.parsed.customTags || []).slice(0, 2)"
+                :key="tag"
+                class="tag-pill px-2 py-0.5 bg-gray-50 text-gray-600 rounded-full text-[10px] font-medium whitespace-nowrap"
+              >
+                #{{ tag }}
+              </span>
+              <span
+                v-if="(note.parsed.customTags || []).length > 2"
+                class="text-[10px] font-medium text-gray-400"
+                >+{{ (note.parsed.customTags || []).length - 2 }}</span
+              >
+            </div>
+            <span
+              class="text-[10px] font-medium whitespace-nowrap text-gray-600 flex-shrink-0"
+              >{{ formatDate(note.updatedAt) }}</span
+            >
+          </div>
+
+          <!-- Supertags Badges - Bottom Left Corner -->
+          <div
+            v-if="getSupertags(note).length > 0"
+            class="supertag-badge absolute bottom-0 left-0 flex flex-wrap gap-1 p-2 rounded-tr-xl rounded-bl-2xl shadow-sm max-w-[65%] sm:max-w-[70%]"
+            :style="{ backgroundColor: `${getCardAccentColor(note)}15` }"
+          >
+            <span
+              v-for="supertag in getSupertags(note).slice(0, 4)"
+              :key="supertag.name"
+              :title="supertag.displayName"
+              class="inline-flex items-center text-sm md:text-base transform group-hover:scale-110 transition-transform duration-200"
+            >
+              {{ supertag.icon }}
             </span>
             <span
-              v-if="(note.parsed.customTags || []).length > 2"
-              class="text-[10px] font-medium text-gray-400"
-              >+{{ (note.parsed.customTags || []).length - 2 }}</span
+              v-if="getSupertags(note).length > 4"
+              class="text-[10px] self-center font-semibold"
+              :style="{ color: getCardAccentColor(note) }"
             >
+              +{{ getSupertags(note).length - 4 }}
+            </span>
           </div>
-          <span
-            class="text-[10px] font-medium whitespace-nowrap ml-2 text-gray-600"
-            >{{ formatDate(note.updatedAt) }}</span
-          >
-        </div>
-
-        <!-- Supertags Badges - Bottom Left Corner with Cut-out Effect -->
-        <div
-          v-if="getSupertags(note).length > 0"
-          class="absolute bottom-0 left-0 flex flex-wrap gap-1 p-2 rounded-tr-xl rounded-bl-2xl shadow-sm max-w-[70%]"
-          :style="{ backgroundColor: `${getCardAccentColor(note)}15` }"
-        >
-          <span
-            v-for="supertag in getSupertags(note).slice(0, 4)"
-            :key="supertag.name"
-            :title="supertag.displayName"
-            class="inline-flex items-center text-base"
-          >
-            {{ supertag.icon }}
-          </span>
-          <span
-            v-if="getSupertags(note).length > 4"
-            class="text-[10px] self-center font-semibold"
-            :style="{ color: getCardAccentColor(note) }"
-          >
-            +{{ getSupertags(note).length - 4 }}
-          </span>
         </div>
 
         <!-- Deleted note badge and countdown -->
         <div
           v-if="note.deletedAt"
-          class="absolute inset-0 flex flex-col items-center justify-center bg-white/80 rounded-2xl z-10 backdrop-blur-sm transition-all"
+          class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 rounded-2xl z-20 backdrop-blur-sm transition-all"
         >
           <div class="text-sm font-bold text-red-600 mb-1">
             Pending Deletion
@@ -177,7 +197,7 @@
           </div>
           <button
             @click.stop="restoreNote(note)"
-            class="px-4 py-2 rounded-lg bg-gray-900 text-white text-xs font-bold hover:bg-black transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0"
+            class="restore-button px-4 py-2 rounded-lg bg-gray-900 text-white text-xs font-bold hover:bg-black transition-all shadow-lg"
           >
             Restore Note
           </button>
@@ -384,10 +404,19 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Line Clamp Utilities */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -398,5 +427,190 @@ onMounted(() => {
   line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Card Micro-Interactions */
+.card-interactive {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  will-change: transform, box-shadow;
+}
+
+.card-active {
+  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+}
+
+/* Desktop Hover Effects */
+@media (hover: hover) and (pointer: fine) {
+  .card-active:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.02),
+      0 0 30px var(--accent-color, #3b82f6) 20;
+  }
+
+  .card-active:active {
+    transform: translateY(-4px) scale(1.01);
+    transition-duration: 0.1s;
+  }
+}
+
+/* Mobile Touch Effects */
+@media (hover: none) and (pointer: coarse) {
+  .card-active:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition-duration: 0.1s;
+  }
+}
+
+/* Deleted Card State */
+.card-deleted {
+  background: #f9fafb;
+  cursor: not-allowed;
+}
+
+.card-deleted:hover {
+  transform: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Glow Effect */
+.card-glow {
+  filter: blur(20px);
+  z-index: 0;
+}
+
+/* Icon Bounce Animation */
+@media (hover: hover) and (pointer: fine) {
+  .icon-bounce {
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .card-active:hover .icon-bounce {
+    transform: scale(1.2) rotate(5deg);
+    filter: grayscale(0) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+}
+
+/* Pin Wiggle Animation */
+@media (hover: hover) and (pointer: fine) {
+  .pin-wiggle {
+    transition: all 0.3s ease;
+  }
+
+  .card-active:hover .pin-wiggle {
+    animation: wiggle 0.5s ease-in-out;
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(45deg);
+  }
+  25% {
+    transform: rotate(50deg);
+  }
+  75% {
+    transform: rotate(40deg);
+  }
+}
+
+/* Tag Pills with Hover Effect */
+.tag-pill {
+  transition: all 0.2s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card-active:hover .tag-pill {
+    background: #dbeafe;
+    color: #2563eb;
+    transform: translateY(-1px);
+  }
+}
+
+/* Supertag Badge Animations */
+.supertag-badge {
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card-active:hover .supertag-badge {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Restore Button */
+.restore-button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .restore-button:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .restore-button:active {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .restore-button:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Smooth Scrolling */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Reduce Motion for Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Mobile Optimizations */
+@media (max-width: 640px) {
+  .card-interactive {
+    min-height: 240px;
+  }
+
+  /* Improve touch targets */
+  .tag-pill {
+    min-height: 24px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+/* Tablet Optimizations */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .card-interactive {
+    min-height: 250px;
+  }
+}
+
+/* Performance Optimization - GPU Acceleration */
+.card-interactive,
+.card-glow,
+.icon-bounce,
+.pin-wiggle,
+.tag-pill,
+.supertag-badge {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-font-smoothing: subpixel-antialiased;
 }
 </style>
