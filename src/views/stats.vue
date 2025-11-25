@@ -1,71 +1,147 @@
 <template>
-  <div class="flex flex-col items-center justify-center min-h-screen max-w-4xl mx-auto p-4 md:p-8">
-    <!-- Page Title -->
-    <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-2">Statistics</h2>
-    <p class="text-gray-600 mb-6 md:mb-8">Overview of your notes and app status</p>
-
+  <div
+    class="min-h-screen w-full p-4 md:p-8 max-w-5xl mx-auto flex flex-col items-center justify-center"
+  >
     <!-- Loading State -->
-    <div v-if="isLoading" class="flex justify-center items-center py-20">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+    <div
+      v-if="isLoading"
+      class="flex flex-col justify-center items-center py-32 space-y-4"
+    >
+      <div
+        class="animate-spin rounded-full h-12 w-12 border-4 border-gray-100 border-t-blue-600"
+      ></div>
+      <p class="text-gray-400 font-medium animate-pulse">
+        Crunching the numbers...
+      </p>
     </div>
 
     <!-- Stats Grid -->
-    <div v-else class="space-y-6">
-      <!-- Overview Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Total Notes -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-sm font-medium text-gray-600">Total Notes</h3>
-            <FileText class="w-5 h-5 text-blue-600" />
+    <div v-else class="space-y-8 animate-fade-in-up">
+      <!-- Primary Stats Row -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Total Notes Card -->
+        <div
+          class="group relative overflow-hidden bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+        >
+          <div
+            class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-blue-50 rounded-full blur-3xl opacity-50 group-hover:opacity-100 transition-opacity"
+          ></div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-between mb-4">
+              <div
+                class="p-3 bg-blue-50 rounded-2xl group-hover:bg-blue-100 transition-colors"
+              >
+                <FileText class="w-6 h-6 text-blue-600" />
+              </div>
+              <span
+                class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-1 rounded-lg"
+                >Active</span
+              >
+            </div>
+            <h3 class="text-gray-500 font-medium text-sm mb-1">Total Notes</h3>
+            <p class="text-5xl font-black text-gray-900 tracking-tight">
+              {{ stats.totalNotes }}
+            </p>
           </div>
-          <p class="text-3xl font-bold text-gray-900">{{ stats.totalNotes }}</p>
         </div>
 
-        <!-- Deleted Notes -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-sm font-medium text-gray-600">Deleted Notes</h3>
-            <Trash2 class="w-5 h-5 text-red-600" />
+        <!-- Deleted Notes Card -->
+        <div
+          class="group relative overflow-hidden bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+        >
+          <div
+            class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-red-50 rounded-full blur-3xl opacity-50 group-hover:opacity-100 transition-opacity"
+          ></div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-between mb-4">
+              <div
+                class="p-3 bg-red-50 rounded-2xl group-hover:bg-red-100 transition-colors"
+              >
+                <Trash2 class="w-6 h-6 text-red-600" />
+              </div>
+              <span
+                v-if="stats.deletedNotes > 0"
+                class="text-xs font-bold uppercase tracking-wider text-red-600 bg-red-50 px-2 py-1 rounded-lg"
+                >Purging Soon</span
+              >
+            </div>
+            <h3 class="text-gray-500 font-medium text-sm mb-1">Trash</h3>
+            <p class="text-5xl font-black text-gray-900 tracking-tight">
+              {{ stats.deletedNotes }}
+            </p>
           </div>
-          <p class="text-3xl font-bold text-gray-900">{{ stats.deletedNotes }}</p>
-          <p v-if="stats.deletedNotes > 0" class="text-xs text-gray-500 mt-1">Automatically purged after 7 days</p>
         </div>
 
-        <!-- Created Date -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-sm font-medium text-gray-600">First Note Created</h3>
-            <Calendar class="w-5 h-5 text-green-600" />
+        <!-- First Note Card -->
+        <div
+          class="group relative overflow-hidden bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+        >
+          <div
+            class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-amber-50 rounded-full blur-3xl opacity-50 group-hover:opacity-100 transition-opacity"
+          ></div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-between mb-4">
+              <div
+                class="p-3 bg-amber-50 rounded-2xl group-hover:bg-amber-100 transition-colors"
+              >
+                <Calendar class="w-6 h-6 text-amber-600" />
+              </div>
+            </div>
+            <h3 class="text-gray-500 font-medium text-sm mb-1">First Idea</h3>
+            <p class="text-xl font-bold text-gray-900 leading-tight">
+              {{ stats.oldestNoteDate }}
+            </p>
           </div>
-          <p class="text-lg font-semibold text-gray-900">{{ stats.oldestNoteDate }}</p>
         </div>
       </div>
 
-      <!-- Storage Info -->
-      <div class="bg-white rounded-xl border border-gray-200 p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
-          <HardDrive class="w-5 h-5 mr-2" />
-          Storage
-        </h3>
+      <!-- System Info Section -->
+      <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100">
+        <div class="flex items-center gap-3 mb-8">
+          <HardDrive class="w-6 h-6 text-gray-700" />
+          <h3 class="text-xl font-bold text-gray-900">System Status</h3>
+        </div>
 
-
-
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-600">Database<br>Name</span>
-            <div class="text-sm font-mono font-medium text-gray-900 whitespace-pre-wrap">{{ stats.dbName }}</div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- DB Info -->
+          <div class="space-y-2">
+            <span
+              class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+              >Database</span
+            >
+            <div class="flex items-center gap-2">
+              <div
+                class="w-2 h-2 rounded-full bg-green-500 animate-pulse"
+              ></div>
+              <p class="font-mono text-sm font-medium text-gray-700 break-all">
+                {{ stats.dbName }}
+              </p>
+            </div>
           </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-600">App Version</span>
-            <span class="text-sm font-medium text-gray-900">{{ stats.appVersion }}</span>
+
+          <!-- Version Info -->
+          <div class="space-y-2">
+            <span
+              class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+              >Version</span
+            >
+            <p class="font-mono text-sm font-medium text-gray-700">
+              v{{ stats.appVersion }}
+            </p>
           </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-600">Encryption</span>
-            <span class="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
-              <Shield class="w-3 h-3 mr-1" />
-              Active
-            </span>
+
+          <!-- Security Info -->
+          <div class="space-y-2">
+            <span
+              class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+              >Security</span
+            >
+            <div
+              class="flex items-center gap-2 text-green-700 bg-green-100 px-3 py-1 rounded-full w-fit"
+            >
+              <Shield class="w-3 h-3" />
+              <span class="text-xs font-bold">Encrypted</span>
+            </div>
           </div>
         </div>
       </div>
@@ -76,16 +152,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { db } from "@/db.js";
-
 import { version } from "@/../package.json";
-
 import { FileText, Calendar, HardDrive, Shield, Trash2 } from "lucide-vue-next";
 
 const isLoading = ref(true);
 const stats = ref({
   totalNotes: 0,
   deletedNotes: 0,
-  oldestNoteDate: "N/A",
+  oldestNoteDate: "No notes yet",
   dbName: "",
   appVersion: version,
 });
@@ -94,13 +168,15 @@ const loadStats = async () => {
   isLoading.value = true;
   try {
     // Get active notes
-    const notes = await db.notes.filter((note) => note.deletedAt === null || note.deletedAt === undefined).toArray();
-
+    const notes = await db.notes
+      .filter((note) => note.deletedAt === null || note.deletedAt === undefined)
+      .toArray();
     stats.value.totalNotes = notes.length;
 
     // Get deleted notes
-    const deletedNotes = await db.notes.filter((note) => note.deletedAt !== null && note.deletedAt !== undefined).toArray();
-
+    const deletedNotes = await db.notes
+      .filter((note) => note.deletedAt !== null && note.deletedAt !== undefined)
+      .toArray();
     stats.value.deletedNotes = deletedNotes.length;
 
     // Find oldest note date
@@ -111,18 +187,16 @@ const loadStats = async () => {
     }
 
     // Get DB name
-    const name = db.name;
-    stats.value.dbName = name.slice(0, Math.ceil(name.length / 2)) + '\n' + name.slice(Math.ceil(name.length / 2));
-
-  // ...existing code...
+    stats.value.dbName = db.name;
   } catch (error) {
     console.error("Error loading stats:", error);
   } finally {
-    isLoading.value = false;
+    // Add a small delay for smoother transition
+    setTimeout(() => {
+      isLoading.value = false;
+    }, 500);
   }
 };
-
-
 
 const formatFullDate = (timestamp) => {
   const date = new Date(timestamp);
@@ -137,3 +211,20 @@ onMounted(() => {
   loadStats();
 });
 </script>
+
+<style scoped>
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

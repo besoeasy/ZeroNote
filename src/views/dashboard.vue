@@ -92,10 +92,13 @@
         <!-- Card Border -->
         <div
           v-if="!note.deletedAt"
-          class="absolute inset-0 rounded-2xl border-2 border-gray-100 group-hover:border-gray-200 transition-colors duration-300 pointer-events-none"
+          class="absolute inset-0 rounded-2xl border border-gray-200 transition-all duration-300 pointer-events-none"
           :style="{
             borderLeftColor: getCardAccentColor(note),
-            borderLeftWidth: '4px',
+            borderLeftWidth: '0px',
+          }"
+          :class="{
+            'group-hover:border-gray-200 group-hover:!border-l-4': true,
           }"
         ></div>
 
@@ -163,8 +166,8 @@
           <!-- Supertags Badges - Bottom Left Corner -->
           <div
             v-if="getSupertags(note).length > 0"
-            class="supertag-badge absolute bottom-0 left-0 flex flex-wrap gap-1 p-2 rounded-tr-xl rounded-bl-2xl shadow-sm max-w-[65%] sm:max-w-[70%]"
-            :style="{ backgroundColor: `${getCardAccentColor(note)}15` }"
+            class="supertag-badge absolute bottom-0 left-0 flex flex-wrap gap-1 p-2 rounded-tr-xl rounded-bl-2xl transition-all duration-300 max-w-[65%] sm:max-w-[70%]"
+            :style="{ '--badge-color': getCardAccentColor(note) }"
           >
             <span
               v-for="supertag in getSupertags(note).slice(0, 4)"
@@ -437,7 +440,7 @@ onMounted(() => {
 }
 
 .card-active {
-  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+  background: #ffffff;
 }
 
 /* Desktop Hover Effects */
@@ -532,11 +535,12 @@ onMounted(() => {
 /* Supertag Badge Animations */
 .supertag-badge {
   transition: all 0.3s ease;
-  backdrop-filter: blur(8px);
+  background-color: transparent;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .card-active:hover .supertag-badge {
+    background-color: color-mix(in srgb, var(--badge-color) 8%, transparent);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 }
