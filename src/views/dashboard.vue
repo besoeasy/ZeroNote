@@ -112,27 +112,6 @@
           </div>
         </div>
 
-        <!-- Supertags Badges -->
-        <div
-          class="flex flex-wrap gap-1.5 mb-3"
-          v-if="getSupertags(note).length > 0"
-        >
-          <span
-            v-for="supertag in getSupertags(note).slice(0, 3)"
-            :key="supertag.name"
-            :title="supertag.displayName"
-            class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-semibold bg-gray-50 text-gray-600 border border-gray-100 group-hover:border-blue-100 group-hover:bg-blue-50/50 transition-colors"
-          >
-            <span class="mr-1">{{ supertag.icon }}</span>
-          </span>
-          <span
-            v-if="getSupertags(note).length > 3"
-            class="text-[10px] text-gray-400 self-center font-medium"
-          >
-            +{{ getSupertags(note).length - 3 }}
-          </span>
-        </div>
-
         <!-- Content -->
         <div class="flex-1 mb-4">
           <h3
@@ -169,6 +148,27 @@
             class="text-[10px] font-medium whitespace-nowrap ml-2 opacity-60 group-hover:opacity-100 transition-opacity"
             >{{ formatDate(note.updatedAt) }}</span
           >
+        </div>
+
+        <!-- Supertags Badges - Bottom Left Corner with Cut-out Effect -->
+        <div
+          v-if="getSupertags(note).length > 0"
+          class="absolute bottom-0 left-0 flex flex-wrap gap-1 p-2 bg-white rounded-tr-xl rounded-bl-2xl shadow-sm max-w-[70%]"
+        >
+          <span
+            v-for="supertag in getSupertags(note).slice(0, 4)"
+            :key="supertag.name"
+            :title="supertag.displayName"
+            class="inline-flex items-center text-base"
+          >
+            {{ supertag.icon }}
+          </span>
+          <span
+            v-if="getSupertags(note).length > 4"
+            class="text-[10px] text-gray-500 self-center font-semibold"
+          >
+            +{{ getSupertags(note).length - 4 }}
+          </span>
         </div>
 
         <!-- Deleted note badge and countdown -->
@@ -309,16 +309,18 @@ const formatDate = (timestamp) => {
   return format(timestamp);
 };
 
-// Color palette for note cards - vibrant modern colors
+// Color palette for note cards - soft pastel colors with good readability
 const cardColors = [
-  "bg-gradient-to-br from-blue-50 to-blue-100",
-  "bg-gradient-to-br from-purple-50 to-purple-100",
-  "bg-gradient-to-br from-pink-50 to-pink-100",
-  "bg-gradient-to-br from-green-50 to-green-100",
-  "bg-gradient-to-br from-amber-50 to-amber-100",
-  "bg-gradient-to-br from-cyan-50 to-cyan-100",
-  "bg-gradient-to-br from-rose-50 to-rose-100",
-  "bg-gradient-to-br from-indigo-50 to-indigo-100",
+  "bg-gradient-to-br from-sky-100 to-sky-200",
+  "bg-gradient-to-br from-violet-100 to-violet-200",
+  "bg-gradient-to-br from-fuchsia-100 to-fuchsia-200",
+  "bg-gradient-to-br from-emerald-100 to-emerald-200",
+  "bg-gradient-to-br from-orange-100 to-orange-200",
+  "bg-gradient-to-br from-teal-100 to-teal-200",
+  "bg-gradient-to-br from-rose-100 to-rose-200",
+  "bg-gradient-to-br from-indigo-100 to-indigo-200",
+  "bg-gradient-to-br from-lime-100 to-lime-200",
+  "bg-gradient-to-br from-pink-100 to-pink-200",
 ];
 
 const getCardColor = (note) => {
