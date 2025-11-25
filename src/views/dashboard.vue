@@ -119,6 +119,7 @@
         <!-- Footer -->
         <div
           class="flex items-center justify-between text-xs text-gray-400 mt-auto pt-3"
+          :class="{ 'pl-24': getSupertags(note).length > 0 }"
         >
           <div class="flex items-center gap-1.5 overflow-hidden">
             <span
