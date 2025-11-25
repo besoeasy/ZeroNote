@@ -14,25 +14,128 @@
     ></div>
 
     <div class="max-w-md w-full relative z-10 animate-fade-in-up">
-      <!-- Header -->
+      <!-- Header / Password Strength Display -->
       <div class="text-center mb-10">
-        <div
-          class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-violet-600 rounded-3xl mb-6 shadow-lg animate-shimmer relative overflow-hidden"
-        >
-          <div
-            class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 animate-shimmer-slide"
-          ></div>
-          <Lock class="w-10 h-10 text-white relative z-10" />
+        <!-- Show Password Strength Meter when typing -->
+        <div v-if="passwordInput || pinInput">
+          <div class="flex flex-col items-center justify-center">
+            <div class="relative w-44 h-44 mb-6">
+              <!-- Background Circle -->
+              <svg class="transform -rotate-90 w-44 h-44">
+                <circle
+                  cx="88"
+                  cy="88"
+                  r="78"
+                  stroke="currentColor"
+                  stroke-width="10"
+                  fill="none"
+                  class="text-gray-200"
+                />
+                <!-- Progress Circle -->
+                <circle
+                  cx="88"
+                  cy="88"
+                  r="78"
+                  stroke="currentColor"
+                  stroke-width="10"
+                  fill="none"
+                  :class="strengthInfo.textColorClass"
+                  :style="{
+                    strokeDasharray: `${2 * Math.PI * 78}`,
+                    strokeDashoffset: `${
+                      2 * Math.PI * 78 * (1 - strengthPercentage / 100)
+                    }`,
+                    transition:
+                      'stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.3s ease',
+                  }"
+                  stroke-linecap="round"
+                />
+              </svg>
+
+              <!-- Center Content -->
+              <div
+                class="absolute inset-0 flex flex-col items-center justify-center"
+              >
+                <div
+                  class="text-5xl font-black"
+                  :class="strengthInfo.textColorClass"
+                >
+                  {{ Math.round(strengthPercentage) }}%
+                </div>
+                <div class="text-base text-gray-600 mt-2 font-semibold">
+                  {{ strengthInfo.label || "Security" }}
+                </div>
+              </div>
+
+              <!-- Animated Success Icon -->
+              <div
+                v-if="strengthPercentage >= 90"
+                class="absolute -top-3 -right-3 w-12 h-12 bg-green-500 rounded-full flex items-center justify-center animate-bounce-in shadow-xl"
+              >
+                <svg
+                  class="w-7 h-7 text-white"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Warning Message (Below Strength Indicator) -->
+            <div
+              v-if="showWarning"
+              class="w-full max-w-md p-4 bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-300 rounded-2xl animate-shake shadow-md"
+            >
+              <p
+                class="text-sm text-red-800 font-bold flex items-center justify-center gap-2"
+              >
+                <svg
+                  class="w-5 h-5 flex-shrink-0 animate-pulse"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span
+                  >Weak password! Add more characters, numbers, or
+                  symbols.</span
+                >
+              </p>
+            </div>
+          </div>
         </div>
-        <h1
-          class="text-5xl font-black text-gray-900 mb-3 tracking-tight uppercase"
-        >
-          Zero<span
-            class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600 animate-gradient"
-            >Note</span
+
+        <!-- Show ZeroNote branding when no input -->
+        <div v-else>
+          <div
+            class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-violet-600 rounded-3xl mb-6 shadow-lg animate-shimmer relative overflow-hidden"
           >
-        </h1>
-        <p class="text-lg text-gray-600 font-medium">Your Secure Note Vault</p>
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 animate-shimmer-slide"
+            ></div>
+            <Lock class="w-10 h-10 text-white relative z-10" />
+          </div>
+          <h1
+            class="text-5xl font-black text-gray-900 mb-3 tracking-tight uppercase"
+          >
+            Zero<span
+              class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600 animate-gradient"
+              >Note</span
+            >
+          </h1>
+          <p class="text-lg text-gray-600 font-medium">
+            Your Secure Note Vault
+          </p>
+        </div>
       </div>
 
       <!-- Input Card -->
@@ -70,120 +173,6 @@
             @keyup.enter="unlockApp"
             maxlength="16"
           />
-        </div>
-
-        <!-- Password Strength Meter -->
-        <div v-if="passwordInput" class="mb-5">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-semibold text-gray-600"
-              >Password Strength</span
-            >
-            <span
-              class="text-xs font-bold"
-              :class="strengthInfo.textColorClass"
-              >{{ strengthInfo.label }}</span
-            >
-          </div>
-
-          <!-- Modern Segmented Strength Meter -->
-          <div class="flex gap-1.5">
-            <div
-              v-for="i in 5"
-              :key="i"
-              class="flex-1 h-2 rounded-full transition-all duration-500 ease-out"
-              :class="[
-                i <= Math.ceil(strengthPercentage / 20)
-                  ? strengthInfo.colorClass + ' animate-pulse-once scale-y-110'
-                  : 'bg-gray-200',
-              ]"
-            ></div>
-          </div>
-
-          <!-- Circular Strength Indicator (Fancy) -->
-          <div class="flex items-center justify-center mt-6 mb-2">
-            <div class="relative w-32 h-32">
-              <!-- Background Circle -->
-              <svg class="transform -rotate-90 w-32 h-32">
-                <circle
-                  cx="64"
-                  cy="64"
-                  r="56"
-                  stroke="currentColor"
-                  stroke-width="8"
-                  fill="none"
-                  class="text-gray-200"
-                />
-                <!-- Progress Circle -->
-                <circle
-                  cx="64"
-                  cy="64"
-                  r="56"
-                  stroke="currentColor"
-                  stroke-width="8"
-                  fill="none"
-                  :class="strengthInfo.textColorClass"
-                  :style="{
-                    strokeDasharray: `${2 * Math.PI * 56}`,
-                    strokeDashoffset: `${
-                      2 * Math.PI * 56 * (1 - strengthPercentage / 100)
-                    }`,
-                    transition:
-                      'stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.3s ease',
-                  }"
-                  stroke-linecap="round"
-                />
-              </svg>
-
-              <!-- Center Content -->
-              <div
-                class="absolute inset-0 flex flex-col items-center justify-center"
-              >
-                <div
-                  class="text-3xl font-black"
-                  :class="strengthInfo.textColorClass"
-                >
-                  {{ Math.round(strengthPercentage) }}%
-                </div>
-                <div class="text-xs text-gray-500 mt-1">Security</div>
-              </div>
-
-              <!-- Animated Icon -->
-              <div
-                v-if="strengthPercentage >= 90"
-                class="absolute -top-2 -right-2 w-10 h-10 bg-green-500 rounded-full flex items-center justify-center animate-bounce-in shadow-lg"
-              >
-                <svg
-                  class="w-6 h-6 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Warning Message -->
-        <div
-          v-if="showWarning"
-          class="mb-5 p-3 bg-red-50 border border-red-200 rounded-xl"
-        >
-          <p class="text-sm text-red-700 font-medium flex items-center">
-            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fill-rule="evenodd"
-                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            Your password is {{ strengthInfo.label }}. Consider using a stronger
-            password.
-          </p>
         </div>
 
         <!-- Account Identifier -->
@@ -445,6 +434,16 @@ const showWarning = computed(() => {
   );
 });
 
+const strengthEmoji = computed(() => {
+  const strength = passwordStrength.value;
+  if (strength === 0) return "🔒";
+  if (strength < 30) return "😰"; // Very Weak
+  if (strength < 50) return "😟"; // Weak
+  if (strength < 70) return "😐"; // Moderate
+  if (strength < 90) return "😊"; // Strong
+  return "🎉"; // Very Strong
+});
+
 const unlockApp = () => {
   const encryptionKey = sha512(
     "besoeasy" + passwordInput.value + pinInput.value
@@ -597,4 +596,47 @@ input:focus {
     transform: scale(1);
   }
 }
+
+/* Shake Animation for Warning */
+.animate-shake {
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
+}
+
+/* Icon Pulse Animation */
+.animate-icon-pulse {
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
 </style>
+```
