@@ -65,21 +65,7 @@
       v-if="!isLoading"
       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-20"
     >
-      <!-- New Note Card -->
-      <div
-        @click="startNewNote"
-        class="group cursor-pointer rounded-2xl p-5 border-2 border-dashed border-gray-300 hover:border-blue-500 hover:bg-blue-50/30 flex flex-col items-center justify-center min-h-[260px] transition-all duration-300 bg-white/50"
-      >
-        <div
-          class="w-14 h-14 rounded-full bg-blue-50 group-hover:bg-blue-100 group-hover:scale-110 flex items-center justify-center mb-3 transition-all duration-300 shadow-sm"
-        >
-          <span class="text-3xl text-blue-500 font-light">+</span>
-        </div>
-        <span
-          class="text-sm font-semibold text-gray-600 group-hover:text-blue-600 transition-colors"
-          >Create New Note</span
-        >
-      </div>
+      <!-- ...existing code... -->
 
       <!-- Note Cards -->
       <div
@@ -128,7 +114,7 @@
 
         <!-- Footer -->
         <div
-          class="flex items-center justify-between text-xs text-gray-400 mt-auto pt-3 border-t border-gray-50 group-hover:border-gray-100 transition-colors"
+          class="flex items-center justify-between text-xs text-gray-400 mt-auto pt-3"
         >
           <div class="flex items-center gap-1.5 overflow-hidden">
             <span
@@ -145,7 +131,7 @@
             >
           </div>
           <span
-            class="text-[10px] font-medium whitespace-nowrap ml-2 opacity-60 group-hover:opacity-100 transition-opacity"
+            class="text-[10px] font-medium whitespace-nowrap ml-2 text-gray-600"
             >{{ formatDate(note.updatedAt) }}</span
           >
         </div>
@@ -309,18 +295,20 @@ const formatDate = (timestamp) => {
   return format(timestamp);
 };
 
-// Color palette for note cards - soft pastel colors with good readability
+// Color palette for note cards - clean solid colors with excellent readability
 const cardColors = [
-  "bg-gradient-to-br from-sky-100 to-sky-200",
-  "bg-gradient-to-br from-violet-100 to-violet-200",
-  "bg-gradient-to-br from-fuchsia-100 to-fuchsia-200",
-  "bg-gradient-to-br from-emerald-100 to-emerald-200",
-  "bg-gradient-to-br from-orange-100 to-orange-200",
-  "bg-gradient-to-br from-teal-100 to-teal-200",
-  "bg-gradient-to-br from-rose-100 to-rose-200",
-  "bg-gradient-to-br from-indigo-100 to-indigo-200",
-  "bg-gradient-to-br from-lime-100 to-lime-200",
-  "bg-gradient-to-br from-pink-100 to-pink-200",
+  "bg-sky-200",
+  "bg-violet-200",
+  "bg-pink-200",
+  "bg-emerald-200",
+  "bg-amber-200",
+  "bg-cyan-200",
+  "bg-fuchsia-200",
+  "bg-teal-200",
+  "bg-purple-200",
+  "bg-lime-200",
+  "bg-rose-200",
+  "bg-indigo-200",
 ];
 
 const getCardColor = (note) => {
