@@ -17,15 +17,18 @@
       <!-- Header -->
       <div class="text-center mb-10">
         <div
-          class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-violet-600 rounded-3xl mb-6 shadow-lg"
+          class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-violet-600 rounded-3xl mb-6 shadow-lg animate-shimmer relative overflow-hidden"
         >
-          <Lock class="w-10 h-10 text-white" />
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 animate-shimmer-slide"
+          ></div>
+          <Lock class="w-10 h-10 text-white relative z-10" />
         </div>
         <h1
           class="text-5xl font-black text-gray-900 mb-3 tracking-tight uppercase"
         >
           Zero<span
-            class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600"
+            class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600 animate-gradient"
             >Note</span
           >
         </h1>
@@ -71,7 +74,7 @@
 
         <!-- Password Strength Meter -->
         <div v-if="passwordInput" class="mb-5">
-          <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center justify-between mb-3">
             <span class="text-xs font-semibold text-gray-600"
               >Password Strength</span
             >
@@ -81,12 +84,87 @@
               >{{ strengthInfo.label }}</span
             >
           </div>
-          <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+
+          <!-- Modern Segmented Strength Meter -->
+          <div class="flex gap-1.5">
             <div
-              class="h-full transition-all duration-500 ease-out rounded-full"
-              :class="strengthInfo.colorClass"
-              :style="{ width: `${strengthPercentage}%` }"
+              v-for="i in 5"
+              :key="i"
+              class="flex-1 h-2 rounded-full transition-all duration-500 ease-out"
+              :class="[
+                i <= Math.ceil(strengthPercentage / 20)
+                  ? strengthInfo.colorClass + ' animate-pulse-once scale-y-110'
+                  : 'bg-gray-200',
+              ]"
             ></div>
+          </div>
+
+          <!-- Circular Strength Indicator (Fancy) -->
+          <div class="flex items-center justify-center mt-6 mb-2">
+            <div class="relative w-32 h-32">
+              <!-- Background Circle -->
+              <svg class="transform -rotate-90 w-32 h-32">
+                <circle
+                  cx="64"
+                  cy="64"
+                  r="56"
+                  stroke="currentColor"
+                  stroke-width="8"
+                  fill="none"
+                  class="text-gray-200"
+                />
+                <!-- Progress Circle -->
+                <circle
+                  cx="64"
+                  cy="64"
+                  r="56"
+                  stroke="currentColor"
+                  stroke-width="8"
+                  fill="none"
+                  :class="strengthInfo.textColorClass"
+                  :style="{
+                    strokeDasharray: `${2 * Math.PI * 56}`,
+                    strokeDashoffset: `${
+                      2 * Math.PI * 56 * (1 - strengthPercentage / 100)
+                    }`,
+                    transition:
+                      'stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.3s ease',
+                  }"
+                  stroke-linecap="round"
+                />
+              </svg>
+
+              <!-- Center Content -->
+              <div
+                class="absolute inset-0 flex flex-col items-center justify-center"
+              >
+                <div
+                  class="text-3xl font-black"
+                  :class="strengthInfo.textColorClass"
+                >
+                  {{ Math.round(strengthPercentage) }}%
+                </div>
+                <div class="text-xs text-gray-500 mt-1">Security</div>
+              </div>
+
+              <!-- Animated Icon -->
+              <div
+                v-if="strengthPercentage >= 90"
+                class="absolute -top-2 -right-2 w-10 h-10 bg-green-500 rounded-full flex items-center justify-center animate-bounce-in shadow-lg"
+              >
+                <svg
+                  class="w-6 h-6 text-white"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -148,6 +226,29 @@
             recovered.</span
           >
         </p>
+      </div>
+
+      <!-- GitHub Link -->
+      <div class="mt-4 text-center">
+        <a
+          href="https://github.com/besoeasy/ZeroNote"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors group"
+        >
+          <svg
+            class="w-5 h-5 group-hover:scale-110 transition-transform"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span class="font-medium">View on GitHub</span>
+        </a>
       </div>
     </div>
   </div>
@@ -250,6 +351,8 @@ const verbs = [
 const validatePin = () => {
   // Ensure only numeric values
   pinInput.value = pinInput.value.replace(/\D/g, "");
+  // Recalculate strength when PIN changes
+  checkPasswordStrength();
 };
 
 const AccountIdentifier = computed(() => {
@@ -277,21 +380,28 @@ const AccountIdentifier = computed(() => {
 
 const checkPasswordStrength = () => {
   const password = passwordInput.value;
+  const pin = pinInput.value;
+  const combined = password + pin;
 
-  if (!password) {
+  if (!combined) {
     passwordStrength.value = 0;
     return;
   }
 
   let score = 0;
 
-  const lengthScore = Math.min(password.length * 4, 40);
+  // Length score (combined password + PIN)
+  const lengthScore = Math.min(combined.length * 4, 40);
   score += lengthScore;
 
-  if (/[A-Z]/.test(password)) score += 15; // Uppercase
-  if (/[a-z]/.test(password)) score += 15; // Lowercase
-  if (/[0-9]/.test(password)) score += 15; // Numbers
-  if (/[^A-Za-z0-9]/.test(password)) score += 15; // Special characters
+  // Character variety checks
+  if (/[A-Z]/.test(combined)) score += 15; // Uppercase
+  if (/[a-z]/.test(combined)) score += 15; // Lowercase
+  if (/[0-9]/.test(combined)) score += 15; // Numbers
+  if (/[^A-Za-z0-9]/.test(combined)) score += 15; // Special characters
+
+  // Bonus for having both password and PIN
+  if (password && pin) score += 10;
 
   passwordStrength.value = Math.min(Math.max(score, 0), 100);
 };
@@ -329,7 +439,10 @@ const strengthInfo = computed(() => {
 });
 
 const showWarning = computed(() => {
-  return passwordInput.value.length > 0 && passwordStrength.value < 50;
+  return (
+    (passwordInput.value.length > 0 || pinInput.value.length > 0) &&
+    passwordStrength.value < 50
+  );
 });
 
 const unlockApp = () => {
@@ -386,6 +499,102 @@ const unlockApp = () => {
   }
   100% {
     transform: translate(0px, 0px) scale(1);
+  }
+}
+
+/* Shimmer Animation */
+.animate-shimmer {
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+  }
+  50% {
+    box-shadow: 0 10px 40px rgba(139, 92, 246, 0.5);
+  }
+}
+
+/* Shimmer Slide */
+.animate-shimmer-slide {
+  animation: shimmerSlide 3s ease-in-out infinite;
+}
+
+@keyframes shimmerSlide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+/* Gradient Animation */
+.animate-gradient {
+  background-size: 200% auto;
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%,
+  100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}
+
+/* Pulse Once */
+.animate-pulse-once {
+  animation: pulseOnce 0.5s cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+@keyframes pulseOnce {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Bounce In */
+.animate-bounce-in {
+  animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Input Focus Animation */
+input:focus {
+  animation: inputFocus 0.3s ease-out;
+}
+
+@keyframes inputFocus {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 </style>
