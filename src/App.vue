@@ -44,6 +44,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: #f9fafb;
 }
 
 /* Custom scrollbar for webkit browsers */

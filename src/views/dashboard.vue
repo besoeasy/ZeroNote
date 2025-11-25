@@ -2,34 +2,57 @@
   <!-- Notes Grid View -->
   <div class="w-full mx-auto p-2 md:p-8 pt-8 md:pt-8">
     <!-- Search Bar -->
-    <div class="mb-4">
-      <div class="relative">
-        <Search class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search notes..."
-          class="w-full pl-12 pr-4 py-3 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
-        />
+    <div class="mb-8 relative max-w-2xl mx-auto">
+      <div class="relative group">
+        <div
+          class="absolute -inset-0.5 bg-gradient-to-r from-gray-200 to-gray-100 rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-500"
+        ></div>
+        <div
+          class="relative flex items-center bg-white rounded-xl shadow-sm border border-gray-100"
+        >
+          <Search class="absolute left-4 text-gray-400 w-5 h-5" />
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search your notes..."
+            class="w-full pl-12 pr-4 py-3.5 bg-transparent rounded-xl focus:outline-none text-gray-700 placeholder-gray-400"
+          />
+          <div
+            class="absolute right-4 hidden md:flex items-center gap-1 pointer-events-none"
+          >
+            <kbd
+              class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-medium text-gray-400 bg-gray-50 border border-gray-200 rounded"
+              >/</kbd
+            >
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Supertag Filters -->
-    <div class="mb-6 md:mb-8">
-      <div class="flex items-center gap-2 overflow-x-auto pb-2">
+    <div class="mb-8">
+      <div class="flex items-center justify-center gap-2 flex-wrap">
         <button
           @click="selectedSupertag = null"
-          :class="selectedSupertag === null ? 'bg-gray-900 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'"
-          class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap border border-gray-200"
+          :class="
+            selectedSupertag === null
+              ? 'bg-gray-900 text-white shadow-md transform scale-105'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900'
+          "
+          class="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 whitespace-nowrap"
         >
-          All
+          All Notes
         </button>
         <button
           v-for="tag in availableSupertags"
           :key="tag.name"
           @click="selectedSupertag = tag.name"
-          :class="selectedSupertag === tag.name ? 'bg-gray-900 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'"
-          class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap border border-gray-200 flex items-center gap-1.5"
+          :class="
+            selectedSupertag === tag.name
+              ? 'bg-gray-900 text-white shadow-md transform scale-105'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900'
+          "
+          class="px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 whitespace-nowrap flex items-center gap-1.5"
         >
           <span>{{ tag.icon }}</span>
           <span>{{ tag.displayName }}</span>
@@ -38,66 +61,132 @@
     </div>
 
     <!-- Notes Grid -->
-    <div v-if="!isLoading && filteredNotes.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+    <div
+      v-if="!isLoading"
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-20"
+    >
+      <!-- New Note Card -->
+      <div
+        @click="startNewNote"
+        class="group cursor-pointer rounded-2xl p-5 border-2 border-dashed border-gray-300 hover:border-blue-500 hover:bg-blue-50/30 flex flex-col items-center justify-center min-h-[260px] transition-all duration-300 bg-white/50"
+      >
+        <div
+          class="w-14 h-14 rounded-full bg-blue-50 group-hover:bg-blue-100 group-hover:scale-110 flex items-center justify-center mb-3 transition-all duration-300 shadow-sm"
+        >
+          <span class="text-3xl text-blue-500 font-light">+</span>
+        </div>
+        <span
+          class="text-sm font-semibold text-gray-600 group-hover:text-blue-600 transition-colors"
+          >Create New Note</span
+        >
+      </div>
+
+      <!-- Note Cards -->
       <div
         v-for="note in filteredNotes"
         :key="note.id"
         @click="note.deletedAt ? undefined : openNote(note)"
-        class="group cursor-pointer rounded-lg p-4 transition-all duration-200 hover:shadow-lg border border-gray-200 flex flex-col relative min-h-[240px]"
-        :class="[getCardColor(note), note.deletedAt ? 'opacity-50 grayscale hover:shadow-none' : 'hover:border-gray-300']"
+        class="group cursor-pointer rounded-2xl p-5 transition-all duration-300 hover:shadow-xl border border-white/20 flex flex-col relative min-h-[260px] hover:-translate-y-1 shadow-sm"
+        :class="[
+          getCardColor(note),
+          note.deletedAt
+            ? 'opacity-60 grayscale hover:shadow-none hover:translate-y-0 bg-gray-50'
+            : '',
+        ]"
       >
-        <!-- Emojis and Supertags in top right -->
-        <div class="absolute top-2 right-2 flex items-center gap-1 flex-wrap justify-end max-w-[50%] bg-white rounded-lg px-2 py-1 shadow-sm">
-          <span v-if="note.parsed.icon" class="text-2xl">{{ note.parsed.icon }}</span>
+        <!-- Pinned & Icon Header -->
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span
+              v-if="note.parsed.icon"
+              class="text-2xl filter grayscale-[0.2] group-hover:grayscale-0 transition-all transform group-hover:scale-110 duration-300"
+              >{{ note.parsed.icon }}</span
+            >
+          </div>
+          <div class="flex items-center gap-1">
+            <span
+              v-if="note.parsed.pinned"
+              class="text-amber-400 transform rotate-45 drop-shadow-sm text-lg"
+              >📌</span
+            >
+          </div>
+        </div>
+
+        <!-- Supertags Badges -->
+        <div
+          class="flex flex-wrap gap-1.5 mb-3"
+          v-if="getSupertags(note).length > 0"
+        >
           <span
-            v-for="supertag in getSupertags(note)"
+            v-for="supertag in getSupertags(note).slice(0, 3)"
             :key="supertag.name"
             :title="supertag.displayName"
-            class="text-base opacity-60 hover:opacity-100 transition-opacity"
+            class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-semibold bg-gray-50 text-gray-600 border border-gray-100 group-hover:border-blue-100 group-hover:bg-blue-50/50 transition-colors"
           >
-            {{ supertag.icon }}
+            <span class="mr-1">{{ supertag.icon }}</span>
           </span>
-          <span v-if="note.parsed.pinned" class="text-base opacity-60">📌</span>
+          <span
+            v-if="getSupertags(note).length > 3"
+            class="text-[10px] text-gray-400 self-center font-medium"
+          >
+            +{{ getSupertags(note).length - 3 }}
+          </span>
         </div>
 
         <!-- Content -->
-        <div class="flex-1 mb-3">
-          <h3 v-if="note.parsed.title" class="text-sm font-semibold text-gray-900 mb-2 line-clamp-2 leading-tight pr-12">
-            {{ note.parsed.title }}
+        <div class="flex-1 mb-4">
+          <h3
+            class="text-base font-bold text-gray-900 mb-2 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors"
+          >
+            {{ note.parsed.title || "Untitled Note" }}
           </h3>
-          <p class="text-xs text-gray-600 line-clamp-4 leading-relaxed">
-            {{ note.parsed.content || "......." }}
+          <p
+            class="text-sm text-gray-500 line-clamp-4 leading-relaxed font-normal"
+          >
+            {{ note.parsed.content || "No additional text..." }}
           </p>
         </div>
 
         <!-- Footer -->
-        <div class="flex items-center justify-between text-xs text-gray-500 mt-auto pt-2 border-t border-gray-100">
-          <div class="flex items-center gap-1 flex-wrap">
+        <div
+          class="flex items-center justify-between text-xs text-gray-400 mt-auto pt-3 border-t border-gray-50 group-hover:border-gray-100 transition-colors"
+        >
+          <div class="flex items-center gap-1.5 overflow-hidden">
             <span
               v-for="tag in (note.parsed.customTags || []).slice(0, 2)"
               :key="tag"
-              class="px-1.5 py-0.5 bg-gray-100 text-gray-700 rounded text-[10px] font-medium"
+              class="px-2 py-0.5 bg-gray-50 text-gray-600 rounded-full text-[10px] font-medium whitespace-nowrap group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors"
             >
-              {{ tag }}
+              #{{ tag }}
             </span>
-            <span v-if="(note.parsed.customTags || []).length > 2" class="text-[10px] font-medium text-gray-400"
+            <span
+              v-if="(note.parsed.customTags || []).length > 2"
+              class="text-[10px] font-medium text-gray-400"
               >+{{ (note.parsed.customTags || []).length - 2 }}</span
             >
           </div>
-          <div class="flex items-center gap-1">
-            <span class="text-[10px]">{{ formatDate(note.updatedAt) }}</span>
-          </div>
+          <span
+            class="text-[10px] font-medium whitespace-nowrap ml-2 opacity-60 group-hover:opacity-100 transition-opacity"
+            >{{ formatDate(note.updatedAt) }}</span
+          >
         </div>
 
         <!-- Deleted note badge and countdown -->
-        <div v-if="note.deletedAt" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 rounded-lg z-10 backdrop-blur-sm">
-          <div class="text-xs font-semibold text-red-600 mb-1">Pending Deletion</div>
-          <div class="text-xs text-gray-600 mb-2">Deleting in {{ getPurgeCountdown(note.deletedAt) }}</div>
+        <div
+          v-if="note.deletedAt"
+          class="absolute inset-0 flex flex-col items-center justify-center bg-white/80 rounded-2xl z-10 backdrop-blur-sm transition-all"
+        >
+          <div class="text-sm font-bold text-red-600 mb-1">
+            Pending Deletion
+          </div>
+          <div class="text-xs text-gray-500 mb-3">
+            Deleting in {{ getPurgeCountdown(note.deletedAt) }}
+          </div>
           <button
             @click.stop="restoreNote(note)"
-            class="px-3 py-1.5 rounded-md bg-green-600 text-white text-xs font-semibold hover:bg-green-700 transition-colors"
+            class="px-4 py-2 rounded-lg bg-gray-900 text-white text-xs font-bold hover:bg-black transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0"
           >
-            Restore
+            Restore Note
           </button>
         </div>
       </div>
@@ -105,19 +194,30 @@
 
     <!-- Loading -->
     <div v-if="isLoading" class="flex justify-center items-center py-20">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      <div
+        class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"
+      ></div>
     </div>
 
     <!-- Empty State -->
-    <div v-if="!isLoading && filteredNotes.length === 0" class="text-center py-20">
-      <div class="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full mb-4 shadow-sm">
+    <div
+      v-if="!isLoading && filteredNotes.length === 0"
+      class="text-center py-20"
+    >
+      <div
+        class="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full mb-4 shadow-sm"
+      >
         <FileText class="w-10 h-10 text-gray-400" />
       </div>
       <h3 class="text-2xl font-semibold text-gray-900 mb-2">
         {{ searchQuery ? "No notes found" : "No notes yet" }}
       </h3>
       <p class="text-gray-600 mb-6">
-        {{ searchQuery ? "Try adjusting your search" : "Click the + button to create your first note" }}
+        {{
+          searchQuery
+            ? "Try adjusting your search"
+            : "Click the + button to create your first note"
+        }}
       </p>
     </div>
   </div>
@@ -157,7 +257,11 @@ const filteredNotes = computed(() => {
   // Filter by search query
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase();
-    filtered = filtered.filter((note) => note.parsed.title?.toLowerCase().includes(query) || note.parsed.content?.toLowerCase().includes(query));
+    filtered = filtered.filter(
+      (note) =>
+        note.parsed.title?.toLowerCase().includes(query) ||
+        note.parsed.content?.toLowerCase().includes(query)
+    );
   }
 
   return filtered.slice().sort((a, b) => {
@@ -187,7 +291,8 @@ const loadNotes = async () => {
 
 const startNewNote = () => {
   // Generate a random ID for new note
-  const newNoteId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+  const newNoteId =
+    Date.now().toString(36) + Math.random().toString(36).substr(2);
   router.push(`/notes/${newNoteId}`);
 };
 
@@ -204,18 +309,31 @@ const formatDate = (timestamp) => {
   return format(timestamp);
 };
 
-// Color palette for note cards - curated modern colors
+// Color palette for note cards - vibrant modern colors
 const cardColors = [
-  "bg-[#E8F4F8]", // Soft cyan - calm and professional
-  "bg-[#F5E6FF]", // Soft purple - creative and elegant
-  "bg-[#FFE8E8]", // Soft coral - warm and inviting
-  "bg-[#E8F8E8]", // Soft mint - fresh and clean
-  "bg-[#FFF4E6]", // Soft amber - warm and cozy
+  "bg-gradient-to-br from-blue-50 to-blue-100",
+  "bg-gradient-to-br from-purple-50 to-purple-100",
+  "bg-gradient-to-br from-pink-50 to-pink-100",
+  "bg-gradient-to-br from-green-50 to-green-100",
+  "bg-gradient-to-br from-amber-50 to-amber-100",
+  "bg-gradient-to-br from-cyan-50 to-cyan-100",
+  "bg-gradient-to-br from-rose-50 to-rose-100",
+  "bg-gradient-to-br from-indigo-50 to-indigo-100",
 ];
 
 const getCardColor = (note) => {
+  // Get sorted supertag names for consistent color assignment
+  const supertags = getSupertags(note);
+  const supertagNames = supertags
+    .map((st) => st.name)
+    .sort()
+    .join(",");
+
+  // If no supertags, use note ID as fallback
+  const colorKey = supertagNames || note.id;
+
   // Use hash-based color for consistency
-  const hash = note.id.split("").reduce((acc, char) => {
+  const hash = colorKey.split("").reduce((acc, char) => {
     return char.charCodeAt(0) + ((acc << 5) - acc);
   }, 0);
 
