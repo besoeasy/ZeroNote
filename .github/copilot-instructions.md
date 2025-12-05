@@ -4,7 +4,7 @@
 - **Code Comments**: Only add comments when code logic is complex or non-obvious. Keep code self-documenting through clear naming conventions.
 - **Responsive Design**: Ensure all components are mobile-compatible and responsive across all screen sizes.
 - **Component Width**: All components should be full width by default unless explicitly specified otherwise.
-- **Animations**: Use only Tailwind CSS animation utilities (e.g., `animate-*`, `transition-*`, `duration-*`). Do not create custom animation keyframes.
+- **Animations**: Use only Tailwind CSS animation utilities (e.g., `animate-*`, `transition-*`, `duration-*`). Use animations aggersively.
 - **Design Consistency**: When creating new components, reference existing components to maintain visual and structural uniformity throughout the project.
 
 # Regarding Supertags
