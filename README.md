@@ -181,6 +181,13 @@ Tags automatically transform your notes:
 - Use export/import for backups
 - Maximum privacy
 
+**Option 4: Nostr Sync (Relays)**
+
+- Requires a NIP-07 browser extension (e.g., Alby, nos2x)
+- One-button Sync: pulls remote, resolves conflicts, and pushes newer notes
+- Uses `kind:30078` App Data events (won’t appear as articles)
+- Per-note events with optional attachment chunking for large files
+
 ## 💡 Use Cases
 
 **Replace 4+ Apps with One:**
