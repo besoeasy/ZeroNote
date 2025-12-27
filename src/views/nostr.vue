@@ -16,7 +16,7 @@
             <h2 class="text-xl font-semibold text-gray-900">Sync Notes to Relays</h2>
             <span class="text-xs px-3 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200">NIP-07 extension required</span>
           </div>
-          <p class="text-sm text-gray-600">Each note is a replaceable `kind:30023` event. Large attachments are automatically chunked. Incremental sync updates only changed notes.</p>
+          <p class="text-sm text-gray-600">Each note is a replaceable `kind:30078` app-data event. Large attachments are automatically chunked. Incremental sync updates only changed notes.</p>
         </div>
       </div>
 
@@ -268,7 +268,7 @@ const fetchEventsFromRelay = (relayUrl, pubkey, dTagPrefix = "zeronote-note:") =
 
     ws.onopen = () => {
       const filter = {
-        kinds: [30023],
+        kinds: [30078],
         authors: [pubkey],
         limit: 2000,
       };
@@ -343,7 +343,7 @@ const backupToNostr = async () => {
 
       // Publish main note event
       const noteEvent = {
-        kind: 30023,
+        kind: 30078,
         created_at: Math.floor(Date.now() / 1000),
         tags: [
           ["d", `zeronote-note:${note.id}`],
@@ -370,7 +370,7 @@ const backupToNostr = async () => {
       // Publish attachment chunks if any
       for (const chunk of attachmentChunks) {
         const chunkEvent = {
-          kind: 30023,
+          kind: 30078,
           created_at: Math.floor(Date.now() / 1000),
           tags: [
             ["d", chunk.dTag],
