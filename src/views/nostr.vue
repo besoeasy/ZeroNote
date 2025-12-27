@@ -2,8 +2,8 @@
   <div class="max-w-4xl mx-auto p-4 md:p-8 pt-16 md:pt-8 space-y-6">
     <header class="text-center space-y-3">
       <p class="inline-flex items-center px-3 py-1 text-xs font-semibold uppercase tracking-widest text-purple-700 bg-purple-100 rounded-full">Experimental</p>
-      <h1 class="text-3xl md:text-5xl font-black text-gray-900">Nostr Backup</h1>
-      <p class="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">Publish and restore encrypted backups via your Nostr extension (NIP-07). Data stays encrypted with your master password; relays only see ciphertext. A Nostr browser extension is required.</p>
+      <h1 class="text-3xl md:text-5xl font-black text-gray-900">Nostr Sync</h1>
+      <p class="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">Sync your notes to Nostr relays via your browser extension (NIP-07). Each note is published as a separate event with smart attachment chunking. Data stays encrypted with your master password.</p>
     </header>
 
     <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-5">
@@ -13,10 +13,10 @@
         </div>
         <div class="flex-1 space-y-2">
           <div class="flex items-center justify-between flex-wrap gap-2">
-            <h2 class="text-xl font-semibold text-gray-900">Backup & Restore</h2>
+            <h2 class="text-xl font-semibold text-gray-900">Sync Notes to Relays</h2>
             <span class="text-xs px-3 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200">NIP-07 extension required</span>
           </div>
-          <p class="text-sm text-gray-600">Uses `kind:30023` events with chunked ciphertext. Keep your relays reachable for restores.</p>
+          <p class="text-sm text-gray-600">Each note is a replaceable `kind:30023` event. Large attachments are automatically chunked. Incremental sync updates only changed notes.</p>
         </div>
       </div>
 
@@ -46,7 +46,7 @@
               class="inline-flex items-center justify-center px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all font-semibold shadow-sm"
             >
               <CloudUpload class="w-5 h-5 mr-2" />
-              {{ nostrWorking ? 'Working...' : 'Backup to Nostr' }}
+              {{ nostrWorking ? 'Syncing...' : 'Sync to Nostr' }}
             </button>
             <button
               @click="restoreFromNostr"
@@ -54,7 +54,7 @@
               class="inline-flex items-center justify-center px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all font-semibold shadow-sm"
             >
               <CloudDownload class="w-5 h-5 mr-2" />
-              {{ nostrWorking ? 'Working...' : 'Restore from Nostr' }}
+              {{ nostrWorking ? 'Syncing...' : 'Pull from Nostr' }}
             </button>
           </div>
         </div>
@@ -62,7 +62,7 @@
 
       <div v-if="nostrProgress.total" class="bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm animate-pulse">
         <p class="font-medium text-gray-800">{{ nostrProgress.status }}</p>
-        <p class="text-xs text-gray-600">{{ nostrProgress.current }} / {{ nostrProgress.total }} chunk{{ nostrProgress.total === 1 ? '' : 's' }}</p>
+        <p class="text-xs text-gray-600">{{ nostrProgress.current }} / {{ nostrProgress.total }} {{ nostrProgress.unit || 'item' }}{{ nostrProgress.total === 1 ? '' : 's' }}</p>
       </div>
 
       <div v-if="nostrMessage" class="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-800">
@@ -86,7 +86,7 @@ const nostrRelayInput = ref(
 const nostrWorking = ref(false);
 const nostrMessage = ref("");
 const nostrError = ref("");
-const nostrProgress = ref({ current: 0, total: 0, status: "" });
+const nostrProgress = ref({ current: 0, total: 0, status: "", unit: "note" });
 
 const nostrRelays = computed(() =>
   nostrRelayInput.value
@@ -113,38 +113,86 @@ const base64ToArrayBuffer = (base64) => {
   return bytes.buffer;
 };
 
-const buildPlainBackupData = async () => {
-  const notes = await db.notes.filter((note) => !note.deletedAt).toArray();
-  if (notes.length === 0) {
-    throw new Error("No notes to backup. Create some notes first!");
-  }
-  return notes.map((note) => ({
-    ...note,
-    content: decryptData(note.content),
-    attachments:
-      note.attachments?.map((att) => ({
-        ...att,
-        data: att.data ? arrayBufferToBase64(att.data) : null,
-      })) || [],
-  }));
-};
-
-const buildEncryptedBackupString = async () => {
-  const plain = await buildPlainBackupData();
-  const jsonData = JSON.stringify(plain);
-  return encryptData(jsonData);
-};
-
 const ensureNostrExtension = () => {
   if (typeof window === "undefined" || !window.nostr || typeof window.nostr.signEvent !== "function") {
     throw new Error("Nostr browser extension not found. Please install a NIP-07 extension and try again.");
   }
 };
 
-const chunkString = (str, size = 15000) => {
-  const chunks = [];
-  for (let i = 0; i < str.length; i += size) chunks.push(str.slice(i, i + size));
-  return chunks;
+// Sign a Nostr event via NIP-07 extension
+const signEventWithExtension = async (baseEvent) => {
+  ensureNostrExtension();
+  try {
+    const signed = await window.nostr.signEvent(baseEvent);
+    if (!signed || !signed.id || !signed.sig) {
+      throw new Error("Failed to sign event: missing id/sig");
+    }
+    return signed;
+  } catch (e) {
+    throw new Error(e?.message || "Failed to sign event");
+  }
+};
+
+const ATTACHMENT_INLINE_THRESHOLD = 50 * 1024; // 50KB
+const ATTACHMENT_CHUNK_SIZE = 40 * 1024; // 40KB per chunk
+
+const prepareNoteForPublish = (note) => {
+  const decryptedContent = decryptData(note.content);
+  const notePayload = {
+    id: note.id,
+    content: decryptedContent,
+    updatedAt: note.updatedAt,
+    deletedAt: note.deletedAt,
+    attachments: [],
+  };
+
+  const attachmentChunks = [];
+
+  for (const att of note.attachments || []) {
+    const attSize = att.data?.byteLength || 0;
+    
+    if (attSize < ATTACHMENT_INLINE_THRESHOLD) {
+      // Small attachment - inline
+      notePayload.attachments.push({
+        id: att.id,
+        name: att.name,
+        type: att.type,
+        size: att.size,
+        uploadedAt: att.uploadedAt,
+        data: att.data ? arrayBufferToBase64(att.data) : null,
+      });
+    } else {
+      // Large attachment - chunk it
+      const base64Data = arrayBufferToBase64(att.data);
+      const chunks = [];
+      for (let i = 0; i < base64Data.length; i += ATTACHMENT_CHUNK_SIZE) {
+        chunks.push(base64Data.slice(i, i + ATTACHMENT_CHUNK_SIZE));
+      }
+
+      notePayload.attachments.push({
+        id: att.id,
+        name: att.name,
+        type: att.type,
+        size: att.size,
+        uploadedAt: att.uploadedAt,
+        chunked: true,
+        totalChunks: chunks.length,
+      });
+
+      chunks.forEach((chunkData, idx) => {
+        attachmentChunks.push({
+          dTag: `${note.id}:${att.id}:chunk-${idx + 1}`,
+          noteId: note.id,
+          attachmentId: att.id,
+          chunkIndex: idx + 1,
+          totalChunks: chunks.length,
+          content: chunkData,
+        });
+      });
+    }
+  }
+
+  return { notePayload, attachmentChunks };
 };
 
 const publishToRelay = (relayUrl, event) =>
@@ -196,7 +244,7 @@ const publishToRelay = (relayUrl, event) =>
     };
   });
 
-const fetchEventsFromRelay = (relayUrl, pubkey) =>
+const fetchEventsFromRelay = (relayUrl, pubkey, dTagPrefix = "zeronote-note:") =>
   new Promise((resolve) => {
     const events = [];
     let settled = false;
@@ -208,7 +256,7 @@ const fetchEventsFromRelay = (relayUrl, pubkey) =>
         ws.close();
         resolve(events);
       }
-    }, 6000);
+    }, 8000);
 
     ws.onerror = () => {
       if (!settled) {
@@ -219,24 +267,32 @@ const fetchEventsFromRelay = (relayUrl, pubkey) =>
     };
 
     ws.onopen = () => {
-      ws.send(
-        JSON.stringify([
-          "REQ",
-          subId,
-          {
-            kinds: [30023],
-            authors: [pubkey],
-            limit: 200,
-          },
-        ])
-      );
+      const filter = {
+        kinds: [30023],
+        authors: [pubkey],
+        limit: 2000,
+      };
+
+      // Add d tag prefix filter if needed (note: not all relays support prefix matching)
+      if (dTagPrefix) {
+        filter["#d"] = [dTagPrefix]; // Some relays support this for prefix matching
+      }
+
+      ws.send(JSON.stringify(["REQ", subId, filter]));
     };
 
     ws.onmessage = (msg) => {
       try {
         const data = JSON.parse(msg.data);
         if (Array.isArray(data) && data[0] === "EVENT" && data[1] === subId) {
-          events.push(data[2]);
+          const ev = data[2];
+          const dTag = ev.tags?.find((t) => t[0] === "d")?.[1];
+          // Client-side filter since not all relays support prefix matching
+          if (!dTagPrefix) {
+            events.push(ev);
+          } else if (dTag && dTag.startsWith(dTagPrefix)) {
+            events.push(ev);
+          }
         }
         if (Array.isArray(data) && data[0] === "EOSE" && data[1] === subId) {
           if (!settled) {
@@ -253,72 +309,98 @@ const fetchEventsFromRelay = (relayUrl, pubkey) =>
     };
   });
 
-const signEventWithExtension = async (baseEvent) => {
-  const signed = await window.nostr.signEvent(baseEvent);
-  if (!signed.id || !signed.sig) {
-    throw new Error("Failed to sign event");
-  }
-  return signed;
-};
-
 const backupToNostr = async () => {
   nostrWorking.value = true;
   nostrMessage.value = "";
   nostrError.value = "";
-  nostrProgress.value = { current: 0, total: 0, status: "Preparing backup..." };
+  nostrProgress.value = { current: 0, total: 0, status: "Preparing notes...", unit: "note" };
 
   try {
     ensureNostrExtension();
     localStorage.setItem("nostr_relays", nostrRelayInput.value);
 
-    const encryptedPayload = await buildEncryptedBackupString();
-    const chunks = chunkString(encryptedPayload);
-    const backupId = `zeronote-backup:${Date.now()}`;
     const pubkey = await window.nostr.getPublicKey();
-
-    if (chunks.length === 0) {
-      throw new Error("Nothing to backup");
-    }
-
     const relayUrls = nostrRelays.value;
     if (relayUrls.length === 0) {
       throw new Error("Please provide at least one relay URL");
     }
 
-    let sent = 0;
-    nostrProgress.value = { current: 0, total: chunks.length, status: "Signing events..." };
+    const notes = await db.notes.toArray(); // Include deleted notes
+    if (notes.length === 0) {
+      throw new Error("No notes to sync.");
+    }
 
-    for (let i = 0; i < chunks.length; i++) {
-      const baseEvent = {
+    nostrProgress.value = { current: 0, total: notes.length, status: "Publishing notes...", unit: "note" };
+
+    let published = 0;
+    let totalChunks = 0;
+
+    for (const note of notes) {
+      const { notePayload, attachmentChunks } = prepareNoteForPublish(note);
+      
+      // Encrypt the entire note payload
+      const encryptedContent = encryptData(JSON.stringify(notePayload));
+
+      // Publish main note event
+      const noteEvent = {
         kind: 30023,
         created_at: Math.floor(Date.now() / 1000),
         tags: [
-          ["d", backupId],
-          ["i", `${i + 1}/${chunks.length}`],
+          ["d", `zeronote-note:${note.id}`],
           ["v", "1"],
-          ["content_type", "application/json"],
           ["app", "ZeroNote"],
+          ["updated_at", String(note.updatedAt)],
         ],
-        content: chunks[i],
+        content: encryptedContent,
         pubkey,
       };
 
-      const signed = await signEventWithExtension(baseEvent);
-
-      const publishResults = await Promise.allSettled(relayUrls.map((url) => publishToRelay(url, signed)));
-      const ok = publishResults.some((r) => r.status === "fulfilled");
-      if (!ok) {
-        throw new Error("Failed to publish to any relay. Check your relays and try again.");
+      if (attachmentChunks.length > 0) {
+        noteEvent.tags.push(["has_chunks", String(attachmentChunks.length)]);
       }
 
-      sent += 1;
-      nostrProgress.value = { current: sent, total: chunks.length, status: `Published chunk ${sent}/${chunks.length}` };
+      const signedNote = await signEventWithExtension(noteEvent);
+      const noteResults = await Promise.allSettled(relayUrls.map((url) => publishToRelay(url, signedNote)));
+      const noteOk = noteResults.some((r) => r.status === "fulfilled");
+      
+      if (!noteOk) {
+        console.warn(`Failed to publish note ${note.id} to any relay`);
+      }
+
+      // Publish attachment chunks if any
+      for (const chunk of attachmentChunks) {
+        const chunkEvent = {
+          kind: 30023,
+          created_at: Math.floor(Date.now() / 1000),
+          tags: [
+            ["d", chunk.dTag],
+            ["parent_note", chunk.noteId],
+            ["attachment_id", chunk.attachmentId],
+            ["chunk", `${chunk.chunkIndex}/${chunk.totalChunks}`],
+            ["app", "ZeroNote"],
+          ],
+          content: chunk.content,
+          pubkey,
+        };
+
+        const signedChunk = await signEventWithExtension(chunkEvent);
+        await Promise.allSettled(relayUrls.map((url) => publishToRelay(url, signedChunk)));
+        totalChunks++;
+      }
+
+      published++;
+      nostrProgress.value = {
+        current: published,
+        total: notes.length,
+        status: `Published ${published}/${notes.length} notes${totalChunks > 0 ? ` (${totalChunks} chunks)` : ""}`,
+        unit: "note",
+      };
     }
 
-    nostrMessage.value = `Backup published to Nostr (${chunks.length} chunk${chunks.length === 1 ? "" : "s"}). Keep your relays reachable for restore.`;
+    nostrMessage.value = `Successfully synced ${published} note${published === 1 ? "" : "s"} to Nostr${totalChunks > 0 ? ` with ${totalChunks} attachment chunks` : ""}.`;
   } catch (err) {
-    console.error("Nostr backup failed", err);
-    nostrError.value = err.message || "Nostr backup failed";
+    console.error("Nostr sync failed", err);
+    nostrError.value = err.message || "Nostr sync failed";
   } finally {
     nostrWorking.value = false;
   }
@@ -328,7 +410,7 @@ const restoreFromNostr = async () => {
   nostrWorking.value = true;
   nostrMessage.value = "";
   nostrError.value = "";
-  nostrProgress.value = { current: 0, total: 0, status: "Fetching backup from relays..." };
+  nostrProgress.value = { current: 0, total: 0, status: "Fetching notes from relays...", unit: "note" };
 
   try {
     ensureNostrExtension();
@@ -340,93 +422,159 @@ const restoreFromNostr = async () => {
       throw new Error("Please provide at least one relay URL");
     }
 
-    const allEventsArrays = await Promise.all(relayUrls.map((url) => fetchEventsFromRelay(url, pubkey)));
-    const allEvents = allEventsArrays.flat();
+    // Fetch all note events
+    const allEventsArrays = await Promise.all(
+      relayUrls.map((url) => fetchEventsFromRelay(url, pubkey, "zeronote-note:"))
+    );
+    let noteEvents = allEventsArrays.flat();
 
-    if (!allEvents.length) {
-      throw new Error("No backup events found on the provided relays.");
-    }
+    if (!noteEvents.length) {
+      // Fallback: fetch all author events and filter client-side
+      const broadEventsArrays = await Promise.all(
+        relayUrls.map((url) => fetchEventsFromRelay(url, pubkey, null))
+      );
+      const broadEvents = broadEventsArrays.flat();
+      noteEvents = broadEvents.filter((ev) => {
+        const dTag = ev.tags?.find((t) => t[0] === "d")?.[1];
+        const appTag = ev.tags?.find((t) => t[0] === "app")?.[1];
+        return dTag?.startsWith("zeronote-note:") && appTag === "ZeroNote";
+      });
 
-    const groups = new Map();
-    for (const ev of allEvents) {
-      const dTag = ev.tags.find((t) => t[0] === "d")?.[1];
-      const iTag = ev.tags.find((t) => t[0] === "i")?.[1];
-      if (!dTag || !iTag || !dTag.startsWith("zeronote-backup:")) continue;
-      const [indexStr, totalStr] = iTag.split("/");
-      const idx = Number(indexStr);
-      const total = Number(totalStr);
-      if (!Number.isFinite(idx) || !Number.isFinite(total)) continue;
-      if (!groups.has(dTag)) {
-        groups.set(dTag, { total, events: [], newest: ev.created_at || 0 });
+      if (!noteEvents.length) {
+        throw new Error(
+          "No notes found on the provided relays. Ensure you synced notes first, you're using the same Nostr key, and relays are reachable."
+        );
       }
-      const g = groups.get(dTag);
-      g.events.push({ idx, total, ev });
-      g.newest = Math.max(g.newest, ev.created_at || 0);
     }
 
-    const completeGroups = Array.from(groups.entries())
-      .filter(([, g]) => g.events.length === g.total)
-      .sort((a, b) => b[1].newest - a[1].newest);
+    nostrProgress.value = { current: 0, total: noteEvents.length, status: "Processing notes...", unit: "note" };
 
-    if (!completeGroups.length) {
-      throw new Error("No complete backup found. Make sure all chunks are available on your relays.");
+    // Deduplicate by d tag (keep newest)
+    const notesByDTag = new Map();
+    for (const ev of noteEvents) {
+      const dTag = ev.tags.find((t) => t[0] === "d")?.[1];
+      if (!dTag || !dTag.startsWith("zeronote-note:")) continue;
+
+      const existing = notesByDTag.get(dTag);
+      if (!existing || (ev.created_at || 0) > (existing.created_at || 0)) {
+        notesByDTag.set(dTag, ev);
+      }
     }
 
-    const [selectedId, selected] = completeGroups[0];
-    nostrProgress.value = { current: 0, total: selected.total, status: `Reassembling ${selectedId}` };
-
-    selected.events.sort((a, b) => a.idx - b.idx);
-    const combined = selected.events
-      .map((e, i) => {
-        nostrProgress.value = { current: i + 1, total: selected.total, status: `Reading chunk ${i + 1}/${selected.total}` };
-        return e.ev.content || "";
-      })
-      .join("");
-
-    const decrypted = decryptData(combined);
-    if (!decrypted) {
-      throw new Error("Failed to decrypt backup. Make sure you are logged in with the same master password.");
-    }
-
-    let parsed;
-    try {
-      parsed = JSON.parse(decrypted);
-    } catch (e) {
-      throw new Error("Backup content is invalid JSON.");
-    }
-
-    if (!Array.isArray(parsed) || parsed.length === 0) {
-      throw new Error("Backup is empty or invalid.");
-    }
-
+    const uniqueNotes = Array.from(notesByDTag.values());
     let restoredCount = 0;
+    let updatedCount = 0;
     let skippedCount = 0;
-    for (const note of parsed) {
-      const existingNote = await db.notes.where({ id: note.id }).first();
-      if (existingNote) {
+
+    for (let i = 0; i < uniqueNotes.length; i++) {
+      const ev = uniqueNotes[i];
+      const dTag = ev.tags.find((t) => t[0] === "d")?.[1];
+      const noteId = dTag.replace("zeronote-note:", "");
+      
+      nostrProgress.value = {
+        current: i + 1,
+        total: uniqueNotes.length,
+        status: `Processing note ${i + 1}/${uniqueNotes.length}`,
+        unit: "note",
+      };
+
+      // Decrypt note content
+      const decrypted = decryptData(ev.content);
+      if (!decrypted) {
+        console.warn(`Failed to decrypt note ${noteId}`);
         skippedCount++;
         continue;
       }
 
-      await db.notes.add({
-        id: note.id,
-        content: encryptData(note.content),
-        updatedAt: note.updatedAt,
-        deletedAt: note.deletedAt,
-        attachments:
-          note.attachments?.map((att) => ({
+      let notePayload;
+      try {
+        notePayload = JSON.parse(decrypted);
+      } catch (e) {
+        console.warn(`Invalid JSON for note ${noteId}`);
+        skippedCount++;
+        continue;
+      }
+
+      // Check if note has chunked attachments
+      const hasChunksTag = ev.tags.find((t) => t[0] === "has_chunks")?.[1];
+      if (hasChunksTag && parseInt(hasChunksTag) > 0) {
+        // Fetch attachment chunks
+        const chunkEvents = await Promise.all(
+          relayUrls.map((url) => fetchEventsFromRelay(url, pubkey, `${noteId}:`))
+        );
+        const allChunks = chunkEvents.flat();
+
+        // Reassemble attachments
+        for (const att of notePayload.attachments) {
+          if (att.chunked) {
+            const attChunks = allChunks
+              .filter((e) => {
+                const attId = e.tags.find((t) => t[0] === "attachment_id")?.[1];
+                return attId === att.id;
+              })
+              .sort((a, b) => {
+                const aChunk = a.tags.find((t) => t[0] === "chunk")?.[1]?.split("/")[0];
+                const bChunk = b.tags.find((t) => t[0] === "chunk")?.[1]?.split("/")[0];
+                return Number(aChunk) - Number(bChunk);
+              });
+
+            if (attChunks.length === att.totalChunks) {
+              const reassembled = attChunks.map((c) => c.content).join("");
+              att.data = reassembled;
+              delete att.chunked;
+              delete att.totalChunks;
+            } else {
+              console.warn(`Incomplete chunks for attachment ${att.id}: ${attChunks.length}/${att.totalChunks}`);
+            }
+          }
+        }
+      }
+
+      // Check if note exists locally
+      const existingNote = await db.notes.where({ id: noteId }).first();
+
+      if (existingNote) {
+        // Update if remote is newer
+        if (notePayload.updatedAt > existingNote.updatedAt) {
+          await db.notes.update(noteId, {
+            content: encryptData(notePayload.content),
+            updatedAt: notePayload.updatedAt,
+            deletedAt: notePayload.deletedAt,
+            attachments: notePayload.attachments.map((att) => ({
+              ...att,
+              data: att.data ? base64ToArrayBuffer(att.data) : null,
+            })),
+          });
+          updatedCount++;
+        } else {
+          skippedCount++;
+        }
+      } else {
+        // Add new note
+        await db.notes.add({
+          id: noteId,
+          content: encryptData(notePayload.content),
+          updatedAt: notePayload.updatedAt,
+          deletedAt: notePayload.deletedAt,
+          attachments: notePayload.attachments.map((att) => ({
             ...att,
             data: att.data ? base64ToArrayBuffer(att.data) : null,
-          })) || [],
-      });
-      restoredCount++;
+          })),
+        });
+        restoredCount++;
+      }
     }
 
-    nostrMessage.value = `Restored ${restoredCount} note${restoredCount === 1 ? "" : "s"}${skippedCount ? ` (${skippedCount} skipped as duplicates)` : ""}. Reloading...`;
+    const summary = [];
+    if (restoredCount > 0) summary.push(`${restoredCount} new`);
+    if (updatedCount > 0) summary.push(`${updatedCount} updated`);
+    if (skippedCount > 0) summary.push(`${skippedCount} skipped`);
+
+    nostrMessage.value = `Sync complete: ${summary.join(", ")} note${summary.length > 1 ? "s" : ""}. Reloading...`;
     setTimeout(() => location.reload(), 2000);
   } catch (err) {
-    console.error("Nostr restore failed", err);
-    nostrError.value = err.message || "Nostr restore failed";
+    console.error("Nostr sync failed", err);
+    nostrError.value = err.message || "Nostr sync failed";
   } finally {
     nostrWorking.value = false;
   }
