@@ -39,22 +39,14 @@
               <p class="text-purple-800">Install and enable a Nostr (NIP-07) browser extension, then retry if prompted.</p>
             </div>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div class="grid grid-cols-1 gap-2">
             <button
-              @click="backupToNostr"
+              @click="syncNostr"
               :disabled="nostrWorking"
               class="inline-flex items-center justify-center px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all font-semibold shadow-sm"
             >
               <CloudUpload class="w-5 h-5 mr-2" />
-              {{ nostrWorking ? 'Syncing...' : 'Sync to Nostr' }}
-            </button>
-            <button
-              @click="restoreFromNostr"
-              :disabled="nostrWorking"
-              class="inline-flex items-center justify-center px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all font-semibold shadow-sm"
-            >
-              <CloudDownload class="w-5 h-5 mr-2" />
-              {{ nostrWorking ? 'Syncing...' : 'Pull from Nostr' }}
+              {{ nostrWorking ? 'Syncing...' : 'Sync' }}
             </button>
           </div>
         </div>
@@ -344,7 +336,7 @@ const backupToNostr = async () => {
       // Publish main note event
       const noteEvent = {
         kind: 30078,
-        created_at: Math.floor(Date.now() / 1000),
+        created_at: Math.floor((note.updatedAt || Date.now()) / 1000),
         tags: [
           ["d", `zeronote-note:${note.id}`],
           ["v", "1"],
@@ -572,6 +564,225 @@ const restoreFromNostr = async () => {
 
     nostrMessage.value = `Sync complete: ${summary.join(", ")} note${summary.length > 1 ? "s" : ""}. Reloading...`;
     setTimeout(() => location.reload(), 2000);
+  } catch (err) {
+    console.error("Nostr sync failed", err);
+    nostrError.value = err.message || "Nostr sync failed";
+  } finally {
+    nostrWorking.value = false;
+  }
+};
+
+// Unified sync: pull remote, resolve conflicts, push newer local notes
+const syncNostr = async () => {
+  nostrWorking.value = true;
+  nostrMessage.value = "";
+  nostrError.value = "";
+  nostrProgress.value = { current: 0, total: 0, status: "Connecting...", unit: "note" };
+
+  try {
+    ensureNostrExtension();
+    localStorage.setItem("nostr_relays", nostrRelayInput.value);
+
+    const pubkey = await window.nostr.getPublicKey();
+    const relayUrls = nostrRelays.value;
+    if (relayUrls.length === 0) {
+      throw new Error("Please provide at least one relay URL");
+    }
+
+    // Pull remote notes
+    const allEventsArrays = await Promise.all(
+      relayUrls.map((url) => fetchEventsFromRelay(url, pubkey, "zeronote-note:"))
+    );
+    let noteEvents = allEventsArrays.flat();
+
+    // Fallback to broader fetch
+    if (!noteEvents.length) {
+      const broadEventsArrays = await Promise.all(
+        relayUrls.map((url) => fetchEventsFromRelay(url, pubkey, null))
+      );
+      const broadEvents = broadEventsArrays.flat();
+      noteEvents = broadEvents.filter((ev) => {
+        const dTag = ev.tags?.find((t) => t[0] === "d")?.[1];
+        const appTag = ev.tags?.find((t) => t[0] === "app")?.[1];
+        return dTag?.startsWith("zeronote-note:") && appTag === "ZeroNote";
+      });
+    }
+
+    // Build remote index (keep newest per noteId)
+    const remoteIndex = new Map();
+    for (const ev of noteEvents) {
+      const dTag = ev.tags?.find((t) => t[0] === "d")?.[1];
+      const noteId = dTag?.replace("zeronote-note:", "");
+      if (!noteId) continue;
+      const existing = remoteIndex.get(noteId);
+      if (!existing || (ev.created_at || 0) > (existing.created_at || 0)) {
+        remoteIndex.set(noteId, ev);
+      }
+    }
+
+    // Load local notes
+    const localNotes = await db.notes.toArray();
+    const localIndex = new Map(localNotes.map((n) => [n.id, n]));
+
+    // Union of IDs
+    const allIds = new Set([...remoteIndex.keys(), ...localIndex.keys()]);
+    nostrProgress.value = { current: 0, total: allIds.size, status: "Reconciling...", unit: "note" };
+
+    let pulled = 0;
+    let pushed = 0;
+    let skipped = 0;
+
+    for (const [i, id] of Array.from(allIds).entries()) {
+      const remoteEv = remoteIndex.get(id);
+      const localNote = localIndex.get(id);
+
+      nostrProgress.value = { current: i + 1, total: allIds.size, status: `Syncing ${i + 1}/${allIds.size}` };
+
+      const remoteUpdatedAt = remoteEv?.tags?.find((t) => t[0] === "updated_at")?.[1];
+      const remoteUpdatedNum = remoteUpdatedAt ? parseInt(remoteUpdatedAt, 10) : 0;
+      const localUpdatedNum = localNote?.updatedAt || 0;
+
+      if (remoteEv && !localNote) {
+        // Pull new remote note
+        // Decrypt and reassemble if needed
+        const decrypted = decryptData(remoteEv.content);
+        if (!decrypted) { skipped++; continue; }
+        let payload; try { payload = JSON.parse(decrypted); } catch { skipped++; continue; }
+
+        // Handle chunks if present
+        const hasChunksTag = remoteEv.tags?.find((t) => t[0] === "has_chunks")?.[1];
+        if (hasChunksTag && parseInt(hasChunksTag) > 0) {
+          const chunkEvents = await Promise.all(relayUrls.map((url) => fetchEventsFromRelay(url, pubkey, `${id}:`)));
+          const allChunks = chunkEvents.flat();
+          for (const att of payload.attachments || []) {
+            if (att.chunked) {
+              const attChunks = allChunks
+                .filter((e) => e.tags?.find((t) => t[0] === "attachment_id")?.[1] === att.id)
+                .sort((a, b) => {
+                  const aChunk = a.tags?.find((t) => t[0] === "chunk")?.[1]?.split("/")[0];
+                  const bChunk = b.tags?.find((t) => t[0] === "chunk")?.[1]?.split("/")[0];
+                  return Number(aChunk) - Number(bChunk);
+                });
+              if (attChunks.length === att.totalChunks) {
+                const reassembled = attChunks.map((c) => c.content).join("");
+                att.data = reassembled;
+                delete att.chunked; delete att.totalChunks;
+              }
+            }
+          }
+        }
+
+        await db.notes.add({
+          id,
+          content: encryptData(payload.content),
+          updatedAt: payload.updatedAt,
+          deletedAt: payload.deletedAt,
+          attachments: (payload.attachments || []).map((att) => ({
+            ...att,
+            data: att.data ? base64ToArrayBuffer(att.data) : null,
+          })),
+        });
+        pulled++;
+        continue;
+      }
+
+      if (remoteEv && localNote) {
+        if (remoteUpdatedNum > localUpdatedNum) {
+          // Pull newer remote
+          const decrypted = decryptData(remoteEv.content);
+          if (!decrypted) { skipped++; continue; }
+          let payload; try { payload = JSON.parse(decrypted); } catch { skipped++; continue; }
+
+          // Reassemble chunks as above
+          const hasChunksTag = remoteEv.tags?.find((t) => t[0] === "has_chunks")?.[1];
+          if (hasChunksTag && parseInt(hasChunksTag) > 0) {
+            const chunkEvents = await Promise.all(relayUrls.map((url) => fetchEventsFromRelay(url, pubkey, `${id}:`)));
+            const allChunks = chunkEvents.flat();
+            for (const att of payload.attachments || []) {
+              if (att.chunked) {
+                const attChunks = allChunks
+                  .filter((e) => e.tags?.find((t) => t[0] === "attachment_id")?.[1] === att.id)
+                  .sort((a, b) => {
+                    const aChunk = a.tags?.find((t) => t[0] === "chunk")?.[1]?.split("/")[0];
+                    const bChunk = b.tags?.find((t) => t[0] === "chunk")?.[1]?.split("/")[0];
+                    return Number(aChunk) - Number(bChunk);
+                  });
+                if (attChunks.length === att.totalChunks) {
+                  const reassembled = attChunks.map((c) => c.content).join("");
+                  att.data = reassembled;
+                  delete att.chunked; delete att.totalChunks;
+                }
+              }
+            }
+          }
+
+          await db.notes.update(id, {
+            content: encryptData(payload.content),
+            updatedAt: payload.updatedAt,
+            deletedAt: payload.deletedAt,
+            attachments: (payload.attachments || []).map((att) => ({
+              ...att,
+              data: att.data ? base64ToArrayBuffer(att.data) : null,
+            })),
+          });
+          pulled++;
+          continue;
+        } else if (localUpdatedNum > remoteUpdatedNum) {
+          // Push newer local
+          const { notePayload, attachmentChunks } = prepareNoteForPublish(localNote);
+          const encryptedContent = encryptData(JSON.stringify(notePayload));
+          const noteEvent = {
+            kind: 30078,
+            created_at: Math.floor((localNote.updatedAt || Date.now()) / 1000),
+            tags: [["d", `zeronote-note:${id}`],["v","1"],["app","ZeroNote"],["updated_at", String(localNote.updatedAt)]],
+            content: encryptedContent,
+            pubkey,
+          };
+          if (attachmentChunks.length > 0) noteEvent.tags.push(["has_chunks", String(attachmentChunks.length)]);
+          const signedNote = await signEventWithExtension(noteEvent);
+          await Promise.allSettled(relayUrls.map((url) => publishToRelay(url, signedNote)));
+          for (const chunk of attachmentChunks) {
+            const chunkEvent = { kind: 30078, created_at: Math.floor((localNote.updatedAt || Date.now()) / 1000), tags: [["d", chunk.dTag],["parent_note", chunk.noteId],["attachment_id", chunk.attachmentId],["chunk", `${chunk.chunkIndex}/${chunk.totalChunks}`],["app","ZeroNote"]], content: chunk.content, pubkey };
+            const signedChunk = await signEventWithExtension(chunkEvent);
+            await Promise.allSettled(relayUrls.map((url) => publishToRelay(url, signedChunk)));
+          }
+          pushed++;
+          continue;
+        } else {
+          skipped++;
+          continue;
+        }
+      }
+
+      if (!remoteEv && localNote) {
+        // Push new local note
+        const { notePayload, attachmentChunks } = prepareNoteForPublish(localNote);
+        const encryptedContent = encryptData(JSON.stringify(notePayload));
+        const noteEvent = {
+          kind: 30078,
+          created_at: Math.floor((localNote.updatedAt || Date.now()) / 1000),
+          tags: [["d", `zeronote-note:${id}`],["v","1"],["app","ZeroNote"],["updated_at", String(localNote.updatedAt)]],
+          content: encryptedContent,
+          pubkey,
+        };
+        if (attachmentChunks.length > 0) noteEvent.tags.push(["has_chunks", String(attachmentChunks.length)]);
+        const signedNote = await signEventWithExtension(noteEvent);
+        await Promise.allSettled(relayUrls.map((url) => publishToRelay(url, signedNote)));
+        for (const chunk of attachmentChunks) {
+          const chunkEvent = { kind: 30078, created_at: Math.floor((localNote.updatedAt || Date.now()) / 1000), tags: [["d", chunk.dTag],["parent_note", chunk.noteId],["attachment_id", chunk.attachmentId],["chunk", `${chunk.chunkIndex}/${chunk.totalChunks}`],["app","ZeroNote"]], content: chunk.content, pubkey };
+          const signedChunk = await signEventWithExtension(chunkEvent);
+          await Promise.allSettled(relayUrls.map((url) => publishToRelay(url, signedChunk)));
+        }
+        pushed++;
+        continue;
+      }
+    }
+
+    const summary = [];
+    if (pulled) summary.push(`${pulled} pulled`);
+    if (pushed) summary.push(`${pushed} pushed`);
+    if (skipped) summary.push(`${skipped} unchanged`);
+    nostrMessage.value = `Sync complete: ${summary.join(", ")}.`;
   } catch (err) {
     console.error("Nostr sync failed", err);
     nostrError.value = err.message || "Nostr sync failed";
