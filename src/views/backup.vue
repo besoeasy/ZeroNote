@@ -32,7 +32,7 @@
           <!-- Restore Section -->
           <div class="bg-white rounded-xl shadow-sm p-8">
             <div class="flex items-start space-x-4">
-              <div class="shrink-0
+              <div class="flex-shrink-0">
                 <div class="p-3 bg-blue-100 rounded-xl">
                   <Upload class="w-6 h-6 text-blue-600" />
                 </div>
