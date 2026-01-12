@@ -11,7 +11,6 @@ import S3 from "@/views/s3.vue";
 import Sync from "@/views/sync.vue";
 import ImportView from "@/views/import.vue";
 import About from "@/views/about.vue";
-import Nostr from "@/views/nostr.vue";
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -59,11 +58,6 @@ const router = createRouter({
       path: "/sync",
       name: "sync",
       component: Sync,
-    },
-    {
-      path: "/nostr",
-      name: "nostr",
-      component: Nostr,
     },
     {
       path: "/import",

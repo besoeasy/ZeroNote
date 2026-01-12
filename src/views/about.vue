@@ -176,7 +176,7 @@
               donation.
             </p>
             <a
-              href="https://dweb.link/ipns/donate.besoeasy.com/"
+              href="https://donate.besoeasy.com/"
               target="_blank"
               rel="noopener noreferrer"
               class="inline-flex items-center gap-2 px-6 py-3 bg-white text-orange-600 rounded-xl hover:bg-orange-50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 font-semibold text-sm"
