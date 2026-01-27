@@ -15,6 +15,32 @@
     </div>
   </div>
 
+  <div v-else-if="isLocked" class="flex flex-col items-center justify-center h-full p-8 bg-gray-50">
+    <div class="w-full max-w-xl bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+      <div class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Encrypted Share</div>
+      <h2 class="text-xl font-bold text-gray-900 mb-2">This shared note is locked</h2>
+      <p class="text-sm text-gray-600 mb-4">Enter the decryption key to view it.</p>
+
+      <div class="flex flex-col gap-3">
+        <input
+          v-model="enteredKey"
+          type="text"
+          placeholder="Paste key..."
+          class="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 focus:border-gray-900 focus:outline-none"
+        />
+        <button
+          @click="attemptDecrypt"
+          :disabled="isDecrypting || !enteredKey.trim()"
+          class="w-full inline-flex items-center justify-center px-4 py-3 text-sm font-semibold text-white bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-xl transition-all duration-200"
+        >
+          {{ isDecrypting ? "Decrypting..." : "Decrypt" }}
+        </button>
+        <p v-if="lockError" class="text-sm text-red-600">{{ lockError }}</p>
+        <p class="text-xs text-gray-500 break-all">CID: {{ cid }}</p>
+      </div>
+    </div>
+  </div>
+
   <div v-else class="h-full flex flex-col bg-white">
     <div class="flex-1 overflow-auto bg-gray-50">
       <div class="mx-auto p-6 md:p-12">
@@ -48,20 +74,28 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { Marked } from "marked";
 
 import { parseNote } from "@/utils/noteParser";
 import { fetchIpfsText, looksLikeIpfsCid } from "@/utils/ipfs";
+import { decryptNotePayload } from "@/utils/secureShare";
 import { getSupertagComponent } from "@/supertags";
 import ParseReferences from "@/components/parsed/References.vue";
 
 const route = useRoute();
+const router = useRouter();
 
 const cid = ref(String(route.params.cid || "").trim());
 const rawContent = ref("");
 const isLoaded = ref(false);
 const error = ref("");
+
+const isLocked = ref(false);
+const encryptedPayload = ref(null);
+const enteredKey = ref(String(route.params.key || "").trim());
+const isDecrypting = ref(false);
+const lockError = ref("");
 
 const markedInstance = new Marked({
   breaks: true,
@@ -87,13 +121,50 @@ onMounted(async () => {
     if (!looksLikeIpfsCid(cid.value)) {
       throw new Error("Invalid IPFS CID");
     }
-    rawContent.value = await fetchIpfsText(cid.value);
+
+    const text = await fetchIpfsText(cid.value);
+
+    // If the IPFS content is an encrypted JSON payload, require the key.
+    try {
+      const maybeJson = JSON.parse(text);
+      if (maybeJson && maybeJson.zn === "enc-v1") {
+        encryptedPayload.value = maybeJson;
+        if (enteredKey.value) {
+          rawContent.value = await decryptNotePayload(maybeJson, enteredKey.value);
+          isLocked.value = false;
+        } else {
+          isLocked.value = true;
+        }
+        return;
+      }
+    } catch {
+      // Not JSON, treat as plaintext markdown.
+    }
+
+    rawContent.value = text;
   } catch (e) {
     error.value = e?.message || "Failed to load shared note";
   } finally {
     isLoaded.value = true;
   }
 });
+
+const attemptDecrypt = async () => {
+  if (!encryptedPayload.value || !enteredKey.value.trim() || isDecrypting.value) return;
+  lockError.value = "";
+  isDecrypting.value = true;
+
+  try {
+    const decrypted = await decryptNotePayload(encryptedPayload.value, enteredKey.value.trim());
+    rawContent.value = decrypted;
+    isLocked.value = false;
+    await router.replace({ name: "ipfs-note-key", params: { cid: cid.value, key: enteredKey.value.trim() } });
+  } catch (e) {
+    lockError.value = e?.message || "Failed to decrypt";
+  } finally {
+    isDecrypting.value = false;
+  }
+};
 </script>
 
 <style scoped>

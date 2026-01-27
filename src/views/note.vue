@@ -20,7 +20,7 @@
     <div class="flex-1 overflow-auto bg-gray-50">
       <div class="mx-auto p-6 md:p-12">
         <!-- Two Column Layout -->
-        <div ref="shareContainerRef" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <!-- Left Column - Tags & Metadata -->
           <div class="lg:col-span-1 space-y-4">
             <!-- Render all tags in order -->
@@ -125,6 +125,7 @@ import { getSupertagComponent } from "@/supertags";
 import ParseReferences from "@/components/parsed/References.vue";
 import ParseAttachments from "@/components/parsed/Attachments.vue";
 import { uploadNoteTextToFileDrop, copyToClipboard } from "@/utils/fileDrop";
+import { encryptNoteText, generateShareKey } from "@/utils/secureShare";
 
 const route = useRoute();
 const router = useRouter();
@@ -134,7 +135,6 @@ const noteId = ref(null);
 const isLoaded = ref(false);
 const isSharing = ref(false);
 const shareResult = ref(null);
-const shareContainerRef = ref(null);
 
 // Initialize marked
 const markedInstance = new Marked({
@@ -194,11 +194,19 @@ const handleTempShare = async () => {
 
   try {
     const baseName = noteId.value ? String(noteId.value) : "note";
-    const filename = `zeronote-${baseName}.md`;
-    const res = await uploadNoteTextToFileDrop(note.value.content, { filename });
+    const filename = `zeronote-${baseName}.json`;
+
+    const shareKey = generateShareKey();
+    const payload = await encryptNoteText(note.value.content, shareKey);
+    const encryptedJson = JSON.stringify(payload);
+
+    const res = await uploadNoteTextToFileDrop(encryptedJson, {
+      filename,
+      mimeType: "application/json",
+    });
 
     const publicBase = (import.meta?.env?.VITE_PUBLIC_ZERONOTE_BASE || "https://zeronote.js.org").replace(/\/$/, "");
-    const shareUrl = `${publicBase}/#/ok/${res.cid}`;
+    const shareUrl = `${publicBase}/#/ok/${res.cid}/${shareKey}`;
 
     shareResult.value = { ...res, shareUrl };
     await copyToClipboard(shareUrl);

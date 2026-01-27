@@ -71,6 +71,12 @@ const router = createRouter({
       component: About,
     },
     {
+      // Supports encrypted share links like: https://zeronote.js.org/#/ok/Qm.../<key>
+      path: "/ok/:cid(Qm[1-9A-HJ-NP-Za-km-z]{44}|bafy[a-z2-7]{50,})/:key([A-Za-z0-9_-]{20,})",
+      name: "ipfs-note-key",
+      component: IpfsNote,
+    },
+    {
       // Supports public share links like: https://zeronote.js.org/#/ok/Qm... or #/ok/bafy...
       path: "/ok/:cid(Qm[1-9A-HJ-NP-Za-km-z]{44}|bafy[a-z2-7]{50,})",
       name: "ipfs-note",
