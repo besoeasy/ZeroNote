@@ -5,38 +5,110 @@
       <div class="flex flex-col lg:flex-row gap-6">
         <!-- Main Column -->
         <div class="flex-1 min-w-0">
-          <!-- Search Bar -->
-          <div class="mb-8 relative z-20">
-            <div class="flex items-center gap-3 w-full">
-              <div class="relative group flex-1">
-                <div
-                  class="absolute -inset-0.5 bg-linear-to-r from-gray-200 to-gray-100 rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-500"
-                ></div>
-                <div class="relative flex items-center bg-white rounded-xl shadow-sm border border-gray-100">
-                  <Search class="absolute left-4 text-gray-400 w-5 h-5" />
-                  <input
-                    v-model="searchQuery"
-                    type="text"
-                    placeholder="Search your notes..."
-                    class="w-full pl-12 pr-4 py-3.5 bg-transparent rounded-xl focus:outline-none text-gray-700 placeholder-gray-400"
-                  />
-                  <div class="absolute right-4 hidden md:flex items-center gap-1 pointer-events-none">
-                    <kbd
-                      class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-medium text-gray-400 bg-gray-50 border border-gray-200 rounded"
-                      >/</kbd
+          <!-- Command Bar (Sticky) -->
+          <div class="sticky top-4 z-30 mb-6">
+            <div class="relative group">
+              <div class="absolute -inset-0.5 rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-500 bg-linear-to-r from-gray-200 via-gray-100 to-white"></div>
+              <div class="relative bg-white/90 backdrop-blur-xl border border-gray-100 rounded-3xl shadow-sm overflow-hidden">
+                <div class="p-4 md:p-5">
+                  <div class="flex flex-col md:flex-row md:items-center gap-3">
+                    <!-- Search -->
+                    <div class="relative flex-1">
+                      <Search class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                      <input
+                        ref="searchInputRef"
+                        v-model="searchQuery"
+                        type="text"
+                        placeholder="Search notes..."
+                        class="w-full pl-12 pr-12 py-3.5 bg-transparent rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 text-gray-700 placeholder-gray-400 transition-all"
+                      />
+                      <div class="absolute right-3 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-1 pointer-events-none">
+                        <kbd class="px-1.5 py-0.5 text-[10px] font-black text-gray-400 bg-gray-50 border border-gray-200 rounded">/</kbd>
+                      </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center gap-2">
+                      <button
+                        class="inline-flex items-center justify-center px-4 py-3 rounded-2xl bg-gray-900 text-white text-sm font-black hover:bg-black transition-all duration-300 shadow-lg shadow-gray-900/15 hover:shadow-xl hover:shadow-gray-900/20"
+                        @click="startNewNote"
+                        title="New Note"
+                      >
+                        <Plus class="w-4 h-4 mr-2" />
+                        New
+                      </button>
+
+                      <button
+                        class="lg:hidden inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white border border-gray-200 shadow-sm hover:bg-gray-50 transition-all duration-300"
+                        @click="isFiltersOpen = true"
+                        title="Filters"
+                      >
+                        <SlidersHorizontal class="w-5 h-5 text-gray-600" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Quick Chips -->
+                  <div class="mt-4 flex flex-col md:flex-row md:items-center gap-3">
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <button
+                        class="px-3 py-1.5 rounded-full text-xs font-black transition-all duration-300"
+                        :class="pinnedOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20' : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'"
+                        @click="pinnedOnly = !pinnedOnly"
+                      >
+                        📌 Pinned
+                      </button>
+
+                      <button
+                        class="px-3 py-1.5 rounded-full text-xs font-black transition-all duration-300"
+                        :class="hasAttachmentsOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20' : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'"
+                        @click="hasAttachmentsOnly = !hasAttachmentsOnly"
+                      >
+                        📎 Attachments
+                      </button>
+
+                      <button
+                        class="px-3 py-1.5 rounded-full text-xs font-black transition-all duration-300"
+                        :class="showDeleted ? 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200' : 'bg-gray-900 text-white shadow-lg shadow-gray-900/20'"
+                        @click="showDeleted = !showDeleted"
+                      >
+                        {{ showDeleted ? '👁️ Deleted: ON' : '🙈 Deleted: OFF' }}
+                      </button>
+
+                      <button
+                        v-if="hasAnyActiveFilters"
+                        class="px-3 py-1.5 rounded-full text-xs font-black bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 transition-all duration-300"
+                        @click="clearAllFilters"
+                      >
+                        Clear all
+                      </button>
+                    </div>
+
+                    <div class="md:ml-auto flex items-center gap-2">
+                      <div class="text-xs font-black text-gray-500 uppercase tracking-wide">Showing</div>
+                      <div class="px-3 py-1.5 rounded-full bg-gray-900 text-white text-xs font-black shadow-lg shadow-gray-900/20">
+                        {{ filteredNotes.length }}
+                      </div>
+                      <div class="text-xs text-gray-400">/ {{ notes.length }}</div>
+                    </div>
+                  </div>
+
+                  <!-- Active Filter Summary -->
+                  <div v-if="activeFilterChips.length" class="mt-3 flex items-center gap-2 flex-wrap">
+                    <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active</div>
+                    <div
+                      v-for="chip in activeFilterChips"
+                      :key="chip.key"
+                      class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-black bg-white border border-gray-200 text-gray-700"
                     >
+                      <span class="truncate max-w-55">{{ chip.label }}</span>
+                      <button class="text-gray-400 hover:text-gray-900 transition-colors" @click="chip.onRemove" title="Remove">
+                        ✕
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-
-              <!-- Mobile Filters Toggle -->
-              <button
-                class="lg:hidden inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white border border-gray-100 shadow-sm hover:bg-gray-50 transition-all duration-300"
-                @click="isFiltersOpen = true"
-                title="Filters"
-              >
-                <SlidersHorizontal class="w-5 h-5 text-gray-600" />
-              </button>
             </div>
           </div>
 
@@ -196,7 +268,7 @@
                     <div class="min-w-0">
                       <div class="text-xs font-black text-gray-500 uppercase tracking-wide">Supertag Filters</div>
                       <div class="text-sm font-bold text-gray-900 mt-1">Narrow your dashboard</div>
-                      <div class="text-xs text-gray-500 mt-1">Click a tag to filter notes.</div>
+                      <div class="text-xs text-gray-500 mt-1">Search tags, toggle quick filters.</div>
                     </div>
                     <button
                       v-if="selectedSupertag"
@@ -209,6 +281,42 @@
                 </div>
 
                 <div class="p-5">
+                  <!-- Quick toggles -->
+                  <div class="grid grid-cols-3 gap-2 mb-4">
+                    <button
+                      class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
+                      :class="pinnedOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'"
+                      @click="pinnedOnly = !pinnedOnly"
+                    >
+                      📌 Pinned
+                    </button>
+                    <button
+                      class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
+                      :class="hasAttachmentsOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'"
+                      @click="hasAttachmentsOnly = !hasAttachmentsOnly"
+                    >
+                      📎 Files
+                    </button>
+                    <button
+                      class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
+                      :class="showDeleted ? 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200' : 'bg-gray-900 text-white shadow-lg shadow-gray-900/20'"
+                      @click="showDeleted = !showDeleted"
+                    >
+                      {{ showDeleted ? '👁️ Del' : '🙈 Del' }}
+                    </button>
+                  </div>
+
+                  <!-- Tag search -->
+                  <div class="relative mb-4">
+                    <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                      v-model="tagSearchQuery"
+                      type="text"
+                      placeholder="Search supertags..."
+                      class="w-full pl-9 pr-3 py-2.5 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 text-sm"
+                    />
+                  </div>
+
                   <div class="space-y-2">
                     <button
                       @click="selectedSupertag = null"
@@ -227,7 +335,7 @@
                     </button>
 
                     <button
-                      v-for="tag in availableSupertags"
+                      v-for="tag in filteredAvailableSupertags"
                       :key="tag.name"
                       @click="selectedSupertag = tag.name"
                       class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300"
@@ -245,6 +353,11 @@
                         {{ supertagCounts[tag.name] || 0 }}
                       </span>
                     </button>
+
+                    <div v-if="!filteredAvailableSupertags.length" class="px-4 py-6 text-center">
+                      <div class="text-sm font-black text-gray-400">No tags found</div>
+                      <div class="text-xs text-gray-400 mt-1">Try a different search.</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -275,6 +388,40 @@
         </div>
 
         <div class="p-4 overflow-auto h-[calc(100vh-72px)]">
+          <div class="grid grid-cols-3 gap-2 mb-4">
+            <button
+              class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
+              :class="pinnedOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'"
+              @click="pinnedOnly = !pinnedOnly"
+            >
+              📌 Pinned
+            </button>
+            <button
+              class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
+              :class="hasAttachmentsOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'"
+              @click="hasAttachmentsOnly = !hasAttachmentsOnly"
+            >
+              📎 Files
+            </button>
+            <button
+              class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
+              :class="showDeleted ? 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200' : 'bg-gray-900 text-white shadow-lg shadow-gray-900/20'"
+              @click="showDeleted = !showDeleted"
+            >
+              {{ showDeleted ? '👁️ Del' : '🙈 Del' }}
+            </button>
+          </div>
+
+          <div class="relative mb-4">
+            <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              v-model="tagSearchQuery"
+              type="text"
+              placeholder="Search supertags..."
+              class="w-full pl-9 pr-3 py-2.5 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 text-sm"
+            />
+          </div>
+
           <div class="space-y-2">
             <button
               @click="selectedSupertag = null; isFiltersOpen = false"
@@ -293,7 +440,7 @@
             </button>
 
             <button
-              v-for="tag in availableSupertags"
+              v-for="tag in filteredAvailableSupertags"
               :key="tag.name"
               @click="selectedSupertag = tag.name; isFiltersOpen = false"
               class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300"
@@ -311,6 +458,11 @@
                 {{ supertagCounts[tag.name] || 0 }}
               </span>
             </button>
+
+            <div v-if="!filteredAvailableSupertags.length" class="px-4 py-6 text-center">
+              <div class="text-sm font-black text-gray-400">No tags found</div>
+              <div class="text-xs text-gray-400 mt-1">Try a different search.</div>
+            </div>
           </div>
         </div>
       </div>
@@ -319,10 +471,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import { fetchNotes, db } from "@/db";
-import { Search, FileText, SlidersHorizontal } from "lucide-vue-next";
+import { Search, FileText, SlidersHorizontal, Plus } from "lucide-vue-next";
 import { format } from "timeago.js";
 import { supertagRegistry } from "@/supertags";
 
@@ -334,13 +486,52 @@ const selectedSupertag = ref(null);
 const isLoading = ref(false);
 const notes = ref([]);
 const isFiltersOpen = ref(false);
+const pinnedOnly = ref(false);
+const hasAttachmentsOnly = ref(false);
+const showDeleted = ref(true);
+const tagSearchQuery = ref("");
+const searchInputRef = ref(null);
 
 // Get all available supertags
 const availableSupertags = computed(() => supertagRegistry.getAllSupertags());
 
+const filteredAvailableSupertags = computed(() => {
+  const q = tagSearchQuery.value.trim().toLowerCase();
+  if (!q) return availableSupertags.value;
+  return availableSupertags.value.filter((t) => {
+    const name = String(t?.name || "").toLowerCase();
+    const display = String(t?.displayName || "").toLowerCase();
+    return name.includes(q) || display.includes(q);
+  });
+});
+
+const hasAnyActiveFilters = computed(() => {
+  return Boolean(
+    searchQuery.value.trim() ||
+      selectedSupertag.value ||
+      pinnedOnly.value ||
+      hasAttachmentsOnly.value ||
+      !showDeleted.value
+  );
+});
+
+const clearAllFilters = () => {
+  searchQuery.value = "";
+  selectedSupertag.value = null;
+  pinnedOnly.value = false;
+  hasAttachmentsOnly.value = false;
+  showDeleted.value = true;
+  tagSearchQuery.value = "";
+};
+
 const supertagCounts = computed(() => {
   const counts = {};
-  for (const note of notes.value) {
+  const base = notes.value
+    .filter((n) => (showDeleted.value ? true : !n.deletedAt))
+    .filter((n) => (pinnedOnly.value ? !!n?.parsed?.pinned : true))
+    .filter((n) => (hasAttachmentsOnly.value ? (n?.attachments?.length || 0) > 0 : true));
+
+  for (const note of base) {
     const tags = note?.parsed?.tags;
     if (!tags) continue;
     for (const tagName of Object.keys(tags)) {
@@ -353,6 +544,18 @@ const supertagCounts = computed(() => {
 // Computed
 const filteredNotes = computed(() => {
   let filtered = notes.value;
+
+  if (!showDeleted.value) {
+    filtered = filtered.filter((note) => !note.deletedAt);
+  }
+
+  if (pinnedOnly.value) {
+    filtered = filtered.filter((note) => !!note?.parsed?.pinned);
+  }
+
+  if (hasAttachmentsOnly.value) {
+    filtered = filtered.filter((note) => (note?.attachments?.length || 0) > 0);
+  }
 
   if (selectedSupertag.value) {
     filtered = filtered.filter((note) => {
@@ -376,6 +579,41 @@ const filteredNotes = computed(() => {
     if (!a.parsed.pinned && b.parsed.pinned) return 1;
     return b.updatedAt - a.updatedAt;
   });
+});
+
+const activeFilterChips = computed(() => {
+  const chips = [];
+
+  if (selectedSupertag.value) {
+    const tag = availableSupertags.value.find((t) => t.name === selectedSupertag.value);
+    chips.push({
+      key: "supertag",
+      label: tag ? `${tag.icon} ${tag.displayName}` : `#@${selectedSupertag.value}`,
+      onRemove: () => (selectedSupertag.value = null),
+    });
+  }
+
+  if (searchQuery.value.trim()) {
+    chips.push({
+      key: "search",
+      label: `Search: ${searchQuery.value.trim()}`,
+      onRemove: () => (searchQuery.value = ""),
+    });
+  }
+
+  if (pinnedOnly.value) {
+    chips.push({ key: "pinned", label: "📌 Pinned only", onRemove: () => (pinnedOnly.value = false) });
+  }
+
+  if (hasAttachmentsOnly.value) {
+    chips.push({ key: "att", label: "📎 Has attachments", onRemove: () => (hasAttachmentsOnly.value = false) });
+  }
+
+  if (!showDeleted.value) {
+    chips.push({ key: "deleted", label: "🙈 Deleted hidden", onRemove: () => (showDeleted.value = true) });
+  }
+
+  return chips;
 });
 
 // Methods
@@ -463,6 +701,23 @@ const restoreNote = async (note) => {
 
 onMounted(() => {
   loadNotes();
+});
+
+const onGlobalKeydown = (e) => {
+  if (e.key !== "/") return;
+  const target = e.target;
+  const tag = String(target?.tagName || "").toLowerCase();
+  if (tag === "input" || tag === "textarea" || target?.isContentEditable) return;
+  e.preventDefault();
+  searchInputRef.value?.focus?.();
+};
+
+onMounted(() => {
+  window.addEventListener("keydown", onGlobalKeydown);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("keydown", onGlobalKeydown);
 });
 </script>
 
