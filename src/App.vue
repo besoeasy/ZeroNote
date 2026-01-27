@@ -1,5 +1,7 @@
 <template>
-  <LockScreen v-if="!isUnlocked" @unlock="handleUnlock" />
+  <RouterView v-if="isPublicShareRoute" />
+
+  <LockScreen v-else-if="!isUnlocked" @unlock="handleUnlock" />
 
   <Navbar v-else @newNote="handleNewNote">
     <RouterView />
@@ -7,11 +9,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
+import { useRoute } from "vue-router";
 import LockScreen from "@/components/LockScreen.vue";
 import Navbar from "@/components/Navbar.vue";
 
 const isUnlocked = ref(false);
+const route = useRoute();
+
+const isPublicShareRoute = computed(() => {
+  return route.name === "ipfs-note" || route.name === "ipfs-note-key";
+});
 
 const handleUnlock = () => {
   location.reload();
