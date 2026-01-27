@@ -22,7 +22,7 @@
       <!-- Sync Options Grid -->
       <section
         aria-label="Sync and Backup Methods"
-        class="grid grid-cols-1 md:grid-cols-3 gap-8"
+        class="grid grid-cols-1 md:grid-cols-2 gap-8"
       >
         <!-- P2P Sync Card -->
         <router-link
@@ -296,6 +296,103 @@
             <!-- Arrow -->
             <div
               class="mt-6 flex items-center text-amber-600 font-semibold text-sm group-hover:translate-x-2 transition-transform"
+            >
+              Learn more
+              <svg
+                class="w-4 h-4 ml-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </div>
+          </div>
+        </router-link>
+
+        <!-- Import Card -->
+        <router-link
+          to="/import"
+          class="group relative overflow-hidden bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-200"
+          tabindex="0"
+          aria-label="Import: Bring data from other apps (CSV)"
+        >
+          <!-- Gradient Glow -->
+          <div
+            class="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 bg-indigo-100 rounded-full blur-3xl opacity-0 group-hover:opacity-70 transition-opacity duration-500"
+          ></div>
+
+          <div class="relative z-10">
+            <!-- Icon -->
+            <div
+              class="flex items-center justify-center w-20 h-20 bg-indigo-50 rounded-2xl mb-6 group-hover:bg-indigo-100 group-hover:scale-110 transition-all duration-300"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-10 w-10 text-indigo-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 3v10m0 0l3-3m-3 3l-3-3M4 17a2 2 0 002 2h12a2 2 0 002-2"
+                />
+              </svg>
+            </div>
+
+            <!-- Content -->
+            <h2
+              class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors"
+            >
+              Import
+            </h2>
+            <p class="text-gray-600 leading-relaxed mb-6">
+              Bring data from other apps (CSV)
+            </p>
+
+            <!-- Features -->
+            <ul class="space-y-2 text-sm text-gray-500">
+              <li class="flex items-center gap-2">
+                <svg
+                  class="w-4 h-4 text-indigo-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Map CSV columns to supertags
+              </li>
+              <li class="flex items-center gap-2">
+                <svg
+                  class="w-4 h-4 text-indigo-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Great for passwords & bookmarks
+              </li>
+            </ul>
+
+            <!-- Arrow -->
+            <div
+              class="mt-6 flex items-center text-indigo-600 font-semibold text-sm group-hover:translate-x-2 transition-transform"
             >
               Learn more
               <svg
