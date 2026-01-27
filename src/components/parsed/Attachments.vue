@@ -28,12 +28,16 @@
 </template>
 
 <script setup>
+import { useToastStore } from "@/stores/toast";
+
 const props = defineProps({
   attachments: {
     type: Array,
     default: () => []
   }
 })
+
+const toast = useToastStore();
 
 const formatFileSize = (bytes) => {
   if (bytes === 0) return "0 Bytes"
@@ -58,7 +62,7 @@ const downloadAttachment = (attachment) => {
     URL.revokeObjectURL(url)
   } catch (error) {
     console.error("Error downloading attachment:", error)
-    alert("Failed to download attachment")
+    toast.error("Failed to download attachment")
   }
 }
 </script>

@@ -6,6 +6,8 @@
   <Navbar v-else @newNote="handleNewNote">
     <RouterView />
   </Navbar>
+
+  <ToastHost />
 </template>
 
 <script setup>
@@ -13,6 +15,7 @@ import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import LockScreen from "@/components/LockScreen.vue";
 import Navbar from "@/components/Navbar.vue";
+import ToastHost from "@/components/ToastHost.vue";
 
 const isUnlocked = ref(false);
 const route = useRoute();

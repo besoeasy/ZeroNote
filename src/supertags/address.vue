@@ -50,8 +50,11 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { useToastStore } from "@/stores/toast";
 const props = defineProps({ value: String });
 const mapUrl = `https://www.openstreetmap.org/search?query=${encodeURIComponent(props.value)}`;
+
+const toast = useToastStore();
 
 const lat = ref(null);
 const lon = ref(null);
@@ -80,10 +83,10 @@ async function locateOnMap() {
       lat.value = null;
       lon.value = null;
       showMap.value = false;
-      alert('Location not found.');
+      toast.error('Location not found.');
     }
   } catch (e) {
-    alert('Error locating address.');
+    toast.error('Error locating address.');
   } finally {
     loading.value = false;
   }

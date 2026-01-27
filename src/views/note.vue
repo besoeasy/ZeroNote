@@ -44,10 +44,10 @@
               </div>
               <div class="flex items-center gap-3">
                 <button
-                  @click="handleTempShare"
+                  @click="openShareModal"
                   :disabled="isSharing"
-                  class="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-gray-900 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl shadow-sm transition-all duration-200 hover:shadow-md disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
-                  title="Upload this note to FileDrop and copy the link"
+                  class="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-gray-900 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl shadow-sm transition-all duration-200 hover:shadow-md disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                  title="Share (encrypted) via IPFS"
                 >
                   <Share2 class="w-4 h-4" :class="isSharing ? 'animate-pulse' : ''" />
                   <span class="hidden md:inline">{{ isSharing ? "Sharing..." : "Share" }}</span>
@@ -70,23 +70,119 @@
               </div>
             </div>
 
-            <div
-              v-if="shareResult"
-              data-share-exclude
-              class="mb-6 flex items-center justify-between gap-3 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300"
-            >
-              <div class="min-w-0">
-                <div class="text-xs font-semibold text-emerald-900">Temporary link ready</div>
-                <div class="text-xs text-emerald-800 truncate">{{ shareResult.shareUrl }}</div>
+            <!-- Share Modal -->
+            <div v-if="isShareModalOpen" data-share-exclude class="fixed inset-0 z-40">
+              <div class="absolute inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200" @click="closeShareModal"></div>
+              <div class="absolute inset-0 flex items-center justify-center p-4">
+                <div class="w-full max-w-2xl bg-white border border-gray-200 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 fade-in duration-200">
+                  <div class="p-6 border-b border-gray-200 bg-linear-to-br from-gray-50 to-white">
+                    <div class="flex items-start justify-between gap-4">
+                      <div class="min-w-0">
+                        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Encrypted Share</div>
+                        <div class="text-xl font-black text-gray-900 mt-1 truncate">Share this note</div>
+                        <div class="text-sm text-gray-600 mt-1">Uploads an encrypted blob to IPFS and generates a ZeroNote link.</div>
+                      </div>
+                      <button class="shrink-0 w-10 h-10 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 transition-all duration-200" @click="closeShareModal" title="Close">
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="p-6">
+                    <!-- Stepper -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div class="p-4 rounded-2xl border" :class="shareStepClass('encrypt')">
+                        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Step 1</div>
+                        <div class="mt-1 text-sm font-bold text-gray-900">Encrypt</div>
+                      </div>
+                      <div class="p-4 rounded-2xl border" :class="shareStepClass('attachments')">
+                        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Step 2</div>
+                        <div class="mt-1 text-sm font-bold text-gray-900">Upload attachments</div>
+                        <div v-if="shareProgress.totalAttachments" class="mt-1 text-xs text-gray-600">
+                          {{ shareProgress.uploadedAttachments }}/{{ shareProgress.totalAttachments }} uploaded
+                        </div>
+                      </div>
+                      <div class="p-4 rounded-2xl border" :class="shareStepClass('note')">
+                        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Step 3</div>
+                        <div class="mt-1 text-sm font-bold text-gray-900">Upload note</div>
+                      </div>
+                    </div>
+
+                    <div v-if="isSharing" class="mt-5">
+                      <div class="flex items-center justify-between text-xs text-gray-600">
+                        <div class="font-semibold">{{ shareProgressLabel }}</div>
+                        <div v-if="shareProgress.currentFilename" class="truncate max-w-[60%]">{{ shareProgress.currentFilename }}</div>
+                      </div>
+                      <div class="mt-2 h-2 w-full rounded-full bg-gray-100 overflow-hidden">
+                        <div class="h-full bg-gray-900 rounded-full transition-all duration-300" :style="{ width: `${sharePercent}%` }"></div>
+                      </div>
+                    </div>
+
+                    <div v-if="shareError" class="mt-5 p-4 rounded-2xl border border-red-200 bg-red-50 animate-in fade-in duration-200">
+                      <div class="text-sm font-bold text-red-900">Share failed</div>
+                      <div class="text-xs text-red-800 mt-1 wrap-break-word">{{ shareError }}</div>
+                    </div>
+
+                    <div v-if="shareResult" class="mt-5 p-4 rounded-2xl border border-emerald-200 bg-emerald-50 animate-in fade-in duration-200">
+                      <div class="text-xs font-semibold text-emerald-900 uppercase tracking-wide">Link ready</div>
+                      <div class="mt-1 text-sm font-bold text-emerald-900 break-all">{{ shareResult.shareUrl }}</div>
+                      <div class="mt-2 text-xs text-emerald-800">Anyone with this link can decrypt. Treat it like a password.</div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="mt-6 flex flex-col md:flex-row gap-3">
+                      <button
+                        v-if="!isSharing && !shareResult"
+                        @click="startShare"
+                        class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-white bg-gray-900 hover:bg-gray-800 rounded-2xl transition-all duration-200 hover:shadow-lg"
+                      >
+                        <span class="animate-pulse">⤴</span>
+                        Start share
+                      </button>
+
+                      <button
+                        v-if="shareError && !isSharing"
+                        @click="startShare"
+                        class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200"
+                      >
+                        Retry
+                      </button>
+
+                      <button
+                        v-if="shareResult"
+                        @click="copyShareUrl"
+                        class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-2xl transition-all duration-200"
+                      >
+                        <Copy class="w-4 h-4" />
+                        Copy link
+                      </button>
+
+                      <button
+                        v-if="shareResult"
+                        @click="copyShareKey"
+                        class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-2xl transition-all duration-200"
+                      >
+                        Copy key
+                      </button>
+
+                      <button
+                        v-if="shareResult"
+                        @click="copyShareCid"
+                        class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-2xl transition-all duration-200"
+                      >
+                        Copy CID
+                      </button>
+
+                      <button
+                        @click="closeShareModal"
+                        class="w-full md:w-auto md:ml-auto inline-flex items-center justify-center px-5 py-3 text-sm font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-2xl transition-all duration-200"
+                      >
+                        Done
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <button
-                @click="copyShareUrl"
-                class="shrink-0 inline-flex items-center px-3 py-2 text-xs font-semibold text-emerald-900 bg-white border border-emerald-200 hover:bg-emerald-100 rounded-lg transition-colors"
-                title="Copy link"
-              >
-                <Copy class="w-4 h-4 mr-1.5" />
-                Copy
-              </button>
             </div>
 
             <!-- Bookmark content goes in the card on left, so show full markdown here -->
@@ -126,6 +222,7 @@ import ParseReferences from "@/components/parsed/References.vue";
 import ParseAttachments from "@/components/parsed/Attachments.vue";
 import { uploadNoteTextToFileDrop, uploadToFileDrop, copyToClipboard } from "@/utils/fileDrop";
 import { encryptJsonPayload, encryptOpaqueBinary, generateShareKey } from "@/utils/secureShare";
+import { useToastStore } from "@/stores/toast";
 
 const route = useRoute();
 const router = useRouter();
@@ -135,6 +232,17 @@ const noteId = ref(null);
 const isLoaded = ref(false);
 const isSharing = ref(false);
 const shareResult = ref(null);
+const isShareModalOpen = ref(false);
+const shareError = ref("");
+const shareProgress = ref({
+  phase: "idle",
+  totalAttachments: 0,
+  uploadedAttachments: 0,
+  currentFilename: "",
+});
+const shareKeyRef = ref("");
+
+const toast = useToastStore();
 
 // Initialize marked
 const markedInstance = new Marked({
@@ -181,27 +289,50 @@ const handleDelete = async () => {
       router.push("/dashboard");
     } catch (error) {
       console.error("Error deleting note:", error);
-      alert("Failed to delete note. Please try again.");
+      toast.error("Failed to delete note. Please try again.");
     }
   }
 };
 
-const handleTempShare = async () => {
+const openShareModal = () => {
+  isShareModalOpen.value = true;
+  shareError.value = "";
+  // Start immediately for a one-click share feel
+  if (!shareResult.value && !isSharing.value) {
+    startShare();
+  }
+};
+
+const closeShareModal = () => {
+  if (isSharing.value) return;
+  isShareModalOpen.value = false;
+};
+
+const startShare = async () => {
   if (!note.value?.content || isSharing.value) return;
 
   isSharing.value = true;
   shareResult.value = null;
+  shareError.value = "";
+  shareProgress.value = { phase: "encrypt", totalAttachments: 0, uploadedAttachments: 0, currentFilename: "" };
+  shareKeyRef.value = "";
 
   try {
     const baseName = noteId.value ? String(noteId.value) : "note";
     const filename = `zeronote-${baseName}.json`;
 
     const shareKey = generateShareKey();
+    shareKeyRef.value = shareKey;
     const localAttachments = Array.isArray(note.value?.attachments) ? note.value.attachments : [];
+    shareProgress.value.totalAttachments = localAttachments.length;
     const sharedAttachments = [];
+
+    shareProgress.value.phase = "attachments";
 
     for (const att of localAttachments) {
       if (!att?.data) continue;
+
+      shareProgress.value.currentFilename = att.name;
 
       const plainBytes = new Uint8Array(att.data);
       const encryptedBytes = await encryptOpaqueBinary(plainBytes, shareKey);
@@ -217,7 +348,12 @@ const handleTempShare = async () => {
         size: att.size || plainBytes.byteLength,
         enc: "iv+ct",
       });
+
+      shareProgress.value.uploadedAttachments += 1;
     }
+
+    shareProgress.value.phase = "note";
+    shareProgress.value.currentFilename = filename;
 
     const payload = await encryptJsonPayload(
       {
@@ -238,69 +374,86 @@ const handleTempShare = async () => {
 
     shareResult.value = { ...res, shareUrl };
     await copyToClipboard(shareUrl);
+    toast.success("Share link copied to clipboard.");
   } catch (error) {
     console.error("Temp share failed:", error);
-    alert(error?.message || "Failed to share note");
+    shareError.value = error?.message || "Failed to share note";
+    toast.error(shareError.value);
   } finally {
     isSharing.value = false;
+    shareProgress.value.currentFilename = "";
   }
-};
-
-const buildSharedNoteHtml = ({ title, updatedAt, body }) => {
-  const safeTitle = String(title || "ZeroNote Shared Note")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
-
-  const updated = updatedAt ? `Updated ${format(updatedAt)}` : "";
-
-  // Important: don't include literal closing-tag sequences in strings/comments in this SFC.
-  return [
-    "<!doctype html>",
-    '<html lang="en">',
-    "  <head>",
-    '    <meta charset="utf-8" />',
-    '    <meta name="viewport" content="width=device-width, initial-scale=1" />',
-    `    <title>${safeTitle}</title>`,
-    '    <script src="https://cdn.tailwindcss.com"></scr' + "ipt>",
-    "    <style>",
-    "      /* Match ZeroNote's markdown styling used in note view */",
-    "      .prose { color: #1f2937; }",
-    "      .prose h1, .prose h2, .prose h3, .prose h4 { font-weight: 700; margin-top: 1.5em; margin-bottom: 0.5em; }",
-    "      .prose p { margin-bottom: 1em; line-height: 1.75; }",
-    "      .prose a { color: #2563eb; text-decoration: none; }",
-    "      .prose a:hover { text-decoration: underline; }",
-    "      .prose code { background-color: #f3f4f6; padding: 0.125rem 0.25rem; border-radius: 0.25rem; font-size: 0.875em; }",
-    "      .prose pre { background-color: #1f2937; color: #f9fafb; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }",
-    "      .prose pre code { background-color: transparent; padding: 0; color: inherit; }",
-    "      .prose ul, .prose ol { margin-left: 1.5rem; margin-bottom: 1rem; }",
-    "      .prose li { margin-bottom: 0.5rem; }",
-    "    </st" + "yle>",
-    "  </head>",
-    '  <body class="bg-gray-50">',
-    '    <main class="mx-auto max-w-6xl p-6 md:p-12">',
-    '      <header class="mb-6">',
-    `        <h1 class="text-2xl font-bold text-gray-900">${safeTitle}</h1>`,
-    updated ? `        <div class="text-sm text-gray-500 mt-1">${updated}</div>` : "",
-    "      </header>",
-    body,
-    '      <footer class="mt-10 text-xs text-gray-400">Shared from ZeroNote</footer>',
-    "    </main>",
-    "  </body>",
-    "</html>",
-  ]
-    .filter(Boolean)
-    .join("\n");
 };
 
 const copyShareUrl = async () => {
   if (!shareResult.value?.shareUrl) return;
   try {
     await copyToClipboard(shareResult.value.shareUrl);
+    toast.success("Copied share link.");
   } catch {
-    alert("Failed to copy link");
+    toast.error("Failed to copy link.");
   }
+};
+
+const copyShareKey = async () => {
+  if (!shareKeyRef.value) return;
+  try {
+    await copyToClipboard(shareKeyRef.value);
+    toast.success("Copied key.");
+  } catch {
+    toast.error("Failed to copy key.");
+  }
+};
+
+const copyShareCid = async () => {
+  if (!shareResult.value?.cid) return;
+  try {
+    await copyToClipboard(String(shareResult.value.cid));
+    toast.success("Copied CID.");
+  } catch {
+    toast.error("Failed to copy CID.");
+  }
+};
+
+const sharePercent = computed(() => {
+  const phase = shareProgress.value.phase;
+  if (phase === "idle") return 0;
+  if (phase === "encrypt") return 10;
+  if (phase === "attachments") {
+    const total = shareProgress.value.totalAttachments || 0;
+    if (!total) return 50;
+    const done = Math.min(shareProgress.value.uploadedAttachments || 0, total);
+    return Math.round(10 + (done / total) * 70);
+  }
+  if (phase === "note") return 90;
+  return 100;
+});
+
+const shareProgressLabel = computed(() => {
+  const phase = shareProgress.value.phase;
+  if (phase === "encrypt") return "Encrypting...";
+  if (phase === "attachments") return "Uploading encrypted attachments...";
+  if (phase === "note") return "Uploading encrypted note...";
+  return "";
+});
+
+const shareStepClass = (step) => {
+  const phase = shareProgress.value.phase;
+  const done = "border-emerald-200 bg-emerald-50";
+  const active = "border-gray-900 bg-white shadow-sm";
+  const idle = "border-gray-200 bg-white";
+
+  if (shareResult.value) return done;
+  if (isSharing.value) {
+    if (step === "encrypt") return phase === "encrypt" ? active : done;
+    if (step === "attachments") {
+      if (phase === "encrypt") return idle;
+      if (phase === "attachments") return active;
+      return done;
+    }
+    if (step === "note") return phase === "note" ? active : idle;
+  }
+  return idle;
 };
 </script>
 

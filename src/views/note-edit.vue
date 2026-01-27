@@ -190,12 +190,14 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useToastStore } from "@/stores/toast";
 import { fetchNoteById, addNote, updateNote, addAttachments } from "@/db";
 import { ArrowLeft, Save, Key, Bookmark, FileText, Paperclip, Upload, File, X } from "lucide-vue-next";
 import { supertagRegistry } from "@/supertags";
 
 const route = useRoute();
 const router = useRouter();
+const toast = useToastStore();
 
 const noteContent = ref("");
 const isNewNote = ref(false);
@@ -328,7 +330,7 @@ const handleFileSelect = async (event) => {
 const processFiles = async (files) => {
   for (const file of files) {
     if (file.size > 10 * 1024 * 1024) {
-      alert(`File "${file.name}" is too large. Max 10MB.`);
+      toast.error(`File "${file.name}" is too large. Max 10MB.`);
       continue;
     }
 
@@ -430,7 +432,7 @@ const handleSaveClick = async () => {
     }
   } catch (error) {
     console.error("Error saving note:", error);
-    alert(`Failed to save note: ${error.message}`);
+    toast.error(`Failed to save note: ${error.message}`);
   }
 };
 
