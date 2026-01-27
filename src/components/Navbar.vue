@@ -40,9 +40,9 @@
           </router-link>
 
           <router-link
-            to="/sync"
+            to="/data"
             class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-all duration-300 active:scale-[0.98]"
-            title="Backup & Sync Options"
+            title="Data Hub"
           >
             <Database class="w-5 h-5" />
           </router-link>

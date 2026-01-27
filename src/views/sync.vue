@@ -8,14 +8,14 @@
         <h1
           class="text-5xl md:text-6xl font-black text-gray-900 mb-4 tracking-tight"
         >
-          Backup &
+          Data
           <span
             class="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-violet-600"
-            >Sync</span
+            >Hub</span
           >
         </h1>
         <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-          Securely sync or backup your notes. Choose a method below:
+          Import, backup, and sync your notes. Choose a method below:
         </p>
       </header>
 

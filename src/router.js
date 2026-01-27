@@ -56,8 +56,9 @@ const router = createRouter({
       component: S3,
     },
     {
-      path: "/sync",
-      name: "sync",
+      path: "/data",
+      alias: "/sync",
+      name: "data",
       component: Sync,
     },
     {
