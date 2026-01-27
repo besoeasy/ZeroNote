@@ -57,6 +57,30 @@
               <component :is="getSupertagComponent(tag.key)" v-if="getSupertagComponent(tag.key)" :value="tag.value" :parsed="parsed" />
             </template>
 
+            <div v-if="sharedAttachments.length" class="p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+              <div class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wide">
+                Attachments ({{ sharedAttachments.length }})
+              </div>
+              <div class="space-y-2">
+                <button
+                  v-for="att in sharedAttachments"
+                  :key="att.cid"
+                  @click="downloadSharedAttachment(att)"
+                  :disabled="isDownloadingCid === att.cid"
+                  class="w-full flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <div class="shrink-0 w-9 h-9 rounded-lg bg-white border border-gray-200 flex items-center justify-center">
+                    <span class="text-sm font-semibold text-gray-700">{{ isDownloadingCid === att.cid ? "…" : "⬇" }}</span>
+                  </div>
+                  <div class="flex-1 min-w-0 text-left">
+                    <div class="text-xs font-semibold text-gray-900 truncate">{{ att.name }}</div>
+                    <div class="text-xs text-gray-500 truncate">{{ formatBytes(att.size) }}</div>
+                  </div>
+                </button>
+              </div>
+              <p v-if="downloadError" class="mt-3 text-xs text-red-600">{{ downloadError }}</p>
+            </div>
+
             <ParseReferences v-if="parsed?.references?.length" :references="parsed.references" />
           </div>
 
@@ -78,8 +102,8 @@ import { useRoute, useRouter } from "vue-router";
 import { Marked } from "marked";
 
 import { parseNote } from "@/utils/noteParser";
-import { fetchIpfsText, looksLikeIpfsCid } from "@/utils/ipfs";
-import { decryptNotePayload } from "@/utils/secureShare";
+import { fetchIpfsText, looksLikeIpfsCid, ipfsUrl } from "@/utils/ipfs";
+import { decryptNotePayload, decryptOpaqueBinary } from "@/utils/secureShare";
 import { getSupertagComponent } from "@/supertags";
 import ParseReferences from "@/components/parsed/References.vue";
 
@@ -96,6 +120,10 @@ const encryptedPayload = ref(null);
 const enteredKey = ref(String(route.params.key || "").trim());
 const isDecrypting = ref(false);
 const lockError = ref("");
+
+const sharedAttachments = ref([]);
+const isDownloadingCid = ref("");
+const downloadError = ref("");
 
 const markedInstance = new Marked({
   breaks: true,
@@ -130,7 +158,15 @@ onMounted(async () => {
       if (maybeJson && maybeJson.zn === "enc-v1") {
         encryptedPayload.value = maybeJson;
         if (enteredKey.value) {
-          rawContent.value = await decryptNotePayload(maybeJson, enteredKey.value);
+          const decryptedText = await decryptNotePayload(maybeJson, enteredKey.value);
+          try {
+            const decryptedJson = JSON.parse(decryptedText);
+            rawContent.value = String(decryptedJson?.content || "");
+            sharedAttachments.value = Array.isArray(decryptedJson?.attachments) ? decryptedJson.attachments : [];
+          } catch {
+            rawContent.value = decryptedText;
+            sharedAttachments.value = [];
+          }
           isLocked.value = false;
         } else {
           isLocked.value = true;
@@ -155,14 +191,65 @@ const attemptDecrypt = async () => {
   isDecrypting.value = true;
 
   try {
-    const decrypted = await decryptNotePayload(encryptedPayload.value, enteredKey.value.trim());
-    rawContent.value = decrypted;
+    const decryptedText = await decryptNotePayload(encryptedPayload.value, enteredKey.value.trim());
+    try {
+      const decryptedJson = JSON.parse(decryptedText);
+      rawContent.value = String(decryptedJson?.content || "");
+      sharedAttachments.value = Array.isArray(decryptedJson?.attachments) ? decryptedJson.attachments : [];
+    } catch {
+      rawContent.value = decryptedText;
+      sharedAttachments.value = [];
+    }
     isLocked.value = false;
     await router.replace({ name: "ipfs-note-key", params: { cid: cid.value, key: enteredKey.value.trim() } });
   } catch (e) {
     lockError.value = e?.message || "Failed to decrypt";
   } finally {
     isDecrypting.value = false;
+  }
+};
+
+const formatBytes = (bytes) => {
+  const num = Number(bytes || 0);
+  if (!num) return "0 Bytes";
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(num) / Math.log(k));
+  return `${Math.round((num / Math.pow(k, i)) * 100) / 100} ${sizes[i]}`;
+};
+
+const downloadSharedAttachment = async (att) => {
+  if (!att?.cid) return;
+  if (!enteredKey.value?.trim()) {
+    lockError.value = "Missing decryption key";
+    isLocked.value = true;
+    return;
+  }
+
+  isDownloadingCid.value = att.cid;
+  downloadError.value = "";
+
+  try {
+    const res = await fetch(ipfsUrl(att.cid));
+    if (!res.ok) {
+      throw new Error(`Failed to fetch attachment (${res.status})`);
+    }
+    const encrypted = new Uint8Array(await res.arrayBuffer());
+    const plainBytes = await decryptOpaqueBinary(encrypted, enteredKey.value.trim());
+
+    const blob = new Blob([plainBytes], { type: att.type || "application/octet-stream" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = att.name || `attachment-${att.cid}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    downloadError.value = e?.message || "Failed to download attachment";
+  } finally {
+    isDownloadingCid.value = "";
   }
 };
 </script>

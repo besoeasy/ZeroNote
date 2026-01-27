@@ -124,8 +124,8 @@ import { getSupertagComponent } from "@/supertags";
 
 import ParseReferences from "@/components/parsed/References.vue";
 import ParseAttachments from "@/components/parsed/Attachments.vue";
-import { uploadNoteTextToFileDrop, copyToClipboard } from "@/utils/fileDrop";
-import { encryptNoteText, generateShareKey } from "@/utils/secureShare";
+import { uploadNoteTextToFileDrop, uploadToFileDrop, copyToClipboard } from "@/utils/fileDrop";
+import { encryptJsonPayload, encryptOpaqueBinary, generateShareKey } from "@/utils/secureShare";
 
 const route = useRoute();
 const router = useRouter();
@@ -197,7 +197,35 @@ const handleTempShare = async () => {
     const filename = `zeronote-${baseName}.json`;
 
     const shareKey = generateShareKey();
-    const payload = await encryptNoteText(note.value.content, shareKey);
+    const localAttachments = Array.isArray(note.value?.attachments) ? note.value.attachments : [];
+    const sharedAttachments = [];
+
+    for (const att of localAttachments) {
+      if (!att?.data) continue;
+
+      const plainBytes = new Uint8Array(att.data);
+      const encryptedBytes = await encryptOpaqueBinary(plainBytes, shareKey);
+
+      const encryptedBlob = new Blob([encryptedBytes], { type: "application/octet-stream" });
+      const encryptedFile = new File([encryptedBlob], `${att.name}.znenc`, { type: "application/octet-stream" });
+
+      const uploaded = await uploadToFileDrop(encryptedFile);
+      sharedAttachments.push({
+        cid: uploaded.cid,
+        name: att.name,
+        type: att.type || "application/octet-stream",
+        size: att.size || plainBytes.byteLength,
+        enc: "iv+ct",
+      });
+    }
+
+    const payload = await encryptJsonPayload(
+      {
+        content: note.value.content,
+        attachments: sharedAttachments,
+      },
+      shareKey
+    );
     const encryptedJson = JSON.stringify(payload);
 
     const res = await uploadNoteTextToFileDrop(encryptedJson, {
