@@ -71,10 +71,15 @@ const router = createRouter({
       component: About,
     },
     {
-      // Supports public share links like: https://zeronote.js.org/#/Qm... or #/bafy...
-      path: "/:cid(Qm[1-9A-HJ-NP-Za-km-z]{44}|bafy[a-z2-7]{50,})",
+      // Supports public share links like: https://zeronote.js.org/#/ok/Qm... or #/ok/bafy...
+      path: "/ok/:cid(Qm[1-9A-HJ-NP-Za-km-z]{44}|bafy[a-z2-7]{50,})",
       name: "ipfs-note",
       component: IpfsNote,
+    },
+    {
+      // Backwards-compatible legacy route: https://zeronote.js.org/#/Qm...
+      path: "/:cid(Qm[1-9A-HJ-NP-Za-km-z]{44}|bafy[a-z2-7]{50,})",
+      redirect: (to) => ({ name: "ipfs-note", params: { cid: to.params.cid } }),
     },
   ],
 });

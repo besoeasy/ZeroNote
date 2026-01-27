@@ -198,7 +198,7 @@ const handleTempShare = async () => {
     const res = await uploadNoteTextToFileDrop(note.value.content, { filename });
 
     const publicBase = (import.meta?.env?.VITE_PUBLIC_ZERONOTE_BASE || "https://zeronote.js.org").replace(/\/$/, "");
-    const shareUrl = `${publicBase}/#/${res.cid}`;
+    const shareUrl = `${publicBase}/#/ok/${res.cid}`;
 
     shareResult.value = { ...res, shareUrl };
     await copyToClipboard(shareUrl);
