@@ -1,13 +1,15 @@
 <template>
-  <RouterView v-if="isPublicShareRoute" />
+  <div class="min-h-screen w-full flex flex-col bg-gray-50 text-gray-900 transition-colors duration-300 dark:bg-gray-950 dark:text-gray-100">
+    <RouterView v-if="isPublicShareRoute" />
 
-  <LockScreen v-else-if="!isUnlocked" @unlock="handleUnlock" />
+    <LockScreen v-else-if="!isUnlocked" @unlock="handleUnlock" />
 
-  <Navbar v-else class="w-full" @newNote="handleNewNote">
-    <RouterView />
-  </Navbar>
+    <Navbar v-else class="w-full" @newNote="handleNewNote">
+      <RouterView />
+    </Navbar>
 
-  <ToastHost />
+    <ToastHost />
+  </div>
 </template>
 
 <script setup>
@@ -49,13 +51,17 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #f9fafb;
+}
+
+.dark body {
+  background-color: #030712;
 }
 
 #app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f9fafb;
 }
 
 /* Custom scrollbar for webkit browsers */
@@ -67,13 +73,25 @@ body {
   background: #f1f5f9;
 }
 
+.dark ::-webkit-scrollbar-track {
+  background: #0b1220;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 4px;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
 
 /* Focus states for accessibility */
