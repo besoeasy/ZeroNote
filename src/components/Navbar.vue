@@ -48,16 +48,6 @@
           </router-link>
 
           <router-link
-            to="/import"
-            class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-all duration-300 active:scale-[0.98]"
-            title="Import Data"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-          </router-link>
-
-          <router-link
             to="/stats"
             class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-all duration-300 active:scale-[0.98]"
             title="Statistics"
