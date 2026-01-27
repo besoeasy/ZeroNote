@@ -43,6 +43,15 @@
                 Updated {{ formatDate(note.updatedAt) }}
               </div>
               <div class="flex items-center gap-3">
+                <button
+                  @click="handleTempShare"
+                  :disabled="isSharing"
+                  class="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-gray-900 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl shadow-sm transition-all duration-200 hover:shadow-md disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                  title="Upload this note to FileDrop and copy the link"
+                >
+                  <Share2 class="w-4 h-4" :class="isSharing ? 'animate-pulse' : ''" />
+                  <span class="hidden md:inline">{{ isSharing ? "Sharing..." : "Temp Share" }}</span>
+                </button>
                 <router-link
                   :to="`/notes/${noteId}/edit`"
                   class="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition-all duration-200 hover:shadow-md"
@@ -61,19 +70,37 @@
               </div>
             </div>
 
+            <div
+              v-if="shareResult"
+              class="mb-6 flex items-center justify-between gap-3 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300"
+            >
+              <div class="min-w-0">
+                <div class="text-xs font-semibold text-emerald-900">Temporary link ready</div>
+                <div class="text-xs text-emerald-800 truncate">{{ shareResult.url }}</div>
+              </div>
+              <button
+                @click="copyShareUrl"
+                class="shrink-0 inline-flex items-center px-3 py-2 text-xs font-semibold text-emerald-900 bg-white border border-emerald-200 hover:bg-emerald-100 rounded-lg transition-colors"
+                title="Copy link"
+              >
+                <Copy class="w-4 h-4 mr-1.5" />
+                Copy
+              </button>
+            </div>
+
             <!-- Bookmark content goes in the card on left, so show full markdown here -->
-            <div v-if="parsed?.tags?.bookmark && parsed?.content" class="p-8 bg-white rounded-xl border border-gray-200 shadow-sm min-h-[400px]">
+            <div v-if="parsed?.tags?.bookmark && parsed?.content" class="p-8 bg-white rounded-xl border border-gray-200 shadow-sm min-h-100">
               <div class="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Description</div>
               <div class="prose prose-lg max-w-none" v-html="renderedMarkdown"></div>
             </div>
 
             <!-- Regular content display -->
-            <div v-else-if="parsed?.content" class="p-8 bg-white rounded-xl border border-gray-200 shadow-sm min-h-[400px]">
+            <div v-else-if="parsed?.content" class="p-8 bg-white rounded-xl border border-gray-200 shadow-sm min-h-100">
               <div class="prose prose-lg max-w-none" v-html="renderedMarkdown"></div>
             </div>
 
             <!-- Empty state -->
-            <div v-else class="p-8 bg-white rounded-xl border border-gray-200 shadow-sm min-h-[400px] flex items-center justify-center">
+            <div v-else class="p-8 bg-white rounded-xl border border-gray-200 shadow-sm min-h-100 flex items-center justify-center">
               <div class="text-gray-400 italic text-center">No content</div>
             </div>
           </div>
@@ -88,7 +115,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { fetchNoteById, softDeleteNote } from "@/db";
 import { parseNote } from "@/utils/noteParser";
-import { ArrowLeft, Edit, Trash2 } from "lucide-vue-next";
+import { ArrowLeft, Edit, Trash2, Share2, Copy } from "lucide-vue-next";
 import { format } from "timeago.js";
 import { Marked } from "marked";
 
@@ -96,6 +123,7 @@ import { getSupertagComponent } from "@/supertags";
 
 import ParseReferences from "@/components/parsed/References.vue";
 import ParseAttachments from "@/components/parsed/Attachments.vue";
+import { uploadNoteTextToFileDrop, copyToClipboard } from "@/utils/fileDrop";
 
 const route = useRoute();
 const router = useRouter();
@@ -103,6 +131,8 @@ const router = useRouter();
 const note = ref(null);
 const noteId = ref(null);
 const isLoaded = ref(false);
+const isSharing = ref(false);
+const shareResult = ref(null);
 
 // Initialize marked
 const markedInstance = new Marked({
@@ -151,6 +181,35 @@ const handleDelete = async () => {
       console.error("Error deleting note:", error);
       alert("Failed to delete note. Please try again.");
     }
+  }
+};
+
+const handleTempShare = async () => {
+  if (!note.value?.content || isSharing.value) return;
+
+  isSharing.value = true;
+  shareResult.value = null;
+
+  try {
+    const baseName = noteId.value ? String(noteId.value) : "note";
+    const filename = `zeronote-${baseName}.md`;
+    const res = await uploadNoteTextToFileDrop(note.value.content, { filename });
+    shareResult.value = res;
+    await copyToClipboard(res.url);
+  } catch (error) {
+    console.error("Temp share failed:", error);
+    alert(error?.message || "Failed to share note");
+  } finally {
+    isSharing.value = false;
+  }
+};
+
+const copyShareUrl = async () => {
+  if (!shareResult.value?.url) return;
+  try {
+    await copyToClipboard(shareResult.value.url);
+  } catch {
+    alert("Failed to copy link");
   }
 };
 </script>

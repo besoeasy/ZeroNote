@@ -57,7 +57,7 @@
                   class="w-full text-left px-3 py-2.5 rounded-lg border border-gray-200 hover:border-gray-900 hover:bg-gray-50 transition-all group"
                 >
                   <div class="flex items-start gap-3">
-                    <span class="text-xl flex-shrink-0">{{ tag.icon }}</span>
+                    <span class="text-xl shrink-0">{{ tag.icon }}</span>
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center gap-2 mb-1">
                         <span class="text-sm font-medium text-gray-900">{{ tag.displayName }}</span>
