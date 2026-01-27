@@ -1,9 +1,9 @@
 <template>
-  <div class="p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
-    <div class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Icon</div>
+  <div class="p-4 bg-white rounded-xl border border-gray-200 shadow-sm dark:bg-slate-950 dark:border-slate-800">
+    <div class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide dark:text-slate-400">Icon</div>
     <div class="flex items-center gap-3">
       <span class="text-4xl">{{ value }}</span>
-      <div class="text-sm text-gray-600">
+      <div class="text-sm text-gray-600 dark:text-slate-300">
         Custom emoji icon for this note
       </div>
     </div>

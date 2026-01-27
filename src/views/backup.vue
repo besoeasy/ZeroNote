@@ -1,11 +1,11 @@
 <template>
   <div class="max-w-4xl mx-auto p-4 md:p-8 pt-16 md:pt-8">
     <!-- Page Title -->
-    <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-6 md:mb-8">Backup</h2>
+    <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-6 md:mb-8 dark:text-slate-100">Backup</h2>
 
         <div class="space-y-6">
           <!-- Backup Section -->
-          <div class="bg-white rounded-xl shadow-sm p-8">
+          <div class="bg-white rounded-xl shadow-sm p-8 dark:bg-slate-950 dark:border dark:border-slate-800">
             <div class="flex items-start space-x-4">
               <div class="shrink-0">
                 <div class="p-3 bg-green-100 rounded-xl">
@@ -13,8 +13,8 @@
                 </div>
               </div>
               <div class="flex-1">
-                <h3 class="text-xl font-semibold text-gray-900 mb-2">Backup Your Notes</h3>
-                <p class="text-gray-600 mb-4">
+                <h3 class="text-xl font-semibold text-gray-900 mb-2 dark:text-slate-100">Backup Your Notes</h3>
+                <p class="text-gray-600 mb-4 dark:text-slate-300">
                   Download all your notes as a JSON file. This file is encrypted with your master password.
                 </p>
                 <button
@@ -30,7 +30,7 @@
           </div>
 
           <!-- Restore Section -->
-          <div class="bg-white rounded-xl shadow-sm p-8">
+          <div class="bg-white rounded-xl shadow-sm p-8 dark:bg-slate-950 dark:border dark:border-slate-800">
             <div class="flex items-start space-x-4">
               <div class="flex-shrink-0">
                 <div class="p-3 bg-blue-100 rounded-xl">
@@ -38,15 +38,15 @@
                 </div>
               </div>
               <div class="flex-1">
-                <h3 class="text-xl font-semibold text-gray-900 mb-2">Restore From Backup</h3>
-                <p class="text-gray-600 mb-4">
+                <h3 class="text-xl font-semibold text-gray-900 mb-2 dark:text-slate-100">Restore From Backup</h3>
+                <p class="text-gray-600 mb-4 dark:text-slate-300">
                   Upload a previously created backup file to restore your notes. This will not delete existing notes.
                 </p>
                 
                 <!-- Warning -->
-                <div class="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start">
-                  <AlertTriangle class="w-5 h-5 text-yellow-600 mr-3 shrink-0 mt-0.5" />
-                  <div class="text-sm text-yellow-800">
+                <div class="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start dark:bg-yellow-900/20 dark:border-yellow-500/30">
+                  <AlertTriangle class="w-5 h-5 text-yellow-600 mr-3 shrink-0 mt-0.5 dark:text-yellow-300" />
+                  <div class="text-sm text-yellow-800 dark:text-yellow-100">
                     <p class="font-medium mb-1">Important:</p>
                     <p>Make sure you're logged in with the same master password that was used to create the backup.</p>
                   </div>
@@ -74,12 +74,12 @@
           <!-- Success Message -->
           <div
             v-if="successMessage"
-            class="bg-green-50 border border-green-200 rounded-xl p-4"
+            class="bg-green-50 border border-green-200 rounded-xl p-4 dark:bg-green-950/30 dark:border-green-500/30"
           >
             <div class="flex items-start">
-              <CheckCircle class="w-5 h-5 text-green-600 mr-3 shrink-0 mt-0.5" />
+              <CheckCircle class="w-5 h-5 text-green-600 mr-3 shrink-0 mt-0.5 dark:text-green-300" />
               <div>
-                <p class="font-medium text-green-900">{{ successMessage }}</p>
+                <p class="font-medium text-green-900 dark:text-green-100">{{ successMessage }}</p>
               </div>
             </div>
           </div>
@@ -87,12 +87,12 @@
           <!-- Error Message -->
           <div
             v-if="errorMessage"
-            class="bg-red-50 border border-red-200 rounded-xl p-4"
+            class="bg-red-50 border border-red-200 rounded-xl p-4 dark:bg-red-950/30 dark:border-red-500/30"
           >
             <div class="flex items-start">
-              <XCircle class="w-5 h-5 text-red-600 mr-3 shrink-0 mt-0.5" />
+              <XCircle class="w-5 h-5 text-red-600 mr-3 shrink-0 mt-0.5 dark:text-red-300" />
               <div>
-                <p class="font-medium text-red-900">{{ errorMessage }}</p>
+                <p class="font-medium text-red-900 dark:text-red-100">{{ errorMessage }}</p>
               </div>
             </div>
           </div>

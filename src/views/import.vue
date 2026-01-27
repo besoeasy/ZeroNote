@@ -160,19 +160,19 @@ const isReadyToImport = computed(() => {
 <template>
   <div class="flex flex-col items-center justify-center min-h-screen p-4">
     <div class="w-full max-w-4xl">
-      <h1 class="text-4xl font-extrabold text-gray-800 mb-8 text-center uppercase">
+      <h1 class="text-4xl font-extrabold text-gray-800 mb-8 text-center uppercase dark:text-slate-100">
         Import <span class="text-blue-600">CSV Data</span>
       </h1>
 
-      <div class="mb-8 p-6 bg-white rounded-xl shadow-lg">
+      <div class="mb-8 p-6 bg-white rounded-xl shadow-lg dark:bg-slate-950 dark:border dark:border-slate-800">
         <!-- Info Section -->
-        <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <h3 class="text-sm font-semibold text-blue-900 mb-2">Import from Other Platforms</h3>
-          <p class="text-xs text-blue-800 mb-2">
+        <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-950/30 dark:border-blue-500/30">
+          <h3 class="text-sm font-semibold text-blue-900 mb-2 dark:text-blue-100">Import from Other Platforms</h3>
+          <p class="text-xs text-blue-800 mb-2 dark:text-blue-200">
             Use this feature to import bookmarks and passwords from other platforms like Chrome, Firefox, Bitwarden, 1Password, etc.
           </p>
-          <details class="text-xs text-blue-700">
-            <summary class="cursor-pointer font-medium hover:text-blue-900">View examples</summary>
+          <details class="text-xs text-blue-700 dark:text-blue-200">
+            <summary class="cursor-pointer font-medium hover:text-blue-900 dark:hover:text-blue-100">View examples</summary>
             <ul class="mt-2 space-y-1 ml-4 list-disc">
               <li><strong>Chrome Bookmarks:</strong> Export bookmarks as HTML, convert to CSV, map Title→title, URL→bookmark</li>
               <li><strong>Bitwarden:</strong> Export as CSV, map Name→title, Username→username, Password→password, URI→domains</li>
@@ -184,27 +184,27 @@ const isReadyToImport = computed(() => {
 
         <!-- File Upload -->
         <div class="mb-6">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Upload CSV File</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-slate-300">Upload CSV File</label>
           <input 
             type="file" 
             accept=".csv" 
             @change="handleFileUpload"
-            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:text-slate-400"
             :disabled="isLoading" 
           />
-          <p class="mt-2 text-xs text-gray-500">Upload a CSV file where each row will become a note</p>
+          <p class="mt-2 text-xs text-gray-500 dark:text-slate-400">Upload a CSV file where each row will become a note</p>
         </div>
 
         <!-- Error Display -->
-        <div v-if="error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start">
-          <AlertCircle class="w-5 h-5 text-red-500 mr-2 flex-shrink-0 mt-0.5" />
-          <p class="text-red-700 text-sm">{{ error }}</p>
+        <div v-if="error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start dark:bg-red-950/30 dark:border-red-500/30">
+          <AlertCircle class="w-5 h-5 text-red-500 mr-2 flex-shrink-0 mt-0.5 dark:text-red-300" />
+          <p class="text-red-700 text-sm dark:text-red-100">{{ error }}</p>
         </div>
 
         <!-- Column Mapping -->
         <div v-if="csvHeaders.length > 0" class="mb-6">
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-semibold">Map Supertags to CSV Columns</h2>
+            <h2 class="text-xl font-semibold dark:text-slate-100">Map Supertags to CSV Columns</h2>
             <button 
               @click="addMapping"
               :disabled="isLoading"
@@ -220,13 +220,13 @@ const isReadyToImport = computed(() => {
             <div 
               v-for="(mapping, index) in columnMappings" 
               :key="index"
-              class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+              class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg dark:bg-slate-900"
             >
               <div class="flex-1">
-                <label class="block text-xs font-medium text-gray-600 mb-1">Supertag</label>
+                <label class="block text-xs font-medium text-gray-600 mb-1 dark:text-slate-400">Supertag</label>
                 <select 
                   v-model="mapping.supertag"
-                  class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
                   :disabled="isLoading"
                 >
                   <option value="">Select supertag...</option>
@@ -241,10 +241,10 @@ const isReadyToImport = computed(() => {
               </div>
 
               <div class="flex-1">
-                <label class="block text-xs font-medium text-gray-600 mb-1">CSV Column</label>
+                <label class="block text-xs font-medium text-gray-600 mb-1 dark:text-slate-400">CSV Column</label>
                 <select 
                   v-model="mapping.column"
-                  class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
                   :disabled="isLoading"
                 >
                   <option value="">Select column...</option>
@@ -257,7 +257,7 @@ const isReadyToImport = computed(() => {
               <button 
                 @click="removeMapping(index)"
                 :disabled="isLoading"
-                class="mt-5 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                class="mt-5 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 dark:text-red-300 dark:hover:bg-red-500/10"
                 title="Remove mapping"
               >
                 <X class="w-4 h-4" />
@@ -265,24 +265,24 @@ const isReadyToImport = computed(() => {
             </div>
           </div>
 
-          <p v-else class="text-sm text-gray-500 text-center py-4">
+          <p v-else class="text-sm text-gray-500 text-center py-4 dark:text-slate-400">
             Click "Add Mapping" to start mapping supertags to CSV columns
           </p>
         </div>
 
         <!-- Additional Content -->
         <div v-if="csvHeaders.length > 0" class="mb-6">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-slate-300">
             Additional Content (Optional)
           </label>
           <textarea
             v-model="additionalContent"
             :disabled="isLoading"
             placeholder="Add custom supertags or notes that will be appended to each imported note...&#10;&#10;Example:&#10;#@tags=imported,2024&#10;#@icon=📥&#10;&#10;Imported from [platform name]"
-            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-vertical"
+            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-vertical dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             rows="5"
           ></textarea>
-          <p class="mt-1 text-xs text-gray-500">
+          <p class="mt-1 text-xs text-gray-500 dark:text-slate-400">
             This content will be added to every imported note. Use it to add common tags, icons, or notes.
           </p>
         </div>
@@ -303,18 +303,18 @@ const isReadyToImport = computed(() => {
             Import Notes
           </button>
 
-          <div v-if="importStatus" class="text-sm text-gray-600">
+          <div v-if="importStatus" class="text-sm text-gray-600 dark:text-slate-300">
             {{ importStatus }}
           </div>
 
           <div v-if="importProgress > 0" class="space-y-2">
-            <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-slate-800">
               <div 
                 class="bg-blue-600 h-2 rounded-full transition-all duration-300"
                 :style="{ width: `${importProgress}%` }"
               ></div>
             </div>
-            <p class="text-sm text-gray-600">{{ importProgress }}% complete</p>
+            <p class="text-sm text-gray-600 dark:text-slate-300">{{ importProgress }}% complete</p>
           </div>
         </div>
       </div>

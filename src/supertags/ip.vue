@@ -1,10 +1,10 @@
 <template>
-  <div class="w-full p-6 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300">
+  <div class="w-full p-6 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 dark:bg-slate-950 dark:border-slate-800">
     <div class="flex items-center gap-6 mb-4">
       <div class="flex-1">
-        <span class="text-sm text-gray-500 font-semibold tracking-wide uppercase mb-2 block">IP Address</span>
+        <span class="text-sm text-gray-500 font-semibold tracking-wide uppercase mb-2 block dark:text-slate-400">IP Address</span>
         <div class="flex items-center gap-3 flex-wrap">
-          <span class="font-mono text-lg font-semibold text-gray-900 bg-gray-50 px-4 py-2 rounded-xl select-all border border-gray-200">{{ value }}</span>
+          <span class="font-mono text-lg font-semibold text-gray-900 bg-gray-50 px-4 py-2 rounded-xl select-all border border-gray-200 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-800">{{ value }}</span>
           <button
             @click="fetchInfo"
             :disabled="loading"
@@ -31,47 +31,47 @@
         </div>
       </div>
     </div>
-    <div v-if="info" class="mt-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-5 border border-gray-200">
+    <div v-if="info" class="mt-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-5 border border-gray-200 dark:from-slate-900 dark:to-slate-900/60 dark:border-slate-800">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="flex flex-col">
-          <span class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Country</span>
-          <span class="text-sm font-medium text-gray-900">{{ info.country || "-" }}</span>
+          <span class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1 dark:text-slate-400">Country</span>
+          <span class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ info.country || "-" }}</span>
         </div>
         <div class="flex flex-col">
-          <span class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Region</span>
-          <span class="text-sm font-medium text-gray-900">{{ info.regionName || "-" }}</span>
+          <span class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1 dark:text-slate-400">Region</span>
+          <span class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ info.regionName || "-" }}</span>
         </div>
         <div class="flex flex-col">
-          <span class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">City</span>
-          <span class="text-sm font-medium text-gray-900">{{ info.city || "-" }}</span>
+          <span class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1 dark:text-slate-400">City</span>
+          <span class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ info.city || "-" }}</span>
         </div>
         <div class="flex flex-col">
-          <span class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">ISP</span>
-          <span class="text-sm font-medium text-gray-900">{{ info.isp || "-" }}</span>
+          <span class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1 dark:text-slate-400">ISP</span>
+          <span class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ info.isp || "-" }}</span>
         </div>
         <div class="flex flex-col">
-          <span class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Organization</span>
-          <span class="text-sm font-medium text-gray-900">{{ info.org || "-" }}</span>
+          <span class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1 dark:text-slate-400">Organization</span>
+          <span class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ info.org || "-" }}</span>
         </div>
         <div class="flex flex-col">
-          <span class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Timezone</span>
-          <span class="text-sm font-medium text-gray-900">{{ info.timezone || "-" }}</span>
+          <span class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1 dark:text-slate-400">Timezone</span>
+          <span class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ info.timezone || "-" }}</span>
         </div>
         <div class="flex flex-col">
-          <span class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Coordinates</span>
-          <span class="text-sm font-medium text-gray-900">{{ info.lat }}, {{ info.lon }}</span>
+          <span class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1 dark:text-slate-400">Coordinates</span>
+          <span class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ info.lat }}, {{ info.lon }}</span>
         </div>
         <div class="flex flex-col">
-          <span class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">ZIP Code</span>
-          <span class="text-sm font-medium text-gray-900">{{ info.zip || "-" }}</span>
+          <span class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1 dark:text-slate-400">ZIP Code</span>
+          <span class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ info.zip || "-" }}</span>
         </div>
       </div>
-      <div v-if="info.query" class="mt-5 pt-4 border-t border-gray-200">
+      <div v-if="info.query" class="mt-5 pt-4 border-t border-gray-200 dark:border-slate-800">
         <a
           :href="`https://www.openstreetmap.org/?mlat=${info.lat}&mlon=${info.lon}`"
           target="_blank"
           rel="noopener"
-          class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl bg-white text-purple-600 hover:bg-purple-50 border border-purple-200 transition-all duration-200 shadow-sm hover:shadow"
+          class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl bg-white text-purple-600 hover:bg-purple-50 border border-purple-200 transition-all duration-200 shadow-sm hover:shadow dark:bg-slate-950 dark:text-purple-300 dark:border-purple-500/30 dark:hover:bg-purple-500/10"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -86,8 +86,8 @@
         </a>
       </div>
     </div>
-    <div v-if="error" class="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl">
-      <p class="text-sm text-red-600 font-medium">{{ error }}</p>
+    <div v-if="error" class="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl dark:bg-red-950/30 dark:border-red-500/30">
+      <p class="text-sm text-red-600 font-medium dark:text-red-200">{{ error }}</p>
     </div>
   </div>
 </template>

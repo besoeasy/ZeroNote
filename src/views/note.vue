@@ -7,17 +7,17 @@
   <!-- Note Not Found -->
   <div v-else-if="!note" class="flex flex-col items-center justify-center h-full p-8">
     <div class="text-center">
-      <h2 class="text-2xl font-bold text-gray-900 mb-2">Note not found</h2>
-      <p class="text-gray-600 mb-6">This note doesn't exist or has been deleted.</p>
+      <h2 class="text-2xl font-bold text-gray-900 mb-2 dark:text-slate-100">Note not found</h2>
+      <p class="text-gray-600 mb-6 dark:text-slate-300">This note doesn't exist or has been deleted.</p>
       <router-link to="/dashboard" class="inline-flex items-center px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
         Back to Dashboard
       </router-link>
     </div>
   </div>
 
-  <div v-else class="h-full flex flex-col bg-white">
+  <div v-else class="h-full flex flex-col bg-white dark:bg-slate-950">
     <!-- Content -->
-    <div class="flex-1 overflow-auto bg-gray-50">
+    <div class="flex-1 overflow-auto bg-gray-50 dark:bg-slate-950">
       <div class="mx-auto p-6 md:p-12">
         <!-- Two Column Layout -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -39,14 +39,14 @@
           <!-- Right Column - Content -->
           <div class="lg:col-span-2">
             <div data-share-exclude class="flex items-center justify-between shrink-0 mb-6">
-              <div class="text-sm text-gray-500">
+              <div class="text-sm text-gray-500 dark:text-slate-400">
                 Updated {{ formatDate(note.updatedAt) }}
               </div>
               <div class="flex items-center gap-3">
                 <button
                   @click="openShareModal"
                   :disabled="isSharing"
-                  class="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-gray-900 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl shadow-sm transition-all duration-200 hover:shadow-md disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                  class="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-gray-900 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl shadow-sm transition-all duration-200 hover:shadow-md disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:bg-slate-950 dark:text-slate-100 dark:border-slate-800 dark:hover:bg-slate-900"
                   title="Share (encrypted) via IPFS"
                 >
                   <Share2 class="w-4 h-4" :class="isSharing ? 'animate-pulse' : ''" />
@@ -61,7 +61,7 @@
                 </router-link>
                 <button
                   @click="handleDelete"
-                  class="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl shadow-sm transition-all duration-200 hover:shadow-md"
+                  class="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl shadow-sm transition-all duration-200 hover:shadow-md dark:text-red-300 dark:bg-red-950/30 dark:border-red-500/30 dark:hover:bg-red-500/20"
                   title="Delete Note"
                 >
                   <Trash2 class="w-4 h-4" />
@@ -74,15 +74,15 @@
             <div v-if="isShareModalOpen" data-share-exclude class="fixed inset-0 z-40">
               <div class="absolute inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200" @click="closeShareModal"></div>
               <div class="absolute inset-0 flex items-center justify-center p-4">
-                <div class="w-full max-w-2xl bg-white border border-gray-200 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 fade-in duration-200">
-                  <div class="p-6 border-b border-gray-200 bg-linear-to-br from-gray-50 to-white">
+                <div class="w-full max-w-2xl bg-white border border-gray-200 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 fade-in duration-200 dark:bg-slate-950 dark:border-slate-800">
+                  <div class="p-6 border-b border-gray-200 bg-linear-to-br from-gray-50 to-white dark:border-slate-800 dark:from-slate-900 dark:to-slate-950">
                     <div class="flex items-start justify-between gap-4">
                       <div class="min-w-0">
-                        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Encrypted Share</div>
-                        <div class="text-xl font-black text-gray-900 mt-1 truncate">Share this note</div>
-                        <div class="text-sm text-gray-600 mt-1">Uploads an encrypted blob to IPFS and generates a ZeroNote link.</div>
+                        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide dark:text-slate-400">Encrypted Share</div>
+                        <div class="text-xl font-black text-gray-900 mt-1 truncate dark:text-slate-100">Share this note</div>
+                        <div class="text-sm text-gray-600 mt-1 dark:text-slate-300">Uploads an encrypted blob to IPFS and generates a ZeroNote link.</div>
                       </div>
-                      <button class="shrink-0 w-10 h-10 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 transition-all duration-200" @click="closeShareModal" title="Close">
+                      <button class="shrink-0 w-10 h-10 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 transition-all duration-200 dark:bg-slate-950 dark:border-slate-800 dark:hover:bg-slate-900" @click="closeShareModal" title="Close">
                         ✕
                       </button>
                     </div>
@@ -92,41 +92,41 @@
                     <!-- Stepper -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <div class="p-4 rounded-2xl border" :class="shareStepClass('encrypt')">
-                        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Step 1</div>
-                        <div class="mt-1 text-sm font-bold text-gray-900">Encrypt</div>
+                        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide dark:text-slate-400">Step 1</div>
+                        <div class="mt-1 text-sm font-bold text-gray-900 dark:text-slate-100">Encrypt</div>
                       </div>
                       <div class="p-4 rounded-2xl border" :class="shareStepClass('attachments')">
-                        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Step 2</div>
-                        <div class="mt-1 text-sm font-bold text-gray-900">Upload attachments</div>
-                        <div v-if="shareProgress.totalAttachments" class="mt-1 text-xs text-gray-600">
+                        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide dark:text-slate-400">Step 2</div>
+                        <div class="mt-1 text-sm font-bold text-gray-900 dark:text-slate-100">Upload attachments</div>
+                        <div v-if="shareProgress.totalAttachments" class="mt-1 text-xs text-gray-600 dark:text-slate-400">
                           {{ shareProgress.uploadedAttachments }}/{{ shareProgress.totalAttachments }} uploaded
                         </div>
                       </div>
                       <div class="p-4 rounded-2xl border" :class="shareStepClass('note')">
-                        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Step 3</div>
-                        <div class="mt-1 text-sm font-bold text-gray-900">Upload note</div>
+                        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide dark:text-slate-400">Step 3</div>
+                        <div class="mt-1 text-sm font-bold text-gray-900 dark:text-slate-100">Upload note</div>
                       </div>
                     </div>
 
                     <div v-if="isSharing" class="mt-5">
-                      <div class="flex items-center justify-between text-xs text-gray-600">
+                      <div class="flex items-center justify-between text-xs text-gray-600 dark:text-slate-400">
                         <div class="font-semibold">{{ shareProgressLabel }}</div>
                         <div v-if="shareProgress.currentFilename" class="truncate max-w-[60%]">{{ shareProgress.currentFilename }}</div>
                       </div>
-                      <div class="mt-2 h-2 w-full rounded-full bg-gray-100 overflow-hidden">
+                      <div class="mt-2 h-2 w-full rounded-full bg-gray-100 overflow-hidden dark:bg-slate-800">
                         <div class="h-full bg-gray-900 rounded-full transition-all duration-300" :style="{ width: `${sharePercent}%` }"></div>
                       </div>
                     </div>
 
-                    <div v-if="shareError" class="mt-5 p-4 rounded-2xl border border-red-200 bg-red-50 animate-in fade-in duration-200">
-                      <div class="text-sm font-bold text-red-900">Share failed</div>
-                      <div class="text-xs text-red-800 mt-1 wrap-break-word">{{ shareError }}</div>
+                    <div v-if="shareError" class="mt-5 p-4 rounded-2xl border border-red-200 bg-red-50 animate-in fade-in duration-200 dark:bg-red-950/30 dark:border-red-500/30">
+                      <div class="text-sm font-bold text-red-900 dark:text-red-100">Share failed</div>
+                      <div class="text-xs text-red-800 mt-1 wrap-break-word dark:text-red-200">{{ shareError }}</div>
                     </div>
 
-                    <div v-if="shareResult" class="mt-5 p-4 rounded-2xl border border-emerald-200 bg-emerald-50 animate-in fade-in duration-200">
-                      <div class="text-xs font-semibold text-emerald-900 uppercase tracking-wide">Link ready</div>
-                      <div class="mt-1 text-sm font-bold text-emerald-900 break-all">{{ shareResult.shareUrl }}</div>
-                      <div class="mt-2 text-xs text-emerald-800">Anyone with this link can decrypt. Treat it like a password.</div>
+                    <div v-if="shareResult" class="mt-5 p-4 rounded-2xl border border-emerald-200 bg-emerald-50 animate-in fade-in duration-200 dark:bg-emerald-950/30 dark:border-emerald-500/30">
+                      <div class="text-xs font-semibold text-emerald-900 uppercase tracking-wide dark:text-emerald-100">Link ready</div>
+                      <div class="mt-1 text-sm font-bold text-emerald-900 break-all dark:text-emerald-100">{{ shareResult.shareUrl }}</div>
+                      <div class="mt-2 text-xs text-emerald-800 dark:text-emerald-200">Anyone with this link can decrypt. Treat it like a password.</div>
                     </div>
 
                     <!-- Actions -->
@@ -151,7 +151,7 @@
                       <button
                         v-if="shareResult"
                         @click="copyShareUrl"
-                        class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-2xl transition-all duration-200"
+                        class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-2xl transition-all duration-200 dark:bg-slate-950 dark:text-slate-100 dark:border-slate-800 dark:hover:bg-slate-900"
                       >
                         <Copy class="w-4 h-4" />
                         Copy link
@@ -160,7 +160,7 @@
                       <button
                         v-if="shareResult"
                         @click="copyShareKey"
-                        class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-2xl transition-all duration-200"
+                        class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-2xl transition-all duration-200 dark:bg-slate-950 dark:text-slate-100 dark:border-slate-800 dark:hover:bg-slate-900"
                       >
                         Copy key
                       </button>
@@ -168,14 +168,14 @@
                       <button
                         v-if="shareResult"
                         @click="copyShareCid"
-                        class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-2xl transition-all duration-200"
+                        class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-2xl transition-all duration-200 dark:bg-slate-950 dark:text-slate-100 dark:border-slate-800 dark:hover:bg-slate-900"
                       >
                         Copy CID
                       </button>
 
                       <button
                         @click="closeShareModal"
-                        class="w-full md:w-auto md:ml-auto inline-flex items-center justify-center px-5 py-3 text-sm font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-2xl transition-all duration-200"
+                        class="w-full md:w-auto md:ml-auto inline-flex items-center justify-center px-5 py-3 text-sm font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-2xl transition-all duration-200 dark:text-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800"
                       >
                         Done
                       </button>
@@ -186,19 +186,19 @@
             </div>
 
             <!-- Bookmark content goes in the card on left, so show full markdown here -->
-            <div v-if="parsed?.tags?.bookmark && parsed?.content" class="p-8 bg-white rounded-xl border border-gray-200 shadow-sm min-h-100">
-              <div class="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Description</div>
-              <div class="prose prose-lg max-w-none" v-html="renderedMarkdown"></div>
+            <div v-if="parsed?.tags?.bookmark && parsed?.content" class="p-8 bg-white rounded-xl border border-gray-200 shadow-sm min-h-100 dark:bg-slate-950 dark:border-slate-800">
+              <div class="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide dark:text-slate-400">Description</div>
+              <div class="prose prose-lg max-w-none dark:prose-invert" v-html="renderedMarkdown"></div>
             </div>
 
             <!-- Regular content display -->
-            <div v-else-if="parsed?.content" class="p-8 bg-white rounded-xl border border-gray-200 shadow-sm min-h-100">
-              <div class="prose prose-lg max-w-none" v-html="renderedMarkdown"></div>
+            <div v-else-if="parsed?.content" class="p-8 bg-white rounded-xl border border-gray-200 shadow-sm min-h-100 dark:bg-slate-950 dark:border-slate-800">
+              <div class="prose prose-lg max-w-none dark:prose-invert" v-html="renderedMarkdown"></div>
             </div>
 
             <!-- Empty state -->
-            <div v-else class="p-8 bg-white rounded-xl border border-gray-200 shadow-sm min-h-100 flex items-center justify-center">
-              <div class="text-gray-400 italic text-center">No content</div>
+            <div v-else class="p-8 bg-white rounded-xl border border-gray-200 shadow-sm min-h-100 flex items-center justify-center dark:bg-slate-950 dark:border-slate-800">
+              <div class="text-gray-400 italic text-center dark:text-slate-500">No content</div>
             </div>
           </div>
         </div>
@@ -439,9 +439,9 @@ const shareProgressLabel = computed(() => {
 
 const shareStepClass = (step) => {
   const phase = shareProgress.value.phase;
-  const done = "border-emerald-200 bg-emerald-50";
-  const active = "border-gray-900 bg-white shadow-sm";
-  const idle = "border-gray-200 bg-white";
+  const done = "border-emerald-200 bg-emerald-50 dark:border-emerald-500/40 dark:bg-emerald-900/30";
+  const active = "border-gray-900 bg-white shadow-sm dark:border-slate-400 dark:bg-slate-900";
+  const idle = "border-gray-200 bg-white dark:border-slate-800 dark:bg-slate-950";
 
   if (shareResult.value) return done;
   if (isSharing.value) {
@@ -463,6 +463,10 @@ const shareStepClass = (step) => {
   color: #1f2937;
 }
 
+:global(.dark) .prose {
+  color: #e2e8f0;
+}
+
 .prose h1,
 .prose h2,
 .prose h3,
@@ -482,6 +486,10 @@ const shareStepClass = (step) => {
   text-decoration: none;
 }
 
+:global(.dark) .prose a {
+  color: #60a5fa;
+}
+
 .prose a:hover {
   text-decoration: underline;
 }
@@ -491,6 +499,11 @@ const shareStepClass = (step) => {
   padding: 0.125rem 0.25rem;
   border-radius: 0.25rem;
   font-size: 0.875em;
+}
+
+:global(.dark) .prose code {
+  background-color: #0f172a;
+  color: #e2e8f0;
 }
 
 .prose pre {

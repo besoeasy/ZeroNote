@@ -1,9 +1,9 @@
 <template>
-  <div class="p-4 bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl border border-orange-200 shadow-sm">
+  <div class="p-4 bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl border border-orange-200 shadow-sm dark:from-orange-950/30 dark:to-yellow-900/20 dark:border-orange-500/30">
     <div class="flex items-center gap-2 mb-3">
       <span class="text-2xl">{{ addressIcon }}</span>
       <div>
-        <div class="text-xs font-semibold text-orange-600 uppercase tracking-wide">
+        <div class="text-xs font-semibold text-orange-600 uppercase tracking-wide dark:text-orange-200">
           {{ addressType }} Address
         </div>
       </div>
@@ -11,8 +11,8 @@
     
     <div class="space-y-3">
       <!-- Address Display -->
-      <div class="p-3 bg-white rounded-lg border border-orange-100">
-        <div class="text-xs text-gray-500 font-mono break-all select-all">
+      <div class="p-3 bg-white rounded-lg border border-orange-100 dark:bg-slate-950 dark:border-orange-500/20">
+        <div class="text-xs text-gray-500 font-mono break-all select-all dark:text-slate-300">
           {{ value }}
         </div>
       </div>

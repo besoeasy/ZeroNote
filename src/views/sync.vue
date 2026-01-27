@@ -1,12 +1,12 @@
 <template>
   <main
-    class="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-gray-50 to-white px-4 py-12"
+    class="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-gray-50 to-white px-4 py-12 dark:from-slate-950 dark:to-slate-900"
   >
     <div class="w-full max-w-6xl mx-auto animate-fade-in-up">
       <!-- Header -->
       <header class="text-center mb-16">
         <h1
-          class="text-5xl md:text-6xl font-black text-gray-900 mb-4 tracking-tight"
+          class="text-5xl md:text-6xl font-black text-gray-900 mb-4 tracking-tight dark:text-slate-100"
         >
           Data
           <span
@@ -14,7 +14,7 @@
             >Hub</span
           >
         </h1>
-        <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed dark:text-slate-300">
           Import, backup, and sync your notes. Choose a method below:
         </p>
       </header>
@@ -27,19 +27,19 @@
         <!-- P2P Sync Card -->
         <router-link
           to="/p2p"
-          class="group relative overflow-hidden bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-200"
+          class="group relative overflow-hidden bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-200 dark:bg-slate-950 dark:border-slate-800 dark:focus:ring-blue-500/30"
           tabindex="0"
           aria-label="Peer-to-Peer: Encrypted device-to-device sync"
         >
           <!-- Gradient Glow -->
           <div
-            class="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 bg-blue-100 rounded-full blur-3xl opacity-0 group-hover:opacity-70 transition-opacity duration-500"
+            class="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 bg-blue-100 rounded-full blur-3xl opacity-0 group-hover:opacity-70 transition-opacity duration-500 dark:bg-blue-500/20"
           ></div>
 
           <div class="relative z-10">
             <!-- Icon -->
             <div
-              class="flex items-center justify-center w-20 h-20 bg-blue-50 rounded-2xl mb-6 group-hover:bg-blue-100 group-hover:scale-110 transition-all duration-300"
+              class="flex items-center justify-center w-20 h-20 bg-blue-50 rounded-2xl mb-6 group-hover:bg-blue-100 group-hover:scale-110 transition-all duration-300 dark:bg-blue-500/10 dark:group-hover:bg-blue-500/20"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -59,16 +59,16 @@
 
             <!-- Content -->
             <h2
-              class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors"
+              class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors dark:text-slate-100 dark:group-hover:text-blue-300"
             >
               Peer-to-Peer
             </h2>
-            <p class="text-gray-600 leading-relaxed mb-6">
+            <p class="text-gray-600 leading-relaxed mb-6 dark:text-slate-300">
               Encrypted device-to-device sync
             </p>
 
             <!-- Features -->
-            <ul class="space-y-2 text-sm text-gray-500">
+            <ul class="space-y-2 text-sm text-gray-500 dark:text-slate-400">
               <li class="flex items-center gap-2">
                 <svg
                   class="w-4 h-4 text-blue-600"
@@ -101,7 +101,7 @@
 
             <!-- Arrow -->
             <div
-              class="mt-6 flex items-center text-blue-600 font-semibold text-sm group-hover:translate-x-2 transition-transform"
+              class="mt-6 flex items-center text-blue-600 font-semibold text-sm group-hover:translate-x-2 transition-transform dark:text-blue-300"
             >
               Learn more
               <svg
@@ -124,19 +124,19 @@
         <!-- S3 Sync Card -->
         <router-link
           to="/s3"
-          class="group relative overflow-hidden bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-emerald-200"
+          class="group relative overflow-hidden bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-emerald-200 dark:bg-slate-950 dark:border-slate-800 dark:focus:ring-emerald-500/30"
           tabindex="0"
           aria-label="S3 / MinIO: Encrypted cloud backup & sync"
         >
           <!-- Gradient Glow -->
           <div
-            class="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 bg-emerald-100 rounded-full blur-3xl opacity-0 group-hover:opacity-70 transition-opacity duration-500"
+            class="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 bg-emerald-100 rounded-full blur-3xl opacity-0 group-hover:opacity-70 transition-opacity duration-500 dark:bg-emerald-500/20"
           ></div>
 
           <div class="relative z-10">
             <!-- Icon -->
             <div
-              class="flex items-center justify-center w-20 h-20 bg-emerald-50 rounded-2xl mb-6 group-hover:bg-emerald-100 group-hover:scale-110 transition-all duration-300"
+              class="flex items-center justify-center w-20 h-20 bg-emerald-50 rounded-2xl mb-6 group-hover:bg-emerald-100 group-hover:scale-110 transition-all duration-300 dark:bg-emerald-500/10 dark:group-hover:bg-emerald-500/20"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -156,16 +156,16 @@
 
             <!-- Content -->
             <h2
-              class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors"
+              class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors dark:text-slate-100 dark:group-hover:text-emerald-300"
             >
               S3 / MinIO
             </h2>
-            <p class="text-gray-600 leading-relaxed mb-6">
+            <p class="text-gray-600 leading-relaxed mb-6 dark:text-slate-300">
               Encrypted cloud backup & sync
             </p>
 
             <!-- Features -->
-            <ul class="space-y-2 text-sm text-gray-500">
+            <ul class="space-y-2 text-sm text-gray-500 dark:text-slate-400">
               <li class="flex items-center gap-2">
                 <svg
                   class="w-4 h-4 text-emerald-600"
@@ -198,7 +198,7 @@
 
             <!-- Arrow -->
             <div
-              class="mt-6 flex items-center text-emerald-600 font-semibold text-sm group-hover:translate-x-2 transition-transform"
+              class="mt-6 flex items-center text-emerald-600 font-semibold text-sm group-hover:translate-x-2 transition-transform dark:text-emerald-300"
             >
               Learn more
               <svg
@@ -221,19 +221,19 @@
         <!-- Local Backup Card -->
         <router-link
           to="/backup"
-          class="group relative overflow-hidden bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-amber-200"
+          class="group relative overflow-hidden bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-amber-200 dark:bg-slate-950 dark:border-slate-800 dark:focus:ring-amber-500/30"
           tabindex="0"
           aria-label="Local Backup: Unencrypted export/import"
         >
           <!-- Gradient Glow -->
           <div
-            class="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 bg-amber-100 rounded-full blur-3xl opacity-0 group-hover:opacity-70 transition-opacity duration-500"
+            class="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 bg-amber-100 rounded-full blur-3xl opacity-0 group-hover:opacity-70 transition-opacity duration-500 dark:bg-amber-500/20"
           ></div>
 
           <div class="relative z-10">
             <!-- Icon -->
             <div
-              class="flex items-center justify-center w-20 h-20 bg-amber-50 rounded-2xl mb-6 group-hover:bg-amber-100 group-hover:scale-110 transition-all duration-300"
+              class="flex items-center justify-center w-20 h-20 bg-amber-50 rounded-2xl mb-6 group-hover:bg-amber-100 group-hover:scale-110 transition-all duration-300 dark:bg-amber-500/10 dark:group-hover:bg-amber-500/20"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -253,16 +253,16 @@
 
             <!-- Content -->
             <h2
-              class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors"
+              class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors dark:text-slate-100 dark:group-hover:text-amber-300"
             >
               Local Backup
             </h2>
-            <p class="text-gray-600 leading-relaxed mb-6">
+            <p class="text-gray-600 leading-relaxed mb-6 dark:text-slate-300">
               Unencrypted export/import
             </p>
 
             <!-- Features -->
-            <ul class="space-y-2 text-sm text-gray-500">
+            <ul class="space-y-2 text-sm text-gray-500 dark:text-slate-400">
               <li class="flex items-center gap-2">
                 <svg
                   class="w-4 h-4 text-amber-600"
@@ -295,7 +295,7 @@
 
             <!-- Arrow -->
             <div
-              class="mt-6 flex items-center text-amber-600 font-semibold text-sm group-hover:translate-x-2 transition-transform"
+              class="mt-6 flex items-center text-amber-600 font-semibold text-sm group-hover:translate-x-2 transition-transform dark:text-amber-300"
             >
               Learn more
               <svg
@@ -318,19 +318,19 @@
         <!-- Import Card -->
         <router-link
           to="/import"
-          class="group relative overflow-hidden bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-200"
+          class="group relative overflow-hidden bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-200 dark:bg-slate-950 dark:border-slate-800 dark:focus:ring-indigo-500/30"
           tabindex="0"
           aria-label="Import: Bring data from other apps (CSV)"
         >
           <!-- Gradient Glow -->
           <div
-            class="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 bg-indigo-100 rounded-full blur-3xl opacity-0 group-hover:opacity-70 transition-opacity duration-500"
+            class="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 bg-indigo-100 rounded-full blur-3xl opacity-0 group-hover:opacity-70 transition-opacity duration-500 dark:bg-indigo-500/20"
           ></div>
 
           <div class="relative z-10">
             <!-- Icon -->
             <div
-              class="flex items-center justify-center w-20 h-20 bg-indigo-50 rounded-2xl mb-6 group-hover:bg-indigo-100 group-hover:scale-110 transition-all duration-300"
+              class="flex items-center justify-center w-20 h-20 bg-indigo-50 rounded-2xl mb-6 group-hover:bg-indigo-100 group-hover:scale-110 transition-all duration-300 dark:bg-indigo-500/10 dark:group-hover:bg-indigo-500/20"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -350,16 +350,16 @@
 
             <!-- Content -->
             <h2
-              class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors"
+              class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors dark:text-slate-100 dark:group-hover:text-indigo-300"
             >
               Import
             </h2>
-            <p class="text-gray-600 leading-relaxed mb-6">
+            <p class="text-gray-600 leading-relaxed mb-6 dark:text-slate-300">
               Bring data from other apps (CSV)
             </p>
 
             <!-- Features -->
-            <ul class="space-y-2 text-sm text-gray-500">
+            <ul class="space-y-2 text-sm text-gray-500 dark:text-slate-400">
               <li class="flex items-center gap-2">
                 <svg
                   class="w-4 h-4 text-indigo-600"
@@ -392,7 +392,7 @@
 
             <!-- Arrow -->
             <div
-              class="mt-6 flex items-center text-indigo-600 font-semibold text-sm group-hover:translate-x-2 transition-transform"
+              class="mt-6 flex items-center text-indigo-600 font-semibold text-sm group-hover:translate-x-2 transition-transform dark:text-indigo-300"
             >
               Learn more
               <svg

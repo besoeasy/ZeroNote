@@ -1,17 +1,17 @@
 <template>
-  <div v-if="secret" class="p-4 bg-green-50 rounded-xl border border-green-200 shadow-sm">
-    <div class="text-xs font-semibold text-green-600 mb-3 uppercase tracking-wide">2FA Code</div>
+  <div v-if="secret" class="p-4 bg-green-50 rounded-xl border border-green-200 shadow-sm dark:bg-green-950/30 dark:border-green-500/30">
+    <div class="text-xs font-semibold text-green-600 mb-3 uppercase tracking-wide dark:text-green-200">2FA Code</div>
     
     <!-- Valid TOTP Code -->
     <div v-if="totpCode && totpCode !== 'Invalid Secret'">
-      <div class="text-3xl font-bold text-green-900 tracking-wider mb-2 font-mono">
+      <div class="text-3xl font-bold text-green-900 tracking-wider mb-2 font-mono dark:text-green-100">
         {{ totpCode.slice(0, 3) }} {{ totpCode.slice(3, 6) }}
       </div>
       <div class="flex items-center justify-between">
-        <div class="text-xs text-green-600">{{ totpTimeRemaining }}s</div>
-        <div class="w-20 h-1 bg-green-200 rounded-full overflow-hidden">
+        <div class="text-xs text-green-600 dark:text-green-200">{{ totpTimeRemaining }}s</div>
+        <div class="w-20 h-1 bg-green-200 rounded-full overflow-hidden dark:bg-green-500/30">
           <div 
-            class="h-full bg-green-600 transition-all duration-1000" 
+            class="h-full bg-green-600 transition-all duration-1000 dark:bg-green-400" 
             :style="{ width: `${(totpTimeRemaining / 30) * 100}%` }"
           ></div>
         </div>
@@ -19,7 +19,7 @@
     </div>
     
     <!-- Invalid Secret -->
-    <div v-else class="text-red-600 text-xs">
+    <div v-else class="text-red-600 text-xs dark:text-red-200">
       Invalid 2FA secret format
     </div>
   </div>

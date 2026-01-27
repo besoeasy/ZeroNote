@@ -1,16 +1,16 @@
 <template>
   <div
-    class="w-full min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-50 via-white to-violet-50 p-6 relative overflow-hidden"
+    class="w-full min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-50 via-white to-violet-50 p-6 relative overflow-hidden dark:from-slate-950 dark:via-slate-950 dark:to-slate-900"
   >
     <!-- Animated Background Elements -->
     <div
-      class="absolute top-0 left-0 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"
+      class="absolute top-0 left-0 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob dark:bg-blue-500/20 dark:opacity-30"
     ></div>
     <div
-      class="absolute top-0 right-0 w-96 h-96 bg-violet-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"
+      class="absolute top-0 right-0 w-96 h-96 bg-violet-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000 dark:bg-violet-500/20 dark:opacity-30"
     ></div>
     <div
-      class="absolute bottom-0 left-1/2 w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"
+      class="absolute bottom-0 left-1/2 w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000 dark:bg-fuchsia-500/20 dark:opacity-30"
     ></div>
 
     <div class="max-w-md w-full relative z-10 animate-fade-in-up">
@@ -29,7 +29,7 @@
                   stroke="currentColor"
                   stroke-width="10"
                   fill="none"
-                  class="text-gray-200"
+                  class="text-gray-200 dark:text-slate-700"
                 />
                 <!-- Progress Circle -->
                 <circle
@@ -62,7 +62,7 @@
                 >
                   {{ Math.round(strengthPercentage) }}%
                 </div>
-                <div class="text-base text-gray-600 mt-2 font-semibold">
+                <div class="text-base text-gray-600 mt-2 font-semibold dark:text-slate-400">
                   {{ strengthInfo.label || "Security" }}
                 </div>
               </div>
@@ -89,10 +89,10 @@
             <!-- Warning Message (Below Strength Indicator) -->
             <div
               v-if="showWarning"
-              class="w-full max-w-md p-4 bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-300 rounded-2xl animate-shake shadow-md"
+              class="w-full max-w-md p-4 bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-300 rounded-2xl animate-shake shadow-md dark:from-red-950/40 dark:to-orange-900/30 dark:border-red-500/40"
             >
               <p
-                class="text-sm text-red-800 font-bold flex items-center justify-center gap-2"
+                class="text-sm text-red-800 font-bold flex items-center justify-center gap-2 dark:text-red-200"
               >
                 <svg
                   class="w-5 h-5 flex-shrink-0 animate-pulse"
@@ -125,14 +125,14 @@
             <Lock class="w-10 h-10 text-white relative z-10" />
           </div>
           <h1
-            class="text-5xl font-black text-gray-900 mb-3 tracking-tight uppercase"
+            class="text-5xl font-black text-gray-900 mb-3 tracking-tight uppercase dark:text-white"
           >
             Zero<span
               class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600 animate-gradient"
               >Note</span
             >
           </h1>
-          <p class="text-lg text-gray-600 font-medium">
+          <p class="text-lg text-gray-600 font-medium dark:text-slate-400">
             Your Secure Note Vault
           </p>
         </div>
@@ -140,18 +140,18 @@
 
       <!-- Input Card -->
       <div
-        class="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 backdrop-blur-sm bg-opacity-95"
+        class="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 backdrop-blur-sm bg-opacity-95 dark:bg-slate-950/85 dark:border-slate-800"
       >
         <!-- Password Input -->
         <div class="mb-5">
-          <label class="block text-sm font-semibold text-gray-700 mb-2"
+          <label class="block text-sm font-semibold text-gray-700 mb-2 dark:text-slate-300"
             >Master Password</label
           >
           <input
             v-model="passwordInput"
             type="password"
             placeholder="Enter your master password"
-            class="w-full p-4 text-base border-2 border-gray-200 rounded-xl bg-gray-50 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200"
+            class="w-full p-4 text-base border-2 border-gray-200 rounded-xl bg-gray-50 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-400 dark:focus:bg-slate-900 dark:focus:ring-blue-500/30"
             @input="checkPasswordStrength"
             @keyup.enter="unlockApp"
           />
@@ -159,7 +159,7 @@
 
         <!-- PIN Input -->
         <div class="mb-5">
-          <label class="block text-sm font-semibold text-gray-700 mb-2"
+          <label class="block text-sm font-semibold text-gray-700 mb-2 dark:text-slate-300"
             >PIN (Optional)</label
           >
           <input
@@ -168,7 +168,7 @@
             inputmode="numeric"
             pattern="[0-9]*"
             placeholder="Enter numeric PIN"
-            class="w-full p-4 text-base border-2 border-gray-200 rounded-xl bg-gray-50 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200"
+            class="w-full p-4 text-base border-2 border-gray-200 rounded-xl bg-gray-50 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-400 dark:focus:bg-slate-900 dark:focus:ring-blue-500/30"
             @input="validatePin"
             @keyup.enter="unlockApp"
             maxlength="16"
@@ -178,14 +178,14 @@
         <!-- Account Identifier -->
         <div
           v-if="AccountIdentifier"
-          class="mb-6 p-4 bg-gradient-to-br from-blue-50 to-violet-50 border border-blue-100 rounded-xl"
+          class="mb-6 p-4 bg-gradient-to-br from-blue-50 to-violet-50 border border-blue-100 rounded-xl dark:from-blue-950/40 dark:to-violet-950/30 dark:border-blue-500/20"
         >
           <p
-            class="text-xs font-semibold text-gray-600 mb-1 uppercase tracking-wide"
+            class="text-xs font-semibold text-gray-600 mb-1 uppercase tracking-wide dark:text-slate-400"
           >
             Account Identifier
           </p>
-          <p class="text-base font-mono font-bold text-blue-700">
+          <p class="text-base font-mono font-bold text-blue-700 dark:text-blue-300">
             {{ AccountIdentifier }}
           </p>
         </div>
@@ -205,9 +205,9 @@
 
       <!-- Info Box -->
       <div
-        class="mt-6 p-5 bg-white bg-opacity-80 rounded-2xl backdrop-blur-sm border border-gray-100 shadow-sm"
+        class="mt-6 p-5 bg-white bg-opacity-80 rounded-2xl backdrop-blur-sm border border-gray-100 shadow-sm dark:bg-slate-950/80 dark:border-slate-800"
       >
-        <p class="text-sm text-gray-700 text-center leading-relaxed">
+        <p class="text-sm text-gray-700 text-center leading-relaxed dark:text-slate-300">
           <span class="inline-block mr-1">🔐</span>
           Your master password is the encryption key for all your data.<br />
           <span class="font-semibold"
@@ -223,7 +223,7 @@
           href="https://github.com/besoeasy/ZeroNote"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors group"
+          class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors group dark:text-slate-400 dark:hover:text-slate-100"
         >
           <svg
             class="w-5 h-5 group-hover:scale-110 transition-transform"

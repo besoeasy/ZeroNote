@@ -1,20 +1,20 @@
 <template>
-  <div class="w-full p-4 bg-white rounded-xl border border-gray-200 flex flex-col gap-2">
+  <div class="w-full p-4 bg-white rounded-xl border border-gray-200 flex flex-col gap-2 dark:bg-slate-950 dark:border-slate-800">
     <div class="flex items-center gap-2 mb-1">
-      <span class="text-gray-900 font-bold text-sm">Secret</span>
+      <span class="text-gray-900 font-bold text-sm dark:text-slate-100">Secret</span>
     </div>
     <div class="flex items-center gap-2">
       <input
         :type="show ? 'text' : 'password'"
         :value="value"
         readonly
-        class="flex-1 px-3 py-2 rounded-lg border border-gray-300 bg-white text-xs font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all select-all"
+        class="flex-1 px-3 py-2 rounded-lg border border-gray-300 bg-white text-xs font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all select-all dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:ring-slate-600"
         @focus="$event.target.select()"
       />
       <button
         @click="toggleShow"
         type="button"
-        class="px-2 py-1 text-xs rounded-lg border border-gray-300 bg-gray-100 text-gray-900 hover:bg-gray-200 transition-colors"
+        class="px-2 py-1 text-xs rounded-lg border border-gray-300 bg-gray-100 text-gray-900 hover:bg-gray-200 transition-colors dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
         :title="show ? 'Hide' : 'Show'"
       >
         {{ show ? "Hide" : "Show" }}
@@ -22,7 +22,7 @@
       <button
         @click="copySecret"
         type="button"
-        class="px-2 py-1 text-xs rounded-lg border border-gray-300 bg-gray-100 text-gray-900 hover:bg-gray-200 transition-colors"
+        class="px-2 py-1 text-xs rounded-lg border border-gray-300 bg-gray-100 text-gray-900 hover:bg-gray-200 transition-colors dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
         :title="copied ? 'Copied!' : 'Copy'"
       >
         <span v-if="copied">Copied!</span>

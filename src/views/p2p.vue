@@ -1,19 +1,19 @@
 <template>
     <!-- Sync Logs -->
-    <div v-if="syncLogs.length" class="mb-4 bg-gray-100 border border-gray-300 rounded p-3 text-xs max-h-48 overflow-y-auto">
-      <div v-for="(log, i) in syncLogs" :key="i" class="font-mono text-gray-700">{{ log }}</div>
+    <div v-if="syncLogs.length" class="mb-4 bg-gray-100 border border-gray-300 rounded p-3 text-xs max-h-48 overflow-y-auto dark:bg-slate-900 dark:border-slate-700">
+      <div v-for="(log, i) in syncLogs" :key="i" class="font-mono text-gray-700 dark:text-slate-300">{{ log }}</div>
     </div>
   <div class="max-w-4xl mx-auto p-4 md:p-8 pt-16 md:pt-8">
     <!-- Page Title with Status -->
     <div class="flex items-center justify-between mb-6 md:mb-8">
-      <h2 class="text-3xl md:text-5xl font-bold text-gray-900">Device Sync</h2>
+      <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-slate-100">Device Sync</h2>
       <div v-if="isConnected" class="flex items-center gap-2 text-green-600">
         <div class="w-2 h-2 bg-green-600 rounded-full animate-pulse"></div>
         <span class="text-sm font-medium">Connected</span>
       </div>
     </div>
       <!-- Status Card -->
-      <div class="bg-linear-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 mb-6">
+      <div class="bg-linear-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 mb-6 dark:from-blue-950/30 dark:to-indigo-950/30 dark:border-blue-500/30">
         <div class="flex items-start gap-4">
           <div class="p-3 bg-blue-500 rounded-lg">
             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,8 +21,8 @@
             </svg>
           </div>
           <div class="flex-1">
-            <h2 class="text-lg font-semibold text-gray-900 mb-1">Peer-to-Peer Sync</h2>
-            <p class="text-sm text-gray-600">
+            <h2 class="text-lg font-semibold text-gray-900 mb-1 dark:text-slate-100">Peer-to-Peer Sync</h2>
+            <p class="text-sm text-gray-600 dark:text-slate-300">
               Sync your notes directly between devices using WebRTC. No cloud storage needed - data goes directly from device to device.
             </p>
           </div>
@@ -32,20 +32,20 @@
       <!-- Connection Status -->
       <div v-if="!isConnected && !connecting && !roomReady" class="space-y-6">
         <!-- Create or Join Room -->
-        <div class="bg-white border border-gray-200 rounded-xl p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Join or Create a Room</h3>
+        <div class="bg-white border border-gray-200 rounded-xl p-6 dark:bg-slate-950 dark:border-slate-800">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4 dark:text-slate-100">Join or Create a Room</h3>
           <div class="space-y-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Room Code</label>
+              <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-slate-300">Room Code</label>
               <input
                 v-model="roomCode"
                 type="text"
                 placeholder="Enter room code (e.g., myroom, test123)"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
                 @keyup.enter="joinRoom()"
                 :disabled="connecting"
               />
-              <p class="text-xs text-gray-500 mt-1">Enter any name you want - if the room exists, you'll join it. If not, you'll create it!</p>
+              <p class="text-xs text-gray-500 mt-1 dark:text-slate-400">Enter any name you want - if the room exists, you'll join it. If not, you'll create it!</p>
             </div>
             
             <button
@@ -59,9 +59,9 @@
         </div>
 
         <!-- How It Works - When Not Connected -->
-        <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">How Room Sync Works</h3>
-          <ul class="space-y-2 text-sm text-gray-700">
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 dark:bg-blue-950/30 dark:border-blue-500/30">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3 dark:text-slate-100">How Room Sync Works</h3>
+          <ul class="space-y-2 text-sm text-gray-700 dark:text-slate-300">
             <li class="flex items-start gap-2">
               <svg class="w-5 h-5 text-blue-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -93,25 +93,25 @@
       <!-- Connecting State -->
             <!-- Connecting View -->
       <div v-else-if="connecting && !isConnected && !roomReady" class="space-y-6">
-        <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
+        <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 dark:bg-yellow-900/20 dark:border-yellow-500/30">
           <div class="flex items-center gap-4">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600"></div>
             <div class="flex-1">
-              <h3 class="text-lg font-semibold text-gray-900 mb-1">
+              <h3 class="text-lg font-semibold text-gray-900 mb-1 dark:text-slate-100">
                 {{ isHost ? 'Setting up room...' : 'Connecting to room...' }}
               </h3>
-              <p class="text-sm text-gray-600">
+              <p class="text-sm text-gray-600 dark:text-slate-300">
                 {{ isHost ? 'Your room is being created. Other devices can join soon.' : 'Looking for the host and establishing connection. This may take a few seconds...' }}
               </p>
             </div>
           </div>
         </div>
         
-        <div class="bg-white border border-gray-200 rounded-xl p-6">
-          <p class="text-sm text-gray-600 mb-2">Room Code: <span class="font-mono font-semibold">{{ roomCode }}</span></p>
+        <div class="bg-white border border-gray-200 rounded-xl p-6 dark:bg-slate-950 dark:border-slate-800">
+          <p class="text-sm text-gray-600 mb-2 dark:text-slate-300">Room Code: <span class="font-mono font-semibold">{{ roomCode }}</span></p>
           <button
             @click="disconnect"
-            class="px-4 py-2 bg-gray-500 text-white text-sm rounded-lg hover:bg-gray-600 transition-colors"
+            class="px-4 py-2 bg-gray-500 text-white text-sm rounded-lg hover:bg-gray-600 transition-colors dark:bg-slate-700 dark:hover:bg-slate-600"
           >
             Cancel
           </button>
@@ -120,7 +120,7 @@
 
       <!-- Room Ready - Host waiting for others -->
       <div v-else-if="roomReady && !isConnected" class="space-y-6">
-        <div class="bg-linear-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-xl p-6">
+        <div class="bg-linear-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-xl p-6 dark:from-blue-950/30 dark:to-cyan-950/20 dark:border-blue-500/30">
           <div class="flex items-start gap-4">
             <div class="p-3 bg-blue-500 rounded-lg">
               <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,30 +130,30 @@
             <div class="flex-1">
               <div class="flex items-center gap-2 mb-2">
                 <span class="px-3 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full">HOST</span>
-                <h3 class="text-lg font-semibold text-gray-900">Room Created Successfully!</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-slate-100">Room Created Successfully!</h3>
               </div>
-              <p class="text-sm text-gray-600 mb-4">
+              <p class="text-sm text-gray-600 mb-4 dark:text-slate-300">
                 Your room is ready and waiting for others to join. Share the room code or QR code below.
               </p>
               
               <!-- Room Code Display -->
-              <div class="bg-white rounded-lg p-4 border border-blue-200 mb-4">
-                <p class="text-xs text-gray-500 mb-1">Room Code</p>
-                <p class="text-2xl font-mono font-bold text-gray-900">{{ roomCode }}</p>
+              <div class="bg-white rounded-lg p-4 border border-blue-200 mb-4 dark:bg-slate-950 dark:border-blue-500/30">
+                <p class="text-xs text-gray-500 mb-1 dark:text-slate-400">Room Code</p>
+                <p class="text-2xl font-mono font-bold text-gray-900 dark:text-slate-100">{{ roomCode }}</p>
               </div>
 
             </div>
           </div>
         </div>
 
-        <div class="bg-white border border-gray-200 rounded-xl p-6">
+        <div class="bg-white border border-gray-200 rounded-xl p-6 dark:bg-slate-950 dark:border-slate-800">
           <div class="flex items-center gap-3 mb-3">
             <div class="animate-pulse w-3 h-3 bg-blue-500 rounded-full"></div>
-            <p class="text-sm font-medium text-gray-700">Waiting for devices to join...</p>
+            <p class="text-sm font-medium text-gray-700 dark:text-slate-300">Waiting for devices to join...</p>
           </div>
           <button
             @click="disconnect"
-            class="px-4 py-2 bg-gray-500 text-white text-sm rounded-lg hover:bg-gray-600 transition-colors"
+            class="px-4 py-2 bg-gray-500 text-white text-sm rounded-lg hover:bg-gray-600 transition-colors dark:bg-slate-700 dark:hover:bg-slate-600"
           >
             Leave Room
           </button>
@@ -163,7 +163,7 @@
       <!-- Connected View -->
       <div v-else-if="isConnected" class="space-y-6">
         <!-- Room Info -->
-        <div class="bg-linear-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6">
+        <div class="bg-linear-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6 dark:from-green-950/30 dark:to-emerald-950/20 dark:border-green-500/30">
           <div class="flex items-center justify-between mb-4">
             <div class="flex-1">
               <div class="flex items-center gap-3 mb-2">
@@ -173,9 +173,9 @@
                   </svg>
                 </div>
                 <div>
-                  <p class="text-sm font-medium text-gray-700">Connected to Room</p>
+                  <p class="text-sm font-medium text-gray-700 dark:text-slate-300">Connected to Room</p>
                   <div class="flex items-center gap-2">
-                    <p class="text-lg font-bold text-gray-900">{{ roomCode }}</p>
+                    <p class="text-lg font-bold text-gray-900 dark:text-slate-100">{{ roomCode }}</p>
                     <span v-if="isHost" class="px-2 py-0.5 bg-blue-500 text-white text-xs font-semibold rounded">HOST</span>
                     <span v-else class="px-2 py-0.5 bg-purple-500 text-white text-xs font-semibold rounded">GUEST</span>
                   </div>
@@ -194,17 +194,17 @@
         </div>
 
         <!-- Connected Peers -->
-        <div class="bg-white border border-gray-200 rounded-xl p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">
+        <div class="bg-white border border-gray-200 rounded-xl p-6 dark:bg-slate-950 dark:border-slate-800">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4 dark:text-slate-100">
             Connected Devices ({{ connections.size + 1 }})
           </h3>
           <div class="space-y-2">
             <!-- This Device -->
-            <div class="flex items-center gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <div class="flex items-center gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-950/30 dark:border-blue-500/30">
               <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
               <div class="flex-1">
-                <p class="text-sm font-medium text-gray-900">This Device</p>
-                <p class="text-xs text-gray-600 font-mono">{{ myPeerId }}</p>
+                <p class="text-sm font-medium text-gray-900 dark:text-slate-100">This Device</p>
+                <p class="text-xs text-gray-600 font-mono dark:text-slate-400">{{ myPeerId }}</p>
               </div>
               <span v-if="isHost" class="px-2 py-1 bg-blue-500 text-white text-xs font-semibold rounded">HOST</span>
               <span v-else class="px-2 py-1 bg-purple-500 text-white text-xs font-semibold rounded">GUEST</span>
@@ -214,31 +214,31 @@
             <div
               v-for="peerId in connectedPeers"
               :key="peerId"
-              class="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg"
+              class="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg dark:bg-slate-900/60 dark:border-slate-800"
             >
               <div class="w-2 h-2 bg-green-500 rounded-full"></div>
               <div class="flex-1">
-                <p class="text-sm font-medium text-gray-900">Remote Device</p>
-                <p class="text-xs text-gray-600 font-mono">{{ peerId }}</p>
+                <p class="text-sm font-medium text-gray-900 dark:text-slate-100">Remote Device</p>
+                <p class="text-xs text-gray-600 font-mono dark:text-slate-400">{{ peerId }}</p>
               </div>
               <span v-if="peerId.includes('-ZeroNote-' + roomCode) && !peerId.includes('-' + roomCode + '-')" class="px-2 py-1 bg-blue-400 text-white text-xs font-semibold rounded">HOST</span>
               <span v-else class="px-2 py-1 bg-purple-400 text-white text-xs font-semibold rounded">GUEST</span>
             </div>
 
-            <p v-if="connections.size === 0" class="text-sm text-gray-500 text-center py-4">
+            <p v-if="connections.size === 0" class="text-sm text-gray-500 text-center py-4 dark:text-slate-400">
               Waiting for other devices to join...
             </p>
           </div>
         </div>
 
         <!-- Sync Actions -->
-        <div class="bg-white border border-gray-200 rounded-xl p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Sync Data</h3>
+        <div class="bg-white border border-gray-200 rounded-xl p-6 dark:bg-slate-950 dark:border-slate-800">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4 dark:text-slate-100">Sync Data</h3>
           <div class="space-y-4">
             <button
               @click="performSync"
               :disabled="syncing || connections.size === 0"
-              class="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed font-medium flex items-center justify-center gap-2"
+              class="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed dark:disabled:bg-slate-700 dark:disabled:text-slate-300 font-medium flex items-center justify-center gap-2"
             >
               <svg v-if="syncing" class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -248,55 +248,55 @@
             </button>
 
             <!-- Sync Stats -->
-            <div v-if="lastSyncStats" class="bg-gray-50 rounded-lg p-4 space-y-2">
-              <p class="text-sm font-medium text-gray-900">Last Sync Results</p>
+            <div v-if="lastSyncStats" class="bg-gray-50 rounded-lg p-4 space-y-2 dark:bg-slate-900/60">
+              <p class="text-sm font-medium text-gray-900 dark:text-slate-100">Last Sync Results</p>
               <div class="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p class="text-gray-600">Sent</p>
-                  <p class="font-semibold text-gray-900">{{ lastSyncStats.sent }} notes</p>
+                  <p class="text-gray-600 dark:text-slate-400">Sent</p>
+                  <p class="font-semibold text-gray-900 dark:text-slate-100">{{ lastSyncStats.sent }} notes</p>
                 </div>
                 <div>
-                  <p class="text-gray-600">Received</p>
-                  <p class="font-semibold text-gray-900">{{ lastSyncStats.received }} notes</p>
+                  <p class="text-gray-600 dark:text-slate-400">Received</p>
+                  <p class="font-semibold text-gray-900 dark:text-slate-100">{{ lastSyncStats.received }} notes</p>
                 </div>
                 <div>
-                  <p class="text-gray-600">Updated</p>
-                  <p class="font-semibold text-gray-900">{{ lastSyncStats.updated }} notes</p>
+                  <p class="text-gray-600 dark:text-slate-400">Updated</p>
+                  <p class="font-semibold text-gray-900 dark:text-slate-100">{{ lastSyncStats.updated }} notes</p>
                 </div>
                 <div>
-                  <p class="text-gray-600">Conflicts</p>
-                  <p class="font-semibold text-gray-900">{{ lastSyncStats.conflicts }} resolved</p>
+                  <p class="text-gray-600 dark:text-slate-400">Conflicts</p>
+                  <p class="font-semibold text-gray-900 dark:text-slate-100">{{ lastSyncStats.conflicts }} resolved</p>
                 </div>
               </div>
-              <p class="text-xs text-gray-500 mt-2">{{ new Date(lastSyncStats.timestamp).toLocaleString() }}</p>
+              <p class="text-xs text-gray-500 mt-2 dark:text-slate-400">{{ new Date(lastSyncStats.timestamp).toLocaleString() }}</p>
             </div>
           </div>
         </div>
 
         <!-- How It Works -->
-        <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">How Sync Works</h3>
-          <ul class="space-y-2 text-sm text-gray-700">
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 dark:bg-blue-900/20 dark:border-blue-800">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3 dark:text-slate-100">How Sync Works</h3>
+          <ul class="space-y-2 text-sm text-gray-700 dark:text-slate-300">
             <li class="flex items-start gap-2">
-              <svg class="w-5 h-5 text-blue-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-blue-500 dark:text-blue-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
               <span>All notes (including deleted) are exchanged between all connected devices</span>
             </li>
             <li class="flex items-start gap-2">
-              <svg class="w-5 h-5 text-blue-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-blue-500 dark:text-blue-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
               <span>Conflicts are resolved automatically using timestamps (newest wins)</span>
             </li>
             <li class="flex items-start gap-2">
-              <svg class="w-5 h-5 text-blue-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-blue-500 dark:text-blue-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
               <span>Mesh network: All devices connect directly to each other</span>
             </li>
             <li class="flex items-start gap-2">
-              <svg class="w-5 h-5 text-blue-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-blue-500 dark:text-blue-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
               <span>No cloud server stores your data - it's purely peer-to-peer via WebRTC</span>
@@ -306,15 +306,15 @@
       </div>
 
       <!-- Error Messages -->
-      <div v-if="errorMessage" class="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
-        <svg class="w-5 h-5 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div v-if="errorMessage" class="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3 dark:bg-red-900/20 dark:border-red-800">
+        <svg class="w-5 h-5 text-red-500 mt-0.5 shrink-0 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
         <div class="flex-1">
-          <p class="text-sm font-medium text-red-900">Error</p>
-          <p class="text-sm text-red-700">{{ errorMessage }}</p>
+          <p class="text-sm font-medium text-red-900 dark:text-red-300">Error</p>
+          <p class="text-sm text-red-700 dark:text-red-400">{{ errorMessage }}</p>
         </div>
-        <button @click="errorMessage = ''" class="text-red-500 hover:text-red-700">
+        <button @click="errorMessage = ''" class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-200">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
           </svg>

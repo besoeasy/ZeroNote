@@ -6,27 +6,27 @@
 
   <div v-else-if="error" class="flex flex-col items-center justify-center h-full p-8">
     <div class="text-center max-w-xl">
-      <h2 class="text-2xl font-bold text-gray-900 mb-2">Shared note not found</h2>
-      <p class="text-gray-600 mb-4">{{ error }}</p>
-      <p class="text-xs text-gray-500 mb-6 break-all">CID: {{ cid }}</p>
+      <h2 class="text-2xl font-bold text-gray-900 mb-2 dark:text-slate-100">Shared note not found</h2>
+      <p class="text-gray-600 mb-4 dark:text-slate-300">{{ error }}</p>
+      <p class="text-xs text-gray-500 mb-6 break-all dark:text-slate-500">CID: {{ cid }}</p>
       <router-link to="/dashboard" class="inline-flex items-center px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
         Back to Dashboard
       </router-link>
     </div>
   </div>
 
-  <div v-else-if="isLocked" class="flex flex-col items-center justify-center h-full p-8 bg-gray-50">
-    <div class="w-full max-w-xl bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
-      <div class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Encrypted Share</div>
-      <h2 class="text-xl font-bold text-gray-900 mb-2">This shared note is locked</h2>
-      <p class="text-sm text-gray-600 mb-4">Enter the decryption key to view it.</p>
+  <div v-else-if="isLocked" class="flex flex-col items-center justify-center h-full p-8 bg-gray-50 dark:bg-slate-950">
+    <div class="w-full max-w-xl bg-white border border-gray-200 rounded-2xl shadow-sm p-6 dark:bg-slate-950 dark:border-slate-800">
+      <div class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide dark:text-slate-400">Encrypted Share</div>
+      <h2 class="text-xl font-bold text-gray-900 mb-2 dark:text-slate-100">This shared note is locked</h2>
+      <p class="text-sm text-gray-600 mb-4 dark:text-slate-300">Enter the decryption key to view it.</p>
 
       <div class="flex flex-col gap-3">
         <input
           v-model="enteredKey"
           type="text"
           placeholder="Paste key..."
-          class="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 focus:border-gray-900 focus:outline-none"
+          class="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 focus:border-gray-900 focus:outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:ring-slate-600"
         />
         <button
           @click="attemptDecrypt"
@@ -35,30 +35,30 @@
         >
           {{ isDecrypting ? "Decrypting..." : "Decrypt" }}
         </button>
-        <p v-if="lockError" class="text-sm text-red-600">{{ lockError }}</p>
-        <p class="text-xs text-gray-500 break-all">CID: {{ cid }}</p>
+        <p v-if="lockError" class="text-sm text-red-600 dark:text-red-300">{{ lockError }}</p>
+        <p class="text-xs text-gray-500 break-all dark:text-slate-500">CID: {{ cid }}</p>
       </div>
     </div>
   </div>
 
-  <div v-else class="h-full flex flex-col bg-white">
-    <div class="flex-1 overflow-auto bg-gray-50">
+  <div v-else class="h-full flex flex-col bg-white dark:bg-slate-950">
+    <div class="flex-1 overflow-auto bg-gray-50 dark:bg-slate-950">
       <div class="mx-auto p-6 md:p-12">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <!-- Left Column - Tags & Metadata -->
           <div class="lg:col-span-1 space-y-4">
-            <div class="p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
-              <div class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Shared Note</div>
-              <div class="text-sm font-semibold text-gray-900 truncate">{{ parsed?.title || 'Untitled Note' }}</div>
-              <div class="mt-2 text-xs text-gray-500 break-all">IPFS: {{ cid }}</div>
+            <div class="p-4 bg-white rounded-xl border border-gray-200 shadow-sm dark:bg-slate-950 dark:border-slate-800">
+              <div class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide dark:text-slate-400">Shared Note</div>
+              <div class="text-sm font-semibold text-gray-900 truncate dark:text-slate-100">{{ parsed?.title || 'Untitled Note' }}</div>
+              <div class="mt-2 text-xs text-gray-500 break-all dark:text-slate-500">IPFS: {{ cid }}</div>
             </div>
 
             <template v-for="(tag, index) in parsed?.allTags" :key="`${tag.key}-${index}`">
               <component :is="getSupertagComponent(tag.key)" v-if="getSupertagComponent(tag.key)" :value="tag.value" :parsed="parsed" />
             </template>
 
-            <div v-if="sharedAttachments.length" class="p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
-              <div class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wide">
+            <div v-if="sharedAttachments.length" class="p-4 bg-white rounded-xl border border-gray-200 shadow-sm dark:bg-slate-950 dark:border-slate-800">
+              <div class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wide dark:text-slate-400">
                 Attachments ({{ sharedAttachments.length }})
               </div>
               <div class="space-y-2">
@@ -67,18 +67,18 @@
                   :key="att.cid"
                   @click="downloadSharedAttachment(att)"
                   :disabled="isDownloadingCid === att.cid"
-                  class="w-full flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                  class="w-full flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed dark:bg-slate-900/60 dark:hover:bg-slate-900 dark:border-slate-800"
                 >
-                  <div class="shrink-0 w-9 h-9 rounded-lg bg-white border border-gray-200 flex items-center justify-center">
-                    <span class="text-sm font-semibold text-gray-700">{{ isDownloadingCid === att.cid ? "…" : "⬇" }}</span>
+                  <div class="shrink-0 w-9 h-9 rounded-lg bg-white border border-gray-200 flex items-center justify-center dark:bg-slate-950 dark:border-slate-800">
+                    <span class="text-sm font-semibold text-gray-700 dark:text-slate-200">{{ isDownloadingCid === att.cid ? "…" : "⬇" }}</span>
                   </div>
                   <div class="flex-1 min-w-0 text-left">
-                    <div class="text-xs font-semibold text-gray-900 truncate">{{ att.name }}</div>
-                    <div class="text-xs text-gray-500 truncate">{{ formatBytes(att.size) }}</div>
+                    <div class="text-xs font-semibold text-gray-900 truncate dark:text-slate-100">{{ att.name }}</div>
+                    <div class="text-xs text-gray-500 truncate dark:text-slate-400">{{ formatBytes(att.size) }}</div>
                   </div>
                 </button>
               </div>
-              <p v-if="downloadError" class="mt-3 text-xs text-red-600">{{ downloadError }}</p>
+              <p v-if="downloadError" class="mt-3 text-xs text-red-600 dark:text-red-300">{{ downloadError }}</p>
             </div>
 
             <ParseReferences v-if="parsed?.references?.length" :references="parsed.references" />
@@ -86,8 +86,8 @@
 
           <!-- Right Column - Content -->
           <div class="lg:col-span-2">
-            <div class="p-8 bg-white rounded-xl border border-gray-200 shadow-sm min-h-100">
-              <div class="prose prose-lg max-w-none" v-html="renderedMarkdown"></div>
+            <div class="p-8 bg-white rounded-xl border border-gray-200 shadow-sm min-h-100 dark:bg-slate-950 dark:border-slate-800">
+              <div class="prose prose-lg max-w-none dark:prose-invert" v-html="renderedMarkdown"></div>
             </div>
           </div>
         </div>
@@ -259,6 +259,10 @@ const downloadSharedAttachment = async (att) => {
   color: #1f2937;
 }
 
+:global(.dark) .prose {
+  color: #e2e8f0;
+}
+
 .prose h1,
 .prose h2,
 .prose h3,
@@ -278,6 +282,10 @@ const downloadSharedAttachment = async (att) => {
   text-decoration: none;
 }
 
+:global(.dark) .prose a {
+  color: #60a5fa;
+}
+
 .prose a:hover {
   text-decoration: underline;
 }
@@ -287,6 +295,11 @@ const downloadSharedAttachment = async (att) => {
   padding: 0.125rem 0.25rem;
   border-radius: 0.25rem;
   font-size: 0.875em;
+}
+
+:global(.dark) .prose code {
+  background-color: #0f172a;
+  color: #e2e8f0;
 }
 
 .prose pre {

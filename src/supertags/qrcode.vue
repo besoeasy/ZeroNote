@@ -1,9 +1,9 @@
 <template>
-  <div v-if="text" class="p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
-    <div class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wide">QR Code</div>
+  <div v-if="text" class="p-4 bg-white rounded-xl border border-gray-200 shadow-sm dark:bg-slate-950 dark:border-slate-800">
+    <div class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wide dark:text-slate-400">QR Code</div>
     <div class="flex flex-col items-center gap-3">
-      <canvas ref="qrcodeCanvas" class="max-w-full h-auto border border-gray-200 rounded-lg"></canvas>
-      <div class="text-xs text-gray-600 break-all text-center px-2">
+      <canvas ref="qrcodeCanvas" class="max-w-full h-auto border border-gray-200 rounded-lg dark:border-slate-800"></canvas>
+      <div class="text-xs text-gray-600 break-all text-center px-2 dark:text-slate-300">
         {{ text }}
       </div>
       <button 

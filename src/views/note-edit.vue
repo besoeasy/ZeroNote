@@ -1,22 +1,22 @@
 <template>
-  <div v-if="isLoaded" class="h-full flex flex-col bg-gray-50">
+  <div v-if="isLoaded" class="h-full flex flex-col bg-gray-50 dark:bg-slate-950">
     <!-- Header -->
-    <div class="bg-white border-b border-gray-200 px-6 py-4">
+    <div class="bg-white border-b border-gray-200 px-6 py-4 dark:bg-slate-950 dark:border-slate-800">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-4">
-          <button @click="handleCancel" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors" title="Back">
+          <button @click="handleCancel" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors dark:text-slate-300 dark:hover:bg-slate-900" title="Back">
             <ArrowLeft class="w-5 h-5" />
           </button>
-          <h2 class="text-2xl font-bold text-gray-900">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-slate-100">
             {{ isNewNote ? "New Note" : "Edit Note" }}
           </h2>
         </div>
         <div class="flex items-center space-x-3">
-          <button @click="handleCancel" class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 rounded-lg transition-colors">Cancel</button>
+          <button @click="handleCancel" class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 rounded-lg transition-colors dark:text-slate-300 dark:hover:bg-slate-900">Cancel</button>
           <button
             @click="handleSaveClick"
             :disabled="!noteContent.trim()"
-            class="flex items-center px-6 py-2 text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-lg transition-colors"
+            class="flex items-center px-6 py-2 text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-lg transition-colors dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
           >
             <Save class="w-4 h-4 mr-2" />
             Save
@@ -28,11 +28,11 @@
     <!-- Main Editor Layout -->
     <div class="flex-1 overflow-hidden flex">
       <!-- Left Sidebar - Available Tags (1/3) -->
-      <div class="w-1/3 border-r border-gray-200 bg-white overflow-y-auto">
+      <div class="w-1/3 border-r border-gray-200 bg-white overflow-y-auto dark:bg-slate-950 dark:border-slate-800">
         <div class="p-6">
           <div class="mb-6">
-            <h3 class="text-sm font-semibold text-gray-900 mb-2">Available Tags</h3>
-            <p class="text-xs text-gray-500">Click to insert into your note</p>
+            <h3 class="text-sm font-semibold text-gray-900 mb-2 dark:text-slate-100">Available Tags</h3>
+            <p class="text-xs text-gray-500 dark:text-slate-400">Click to insert into your note</p>
           </div>
 
           <!-- Search -->
@@ -41,30 +41,30 @@
               v-model="tagSearch"
               type="text"
               placeholder="Search tags..."
-              class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 focus:outline-none"
+              class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 focus:outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:ring-slate-600"
             />
           </div>
 
           <!-- Tags by Category -->
           <div class="space-y-6">
             <div v-for="category in filteredCategories" :key="category" class="space-y-2">
-              <h4 class="text-xs font-semibold text-gray-700 uppercase tracking-wider">{{ category }}</h4>
+              <h4 class="text-xs font-semibold text-gray-700 uppercase tracking-wider dark:text-slate-300">{{ category }}</h4>
               <div class="space-y-1">
                 <button
                   v-for="tag in getTagsByCategory(category)"
                   :key="tag.name"
                   @click="insertTag(tag)"
-                  class="w-full text-left px-3 py-2.5 rounded-lg border border-gray-200 hover:border-gray-900 hover:bg-gray-50 transition-all group"
+                  class="w-full text-left px-3 py-2.5 rounded-lg border border-gray-200 hover:border-gray-900 hover:bg-gray-50 transition-all group dark:border-slate-800 dark:hover:border-slate-600 dark:hover:bg-slate-900"
                 >
                   <div class="flex items-start gap-3">
                     <span class="text-xl shrink-0">{{ tag.icon }}</span>
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center gap-2 mb-1">
-                        <span class="text-sm font-medium text-gray-900">{{ tag.displayName }}</span>
+                        <span class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ tag.displayName }}</span>
                       </div>
-                      <code class="text-xs text-gray-600 font-mono mt-2 block w-fit">#@{{ tag.example }}</code>
+                      <code class="text-xs text-gray-600 font-mono mt-2 block w-fit dark:text-slate-300">#@{{ tag.example }}</code>
 
-                      <p class="text-xs text-gray-500 mt-1">{{ tag.description }}</p>
+                      <p class="text-xs text-gray-500 mt-1 dark:text-slate-400">{{ tag.description }}</p>
                     </div>
                   </div>
                 </button>
@@ -73,34 +73,34 @@
           </div>
 
           <!-- Quick Templates -->
-          <div class="mt-8 pt-6 border-t border-gray-200">
-            <h4 class="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-3">Quick Templates</h4>
+          <div class="mt-8 pt-6 border-t border-gray-200 dark:border-slate-800">
+            <h4 class="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-3 dark:text-slate-300">Quick Templates</h4>
             <div class="space-y-2">
               <button
                 @click="insertTemplate('password')"
-                class="w-full text-left px-3 py-2.5 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 transition-colors"
+                class="w-full text-left px-3 py-2.5 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 transition-colors dark:border-blue-500/30 dark:bg-blue-500/10 dark:hover:bg-blue-500/20"
               >
                 <div class="flex items-center gap-2">
-                  <Key class="w-4 h-4 text-blue-600" />
-                  <span class="text-sm font-medium text-blue-900">Password Template</span>
+                  <Key class="w-4 h-4 text-blue-600 dark:text-blue-300" />
+                  <span class="text-sm font-medium text-blue-900 dark:text-blue-100">Password Template</span>
                 </div>
               </button>
               <button
                 @click="insertTemplate('bookmark')"
-                class="w-full text-left px-3 py-2.5 rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 transition-colors"
+                class="w-full text-left px-3 py-2.5 rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 transition-colors dark:border-amber-500/30 dark:bg-amber-500/10 dark:hover:bg-amber-500/20"
               >
                 <div class="flex items-center gap-2">
-                  <Bookmark class="w-4 h-4 text-amber-600" />
-                  <span class="text-sm font-medium text-amber-900">Bookmark Template</span>
+                  <Bookmark class="w-4 h-4 text-amber-600 dark:text-amber-300" />
+                  <span class="text-sm font-medium text-amber-900 dark:text-amber-100">Bookmark Template</span>
                 </div>
               </button>
               <button
                 @click="insertTemplate('note')"
-                class="w-full text-left px-3 py-2.5 rounded-lg border border-green-200 bg-green-50 hover:bg-green-100 transition-colors"
+                class="w-full text-left px-3 py-2.5 rounded-lg border border-green-200 bg-green-50 hover:bg-green-100 transition-colors dark:border-green-500/30 dark:bg-green-500/10 dark:hover:bg-green-500/20"
               >
                 <div class="flex items-center gap-2">
-                  <FileText class="w-4 h-4 text-green-600" />
-                  <span class="text-sm font-medium text-green-900">Note Template</span>
+                  <FileText class="w-4 h-4 text-green-600 dark:text-green-300" />
+                  <span class="text-sm font-medium text-green-900 dark:text-green-100">Note Template</span>
                 </div>
               </button>
             </div>
@@ -109,18 +109,18 @@
       </div>
 
       <!-- Right Side - Markdown Editor (2/3) -->
-      <div class="flex-1 flex flex-col bg-white">
+      <div class="flex-1 flex flex-col bg-white dark:bg-slate-950">
         <!-- Editor Toolbar -->
-        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 dark:bg-slate-900/60 dark:border-slate-800">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
-              <h3 class="text-sm font-semibold text-gray-900">Content</h3>
-              <span class="text-xs text-gray-500">{{ noteContent.length }} characters</span>
+              <h3 class="text-sm font-semibold text-gray-900 dark:text-slate-100">Content</h3>
+              <span class="text-xs text-gray-500 dark:text-slate-400">{{ noteContent.length }} characters</span>
               <a
                 href="https://www.markdownguide.org/cheat-sheet/"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-700 hover:underline"
+                class="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300"
                 title="Markdown formatting help"
               >
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,8 +130,8 @@
               </a>
             </div>
             <div class="flex items-center gap-2">
-              <Paperclip class="w-4 h-4 text-gray-600" />
-              <span class="text-xs text-gray-600">{{ attachments.length }} attachment{{ attachments.length !== 1 ? "s" : "" }}</span>
+              <Paperclip class="w-4 h-4 text-gray-600 dark:text-slate-400" />
+              <span class="text-xs text-gray-600 dark:text-slate-400">{{ attachments.length }} attachment{{ attachments.length !== 1 ? "s" : "" }}</span>
             </div>
           </div>
         </div>
@@ -143,19 +143,19 @@
             v-model="noteContent"
             @keydown.tab.prevent="handleTab"
             placeholder="Start typing your note... Click tags on the left to insert them."
-            class="w-full h-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 focus:border-gray-900 focus:outline-none resize-none text-sm leading-relaxed"
+            class="w-full h-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 focus:border-gray-900 focus:outline-none resize-none text-sm leading-relaxed dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 dark:focus:ring-slate-600"
             style="font-family: 'SF Mono', 'Monaco', monospace"
           ></textarea>
         </div>
 
         <!-- Attachments Section -->
-        <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+        <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 dark:bg-slate-900/60 dark:border-slate-800">
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2">
-              <Paperclip class="w-4 h-4 text-gray-600" />
-              <span class="text-xs font-semibold text-gray-900">Attachments</span>
+              <Paperclip class="w-4 h-4 text-gray-600 dark:text-slate-400" />
+              <span class="text-xs font-semibold text-gray-900 dark:text-slate-100">Attachments</span>
             </div>
-            <label class="flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors">
+            <label class="flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors dark:text-slate-300 dark:hover:bg-slate-900">
               <Upload class="w-3.5 h-3.5 mr-1.5" />
               Add Files
               <input type="file" multiple @change="handleFileSelect" class="hidden" accept="image/*,.pdf,.doc,.docx,.txt,.zip" />
@@ -164,18 +164,18 @@
 
           <!-- Attachments List -->
           <div v-if="attachments.length > 0" class="grid grid-cols-4 gap-3">
-            <div v-for="(att, index) in attachments" :key="index" class="relative p-3 bg-white rounded-lg border border-gray-200">
+            <div v-for="(att, index) in attachments" :key="index" class="relative p-3 bg-white rounded-lg border border-gray-200 dark:bg-slate-950 dark:border-slate-800">
               <button @click="removeAttachment(index)" class="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600">
                 <X class="w-3 h-3" />
               </button>
               <div v-if="att.preview" class="w-full h-20 rounded overflow-hidden mb-2">
                 <img :src="att.preview" :alt="att.name" class="w-full h-full object-cover" />
               </div>
-              <div v-else class="w-full h-20 rounded bg-gray-100 flex items-center justify-center mb-2">
-                <File class="w-8 h-8 text-gray-400" />
+              <div v-else class="w-full h-20 rounded bg-gray-100 flex items-center justify-center mb-2 dark:bg-slate-900">
+                <File class="w-8 h-8 text-gray-400 dark:text-slate-500" />
               </div>
-              <p class="text-xs font-medium text-gray-900 truncate">{{ att.name }}</p>
-              <p class="text-xs text-gray-500">{{ formatFileSize(att.size) }}</p>
+              <p class="text-xs font-medium text-gray-900 truncate dark:text-slate-100">{{ att.name }}</p>
+              <p class="text-xs text-gray-500 dark:text-slate-400">{{ formatFileSize(att.size) }}</p>
             </div>
           </div>
         </div>

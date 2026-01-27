@@ -8,22 +8,22 @@
           <!-- Command Bar (Sticky) -->
           <div class="sticky top-4 z-30 mb-6">
             <div class="relative group">
-              <div class="absolute -inset-0.5 rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-500 bg-linear-to-r from-gray-200 via-gray-100 to-white"></div>
-              <div class="relative bg-white/90 backdrop-blur-xl border border-gray-100 rounded-3xl shadow-sm overflow-hidden">
+              <div class="absolute -inset-0.5 rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-500 bg-linear-to-r from-gray-200 via-gray-100 to-white dark:from-slate-800 dark:via-slate-900 dark:to-slate-950"></div>
+              <div class="relative bg-white/90 backdrop-blur-xl border border-gray-100 rounded-3xl shadow-sm overflow-hidden dark:bg-slate-950/80 dark:border-slate-800">
                 <div class="p-4 md:p-5">
                   <div class="flex flex-col md:flex-row md:items-center gap-3">
                     <!-- Search -->
                     <div class="relative flex-1">
-                      <Search class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                      <Search class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 dark:text-slate-500" />
                       <input
                         ref="searchInputRef"
                         v-model="searchQuery"
                         type="text"
                         placeholder="Search notes..."
-                        class="w-full pl-12 pr-12 py-3.5 bg-transparent rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 text-gray-700 placeholder-gray-400 transition-all"
+                        class="w-full pl-12 pr-12 py-3.5 bg-transparent rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 text-gray-700 placeholder-gray-400 transition-all dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:ring-slate-600"
                       />
                       <div class="absolute right-3 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-1 pointer-events-none">
-                        <kbd class="px-1.5 py-0.5 text-[10px] font-black text-gray-400 bg-gray-50 border border-gray-200 rounded">/</kbd>
+                        <kbd class="px-1.5 py-0.5 text-[10px] font-black text-gray-400 bg-gray-50 border border-gray-200 rounded dark:bg-slate-900 dark:border-slate-700 dark:text-slate-500">/</kbd>
                       </div>
                     </div>
 
@@ -39,11 +39,11 @@
                       </button>
 
                       <button
-                        class="lg:hidden inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white border border-gray-200 shadow-sm hover:bg-gray-50 transition-all duration-300"
+                        class="lg:hidden inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white border border-gray-200 shadow-sm hover:bg-gray-50 transition-all duration-300 dark:bg-slate-950 dark:border-slate-800 dark:hover:bg-slate-900"
                         @click="isFiltersOpen = true"
                         title="Filters"
                       >
-                        <SlidersHorizontal class="w-5 h-5 text-gray-600" />
+                        <SlidersHorizontal class="w-5 h-5 text-gray-600 dark:text-slate-300" />
                       </button>
                     </div>
                   </div>
@@ -53,7 +53,7 @@
                     <div class="flex items-center gap-2 flex-wrap">
                       <button
                         class="px-3 py-1.5 rounded-full text-xs font-black transition-all duration-300"
-                        :class="pinnedOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20' : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'"
+                        :class="pinnedOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900' : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
                         @click="pinnedOnly = !pinnedOnly"
                       >
                         📌 Pinned
@@ -61,7 +61,7 @@
 
                       <button
                         class="px-3 py-1.5 rounded-full text-xs font-black transition-all duration-300"
-                        :class="hasAttachmentsOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20' : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'"
+                        :class="hasAttachmentsOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900' : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
                         @click="hasAttachmentsOnly = !hasAttachmentsOnly"
                       >
                         📎 Attachments
@@ -69,7 +69,7 @@
 
                       <button
                         class="px-3 py-1.5 rounded-full text-xs font-black transition-all duration-300"
-                        :class="showDeleted ? 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200' : 'bg-gray-900 text-white shadow-lg shadow-gray-900/20'"
+                        :class="showDeleted ? 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800' : 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900'"
                         @click="showDeleted = !showDeleted"
                       >
                         {{ showDeleted ? '👁️ Deleted: ON' : '🙈 Deleted: OFF' }}
@@ -77,7 +77,7 @@
 
                       <button
                         v-if="hasAnyActiveFilters"
-                        class="px-3 py-1.5 rounded-full text-xs font-black bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 transition-all duration-300"
+                        class="px-3 py-1.5 rounded-full text-xs font-black bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 transition-all duration-300 dark:bg-slate-950 dark:text-slate-200 dark:border-slate-800 dark:hover:bg-slate-900"
                         @click="clearAllFilters"
                       >
                         Clear all
@@ -85,24 +85,24 @@
                     </div>
 
                     <div class="md:ml-auto flex items-center gap-2">
-                      <div class="text-xs font-black text-gray-500 uppercase tracking-wide">Showing</div>
+                      <div class="text-xs font-black text-gray-500 uppercase tracking-wide dark:text-slate-400">Showing</div>
                       <div class="px-3 py-1.5 rounded-full bg-gray-900 text-white text-xs font-black shadow-lg shadow-gray-900/20">
                         {{ filteredNotes.length }}
                       </div>
-                      <div class="text-xs text-gray-400">/ {{ notes.length }}</div>
+                      <div class="text-xs text-gray-400 dark:text-slate-500">/ {{ notes.length }}</div>
                     </div>
                   </div>
 
                   <!-- Active Filter Summary -->
                   <div v-if="activeFilterChips.length" class="mt-3 flex items-center gap-2 flex-wrap">
-                    <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active</div>
+                    <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest dark:text-slate-500">Active</div>
                     <div
                       v-for="chip in activeFilterChips"
                       :key="chip.key"
-                      class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-black bg-white border border-gray-200 text-gray-700"
+                      class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-black bg-white border border-gray-200 text-gray-700 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-200"
                     >
                       <span class="truncate max-w-55">{{ chip.label }}</span>
-                      <button class="text-gray-400 hover:text-gray-900 transition-colors" @click="chip.onRemove" title="Remove">
+                      <button class="text-gray-400 hover:text-gray-900 transition-colors dark:hover:text-slate-100" @click="chip.onRemove" title="Remove">
                         ✕
                       </button>
                     </div>
@@ -131,7 +131,7 @@
                 :style="{ '--accent-color': getCardAccentColor(note) }"
               >
                 <!-- Card Body -->
-                <div class="card-body h-full flex flex-col relative bg-white rounded-3xl overflow-hidden transition-all duration-500 border border-gray-100">
+                <div class="card-body h-full flex flex-col relative bg-white rounded-3xl overflow-hidden transition-all duration-500 border border-gray-100 dark:bg-slate-950 dark:border-slate-800">
                   
                   <!-- Top Gradient Accent -->
                   <div 
@@ -152,25 +152,25 @@
                           {{ note.parsed.icon }}
                         </span>
                         <!-- Fallback Icon if no user icon -->
-                        <div v-else class="w-10 h-10 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-300 group-hover:bg-(--accent-color) group-hover:bg-opacity-10 group-hover:text-(--accent-color) transition-all duration-300">
+                        <div v-else class="w-10 h-10 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-300 group-hover:bg-(--accent-color) group-hover:bg-opacity-10 group-hover:text-(--accent-color) transition-all duration-300 dark:bg-slate-900 dark:text-slate-500">
                           <FileText class="w-5 h-5" />
                         </div>
                       </div>
                       
                       <div class="flex items-center gap-2">
-                        <div v-if="note.parsed.pinned" class="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center shadow-inner">
+                        <div v-if="note.parsed.pinned" class="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center shadow-inner dark:bg-amber-500/10">
                           <span class="text-amber-400 text-sm transform rotate-45">📌</span>
                         </div>
                       </div>
                     </div>
 
                     <!-- Title -->
-                    <h3 class="text-xl font-bold text-gray-900 mb-3 leading-tight group-hover:text-(--accent-color) transition-colors duration-300 line-clamp-2">
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 leading-tight group-hover:text-(--accent-color) transition-colors duration-300 line-clamp-2 dark:text-slate-100">
                       {{ note.parsed.title || "Untitled Note" }}
                     </h3>
 
                     <!-- Content Preview -->
-                    <p class="text-sm text-gray-500 leading-relaxed line-clamp-3 mb-6 font-medium opacity-90">
+                    <p class="text-sm text-gray-500 leading-relaxed line-clamp-3 mb-6 font-medium opacity-90 dark:text-slate-400">
                       {{ note.parsed.content || "No additional text..." }}
                     </p>
 
@@ -181,15 +181,15 @@
                         <span 
                           v-for="tag in (note.parsed.customTags || []).slice(0, 2)"
                           :key="tag"
-                          class="px-2.5 py-1 rounded-lg bg-gray-50 text-gray-500 text-[10px] uppercase tracking-wider font-bold group-hover:bg-(--accent-color) group-hover:text-white transition-colors duration-300"
+                          class="px-2.5 py-1 rounded-lg bg-gray-50 text-gray-500 text-[10px] uppercase tracking-wider font-bold group-hover:bg-(--accent-color) group-hover:text-white transition-colors duration-300 dark:bg-slate-900 dark:text-slate-400"
                         >
                           #{{ tag }}
                         </span>
-                        <span v-if="(note.parsed.customTags || []).length > 2" class="text-[10px] text-gray-400 py-1 font-bold">+{{ (note.parsed.customTags || []).length - 2 }}</span>
+                        <span v-if="(note.parsed.customTags || []).length > 2" class="text-[10px] text-gray-400 py-1 font-bold dark:text-slate-500">+{{ (note.parsed.customTags || []).length - 2 }}</span>
                       </div>
                       
                       <!-- Date -->
-                      <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest group-hover:text-gray-400 transition-colors">
+                      <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest group-hover:text-gray-400 transition-colors dark:text-slate-600 dark:group-hover:text-slate-500">
                         {{ formatShortDate(note.updatedAt) }}
                       </span>
                     </div>
@@ -198,7 +198,7 @@
                   <!-- Absolute Supertags (Bottom Left) -->
                   <div
                     v-if="getSupertags(note).length > 0"
-                    class="absolute bottom-0 left-0 w-full h-12 bg-linear-to-t from-white via-white to-transparent pointer-events-none z-0"
+                    class="absolute bottom-0 left-0 w-full h-12 bg-linear-to-t from-white via-white to-transparent pointer-events-none z-0 dark:from-slate-950 dark:via-slate-950"
                   ></div>
                 </div>
                 
@@ -211,10 +211,10 @@
                 <!-- Deleted Overlay -->
                 <div
                   v-if="note.deletedAt"
-                  class="absolute inset-0 flex flex-col items-center justify-center bg-white/80 rounded-3xl z-30 backdrop-blur-sm border-2 border-dashed border-red-100"
+                  class="absolute inset-0 flex flex-col items-center justify-center bg-white/80 rounded-3xl z-30 backdrop-blur-sm border-2 border-dashed border-red-100 dark:bg-slate-950/80 dark:border-red-500/30"
                 >
                   <div class="text-sm font-black text-red-500 mb-1 uppercase tracking-wide">Pending Deletion</div>
-                  <div class="text-xs text-gray-500 mb-4 font-medium">Deleted {{ formatDate(note.updatedAt) }}</div>
+                  <div class="text-xs text-gray-500 mb-4 font-medium dark:text-slate-400">Deleted {{ formatDate(note.updatedAt) }}</div>
                   <button
                     @click.stop="restoreNote(note)"
                     class="px-5 py-2.5 rounded-xl bg-gray-900 text-white text-xs font-bold hover:bg-black hover:scale-105 active:scale-95 transition-all shadow-xl shadow-gray-900/20"
@@ -240,14 +240,14 @@
             class="text-center py-32 animate-fade-in"
           >
             <div
-              class="inline-flex items-center justify-center w-24 h-24 bg-gray-50/50 rounded-full mb-6 shadow-lg shadow-gray-100 animate-float"
+              class="inline-flex items-center justify-center w-24 h-24 bg-gray-50/50 rounded-full mb-6 shadow-lg shadow-gray-100 animate-float dark:bg-slate-900/50 dark:shadow-slate-900/50"
             >
-              <FileText class="w-10 h-10 text-gray-300/80" />
+              <FileText class="w-10 h-10 text-gray-300/80 dark:text-slate-600" />
             </div>
-            <h3 class="text-2xl font-bold text-gray-400 mb-2">
+            <h3 class="text-2xl font-bold text-gray-400 mb-2 dark:text-slate-500">
               {{ searchQuery ? "No matches found" : "No notes yet" }}
             </h3>
-            <p class="text-gray-300 max-w-xs mx-auto text-sm">
+            <p class="text-gray-300 max-w-xs mx-auto text-sm dark:text-slate-600">
               {{
                 searchQuery
                   ? "Try searching for something else..."
@@ -261,19 +261,19 @@
         <aside class="hidden lg:block w-full lg:w-80 xl:w-96 shrink-0">
           <div class="sticky top-24 max-h-[calc(100vh-8rem)] overflow-auto pr-1">
             <div class="relative group">
-              <div class="absolute -inset-0.5 rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-500 bg-linear-to-br from-gray-200 via-gray-100 to-white"></div>
-              <div class="relative bg-white border border-gray-100 rounded-3xl shadow-sm overflow-hidden">
-                <div class="p-6 border-b border-gray-100">
+              <div class="absolute -inset-0.5 rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-500 bg-linear-to-br from-gray-200 via-gray-100 to-white dark:from-slate-900/80 dark:via-slate-900/40 dark:to-slate-950"></div>
+              <div class="relative bg-white border border-gray-100 rounded-3xl shadow-sm overflow-hidden dark:bg-slate-950 dark:border-slate-800">
+                <div class="p-6 border-b border-gray-100 dark:border-slate-800">
                   <div class="flex items-start justify-between gap-3">
                     <div class="min-w-0">
-                      <div class="text-xs font-black text-gray-500 uppercase tracking-wide">Supertag Filters</div>
-                      <div class="text-sm font-bold text-gray-900 mt-1">Narrow your dashboard</div>
-                      <div class="text-xs text-gray-500 mt-1">Search tags, toggle quick filters.</div>
+                      <div class="text-xs font-black text-gray-500 uppercase tracking-wide dark:text-slate-400">Supertag Filters</div>
+                      <div class="text-sm font-bold text-gray-900 mt-1 dark:text-slate-100">Narrow your dashboard</div>
+                      <div class="text-xs text-gray-500 mt-1 dark:text-slate-400">Search tags, toggle quick filters.</div>
                     </div>
                     <button
                       v-if="selectedSupertag"
                       @click="selectedSupertag = null"
-                      class="shrink-0 px-3 py-2 rounded-xl text-xs font-bold bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-all"
+                      class="shrink-0 px-3 py-2 rounded-xl text-xs font-bold bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-all dark:bg-slate-900/60 dark:hover:bg-slate-900 dark:border-slate-800 dark:text-slate-200"
                     >
                       Clear
                     </button>
@@ -285,21 +285,21 @@
                   <div class="grid grid-cols-3 gap-2 mb-4">
                     <button
                       class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
-                      :class="pinnedOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'"
+                      :class="pinnedOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
                       @click="pinnedOnly = !pinnedOnly"
                     >
                       📌 Pinned
                     </button>
                     <button
                       class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
-                      :class="hasAttachmentsOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'"
+                      :class="hasAttachmentsOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
                       @click="hasAttachmentsOnly = !hasAttachmentsOnly"
                     >
                       📎 Files
                     </button>
                     <button
                       class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
-                      :class="showDeleted ? 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200' : 'bg-gray-900 text-white shadow-lg shadow-gray-900/20'"
+                      :class="showDeleted ? 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800' : 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900'"
                       @click="showDeleted = !showDeleted"
                     >
                       {{ showDeleted ? '👁️ Del' : '🙈 Del' }}
@@ -308,12 +308,12 @@
 
                   <!-- Tag search -->
                   <div class="relative mb-4">
-                    <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-slate-500" />
                     <input
                       v-model="tagSearchQuery"
                       type="text"
                       placeholder="Search supertags..."
-                      class="w-full pl-9 pr-3 py-2.5 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 text-sm"
+                      class="w-full pl-9 pr-3 py-2.5 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 text-sm dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:ring-slate-600 dark:bg-slate-950"
                     />
                   </div>
 
@@ -323,8 +323,8 @@
                       class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300"
                       :class="
                         selectedSupertag === null
-                          ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20'
-                          : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                          ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900'
+                          : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'
                       "
                     >
                       <span class="flex items-center gap-2">
@@ -341,8 +341,8 @@
                       class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300"
                       :class="
                         selectedSupertag === tag.name
-                          ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20'
-                          : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                          ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900'
+                          : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'
                       "
                     >
                       <span class="flex items-center gap-2 min-w-0">
@@ -355,8 +355,8 @@
                     </button>
 
                     <div v-if="!filteredAvailableSupertags.length" class="px-4 py-6 text-center">
-                      <div class="text-sm font-black text-gray-400">No tags found</div>
-                      <div class="text-xs text-gray-400 mt-1">Try a different search.</div>
+                      <div class="text-sm font-black text-gray-400 dark:text-slate-500">No tags found</div>
+                      <div class="text-xs text-gray-400 mt-1 dark:text-slate-500">Try a different search.</div>
                     </div>
                   </div>
                 </div>
@@ -371,15 +371,15 @@
     <div v-if="isFiltersOpen" class="fixed inset-0 z-40 lg:hidden">
       <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="isFiltersOpen = false"></div>
       <div
-        class="absolute right-0 top-0 h-full w-[92%] max-w-sm bg-white border-l border-gray-200 shadow-2xl transform transition-transform duration-300"
+        class="absolute right-0 top-0 h-full w-[92%] max-w-sm bg-white border-l border-gray-200 shadow-2xl transform transition-transform duration-300 dark:bg-slate-950 dark:border-slate-800"
       >
-        <div class="p-5 border-b border-gray-100 flex items-center justify-between">
+        <div class="p-5 border-b border-gray-100 flex items-center justify-between dark:border-slate-800">
           <div>
-            <div class="text-xs font-black text-gray-500 uppercase tracking-wide">Supertag Filters</div>
-            <div class="text-sm font-bold text-gray-900 mt-1">Filter notes</div>
+            <div class="text-xs font-black text-gray-500 uppercase tracking-wide dark:text-slate-400">Supertag Filters</div>
+            <div class="text-sm font-bold text-gray-900 mt-1 dark:text-slate-100">Filter notes</div>
           </div>
           <button
-            class="w-10 h-10 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 transition-all"
+            class="w-10 h-10 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 transition-all dark:bg-slate-950 dark:border-slate-800 dark:hover:bg-slate-900 dark:text-slate-100"
             @click="isFiltersOpen = false"
             title="Close"
           >
@@ -391,21 +391,21 @@
           <div class="grid grid-cols-3 gap-2 mb-4">
             <button
               class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
-              :class="pinnedOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'"
+              :class="pinnedOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
               @click="pinnedOnly = !pinnedOnly"
             >
               📌 Pinned
             </button>
             <button
               class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
-              :class="hasAttachmentsOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'"
+              :class="hasAttachmentsOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
               @click="hasAttachmentsOnly = !hasAttachmentsOnly"
             >
               📎 Files
             </button>
             <button
               class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
-              :class="showDeleted ? 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200' : 'bg-gray-900 text-white shadow-lg shadow-gray-900/20'"
+              :class="showDeleted ? 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800' : 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900'"
               @click="showDeleted = !showDeleted"
             >
               {{ showDeleted ? '👁️ Del' : '🙈 Del' }}
@@ -413,12 +413,12 @@
           </div>
 
           <div class="relative mb-4">
-            <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-slate-500" />
             <input
               v-model="tagSearchQuery"
               type="text"
               placeholder="Search supertags..."
-              class="w-full pl-9 pr-3 py-2.5 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 text-sm"
+              class="w-full pl-9 pr-3 py-2.5 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 text-sm dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:ring-slate-600 dark:bg-slate-950"
             />
           </div>
 
@@ -428,8 +428,8 @@
               class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300"
               :class="
                 selectedSupertag === null
-                  ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                  ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'
               "
             >
               <span class="flex items-center gap-2">
@@ -446,8 +446,8 @@
               class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300"
               :class="
                 selectedSupertag === tag.name
-                  ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                  ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'
               "
             >
               <span class="flex items-center gap-2 min-w-0">
@@ -460,8 +460,8 @@
             </button>
 
             <div v-if="!filteredAvailableSupertags.length" class="px-4 py-6 text-center">
-              <div class="text-sm font-black text-gray-400">No tags found</div>
-              <div class="text-xs text-gray-400 mt-1">Try a different search.</div>
+              <div class="text-sm font-black text-gray-400 dark:text-slate-500">No tags found</div>
+              <div class="text-xs text-gray-400 mt-1 dark:text-slate-500">Try a different search.</div>
             </div>
           </div>
         </div>

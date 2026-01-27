@@ -1,10 +1,10 @@
 <template>
-  <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+  <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow dark:bg-slate-950 dark:border-slate-800">
     <!-- Loading State -->
     <div v-if="isLoading" class="flex items-center justify-center py-12">
       <div class="text-center">
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto mb-2"></div>
-        <p class="text-gray-600 text-sm">Loading crypto data...</p>
+        <p class="text-gray-600 text-sm dark:text-slate-400">Loading crypto data...</p>
       </div>
     </div>
 
@@ -18,63 +18,63 @@
     <!-- Crypto Data -->
     <div v-else-if="cryptoData">
       <!-- Header -->
-      <div class="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 border-b border-gray-200">
+      <div class="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 border-b border-gray-200 dark:from-orange-950/30 dark:to-yellow-900/20 dark:border-slate-800">
         <div class="flex items-center gap-3 mb-3">
           <img v-if="cryptoData.image" :src="cryptoData.image" :alt="cryptoData.name" class="w-10 h-10 rounded-full shadow-sm" />
           <div class="flex-1 min-w-0">
-            <h4 class="text-lg font-bold text-gray-900 truncate">{{ cryptoData.name }}</h4>
+            <h4 class="text-lg font-bold text-gray-900 truncate dark:text-slate-100">{{ cryptoData.name }}</h4>
             <div class="flex items-center gap-2">
-              <span class="text-xs text-gray-600 font-mono uppercase">{{ cryptoData.symbol }}</span>
-              <span v-if="cryptoData.market_cap_rank" class="px-1.5 py-0.5 bg-orange-100 text-orange-700 text-xs font-bold rounded">
+              <span class="text-xs text-gray-600 font-mono uppercase dark:text-slate-400">{{ cryptoData.symbol }}</span>
+              <span v-if="cryptoData.market_cap_rank" class="px-1.5 py-0.5 bg-orange-100 text-orange-700 text-xs font-bold rounded dark:bg-orange-500/15 dark:text-orange-200">
                 #{{ cryptoData.market_cap_rank }}
               </span>
             </div>
           </div>
         </div>
-        <div class="text-2xl font-bold text-gray-900">{{ formatCryptoPrice(cryptoData.current_price) }}</div>
+        <div class="text-2xl font-bold text-gray-900 dark:text-slate-100">{{ formatCryptoPrice(cryptoData.current_price) }}</div>
         <div v-if="cryptoData.price_change_24h != null" class="flex items-center gap-1 mt-1">
           <span :class="getPriceChangeColor(cryptoData.price_change_24h)" class="text-xs font-semibold">
             {{ cryptoData.price_change_24h >= 0 ? "▲" : "▼" }}
             {{ Math.abs(cryptoData.price_change_24h).toFixed(2) }}%
           </span>
-          <span class="text-xs text-gray-500">24h</span>
+          <span class="text-xs text-gray-500 dark:text-slate-400">24h</span>
         </div>
       </div>
 
       <!-- Stats -->
       <div class="p-4 space-y-2 text-xs">
         <div v-if="cryptoData.market_cap" class="flex items-center justify-between">
-          <span class="text-gray-600">Market Cap</span>
-          <span class="font-bold text-gray-900">{{ formatLargeNumber(cryptoData.market_cap) }}</span>
+          <span class="text-gray-600 dark:text-slate-400">Market Cap</span>
+          <span class="font-bold text-gray-900 dark:text-slate-100">{{ formatLargeNumber(cryptoData.market_cap) }}</span>
         </div>
         <div v-if="cryptoData.total_volume" class="flex items-center justify-between">
-          <span class="text-gray-600">24h Volume</span>
-          <span class="font-bold text-gray-900">{{ formatLargeNumber(cryptoData.total_volume) }}</span>
+          <span class="text-gray-600 dark:text-slate-400">24h Volume</span>
+          <span class="font-bold text-gray-900 dark:text-slate-100">{{ formatLargeNumber(cryptoData.total_volume) }}</span>
         </div>
         <div v-if="cryptoData.high_24h && cryptoData.low_24h" class="flex items-center justify-between">
-          <span class="text-gray-600">24h Range</span>
-          <span class="font-bold text-gray-900"> {{ formatCryptoPrice(cryptoData.low_24h) }} - {{ formatCryptoPrice(cryptoData.high_24h) }} </span>
+          <span class="text-gray-600 dark:text-slate-400">24h Range</span>
+          <span class="font-bold text-gray-900 dark:text-slate-100"> {{ formatCryptoPrice(cryptoData.low_24h) }} - {{ formatCryptoPrice(cryptoData.high_24h) }} </span>
         </div>
-        <div v-if="cryptoData.price_change_7d != null" class="flex items-center justify-between pt-2 border-t border-gray-100">
-          <span class="text-gray-600">7d Change</span>
+        <div v-if="cryptoData.price_change_7d != null" class="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-slate-800">
+          <span class="text-gray-600 dark:text-slate-400">7d Change</span>
           <span :class="getPriceChangeColor(cryptoData.price_change_7d)" class="font-bold">
             {{ cryptoData.price_change_7d >= 0 ? "+" : "" }}{{ cryptoData.price_change_7d.toFixed(1) }}%
           </span>
         </div>
         <div v-if="cryptoData.price_change_30d != null" class="flex items-center justify-between">
-          <span class="text-gray-600">30d Change</span>
+          <span class="text-gray-600 dark:text-slate-400">30d Change</span>
           <span :class="getPriceChangeColor(cryptoData.price_change_30d)" class="font-bold">
             {{ cryptoData.price_change_30d >= 0 ? "+" : "" }}{{ cryptoData.price_change_30d.toFixed(1) }}%
           </span>
         </div>
 
         <!-- CoinGecko Link -->
-        <div class="pt-2 border-t border-gray-100">
+        <div class="pt-2 border-t border-gray-100 dark:border-slate-800">
           <a
             :href="`https://www.coingecko.com/en/coins/${cryptoData.id}`"
             target="_blank"
             rel="noopener noreferrer"
-            class="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 font-medium"
+            class="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 font-medium dark:text-blue-400 dark:hover:text-blue-300"
           >
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -201,8 +201,8 @@ const formatLargeNumber = (num) => {
 };
 
 const getPriceChangeColor = (change) => {
-  if (!change && change !== 0) return "text-gray-500";
-  return change >= 0 ? "text-green-600" : "text-red-600";
+  if (!change && change !== 0) return "text-gray-500 dark:text-slate-400";
+  return change >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400";
 };
 
 const loadCryptoData = async () => {

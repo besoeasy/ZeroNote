@@ -1,19 +1,19 @@
 <template>
   <div
-    class="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-white p-4"
+    class="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-white p-4 dark:from-slate-950 dark:to-slate-900"
   >
     <div class="max-w-4xl w-full mx-auto px-6 py-12 animate-fade-in-up">
       <!-- Header -->
       <div class="text-center mb-12">
         <h1
-          class="text-5xl md:text-6xl font-black text-gray-900 mb-4 tracking-tight uppercase"
+          class="text-5xl md:text-6xl font-black text-gray-900 mb-4 tracking-tight uppercase dark:text-slate-100"
         >
           Zero<span
             class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600"
             >Note</span
           >
         </h1>
-        <p class="text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto">
+        <p class="text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto dark:text-slate-300">
           A privacy-focused, local-first note-taking application. All your data
           stays on your device with optional encrypted sync.
         </p>
@@ -22,10 +22,10 @@
       <!-- Feature Highlights -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         <div
-          class="group bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+          class="group bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 dark:bg-slate-950 dark:border-slate-800"
         >
           <div
-            class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors"
+            class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors dark:bg-blue-500/10 dark:group-hover:bg-blue-500/20"
           >
             <svg
               class="w-6 h-6 text-blue-600"
@@ -41,17 +41,17 @@
               />
             </svg>
           </div>
-          <h3 class="text-lg font-bold text-gray-900 mb-2">Privacy First</h3>
-          <p class="text-sm text-gray-600 leading-relaxed">
+          <h3 class="text-lg font-bold text-gray-900 mb-2 dark:text-slate-100">Privacy First</h3>
+          <p class="text-sm text-gray-600 leading-relaxed dark:text-slate-300">
             Your notes never leave your device unless you choose to sync them.
           </p>
         </div>
 
         <div
-          class="group bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+          class="group bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 dark:bg-slate-950 dark:border-slate-800"
         >
           <div
-            class="w-12 h-12 bg-violet-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-violet-100 transition-colors"
+            class="w-12 h-12 bg-violet-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-violet-100 transition-colors dark:bg-violet-500/10 dark:group-hover:bg-violet-500/20"
           >
             <svg
               class="w-6 h-6 text-violet-600"
@@ -67,17 +67,17 @@
               />
             </svg>
           </div>
-          <h3 class="text-lg font-bold text-gray-900 mb-2">Lightning Fast</h3>
-          <p class="text-sm text-gray-600 leading-relaxed">
+          <h3 class="text-lg font-bold text-gray-900 mb-2 dark:text-slate-100">Lightning Fast</h3>
+          <p class="text-sm text-gray-600 leading-relaxed dark:text-slate-300">
             Built with modern web technologies for instant performance.
           </p>
         </div>
 
         <div
-          class="group bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+          class="group bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 dark:bg-slate-950 dark:border-slate-800"
         >
           <div
-            class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-emerald-100 transition-colors"
+            class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-emerald-100 transition-colors dark:bg-emerald-500/10 dark:group-hover:bg-emerald-500/20"
           >
             <svg
               class="w-6 h-6 text-emerald-600"
@@ -93,8 +93,8 @@
               />
             </svg>
           </div>
-          <h3 class="text-lg font-bold text-gray-900 mb-2">Open Source</h3>
-          <p class="text-sm text-gray-600 leading-relaxed">
+          <h3 class="text-lg font-bold text-gray-900 mb-2 dark:text-slate-100">Open Source</h3>
+          <p class="text-sm text-gray-600 leading-relaxed dark:text-slate-300">
             Transparent, auditable, and community-driven development.
           </p>
         </div>
@@ -104,15 +104,15 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Open Source Card -->
         <div
-          class="group relative overflow-hidden bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-xl transition-all duration-300"
+          class="group relative overflow-hidden bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 dark:bg-slate-950 dark:border-slate-800"
         >
           <div
-            class="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-gray-50 rounded-full blur-3xl opacity-50 group-hover:opacity-100 transition-opacity"
+            class="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-gray-50 rounded-full blur-3xl opacity-50 group-hover:opacity-100 transition-opacity dark:bg-slate-800/40"
           ></div>
           <div class="relative z-10">
             <div class="flex items-center gap-3 mb-4">
               <svg
-                class="w-8 h-8 text-gray-900"
+                class="w-8 h-8 text-gray-900 dark:text-slate-100"
                 fill="currentColor"
                 viewBox="0 0 24 24"
               >
@@ -122,9 +122,9 @@
                   clip-rule="evenodd"
                 />
               </svg>
-              <h2 class="text-2xl font-bold text-gray-900">Open Source</h2>
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-slate-100">Open Source</h2>
             </div>
-            <p class="text-gray-600 mb-6 leading-relaxed">
+            <p class="text-gray-600 mb-6 leading-relaxed dark:text-slate-300">
               ZeroNote is open source and welcomes contributions. Fork the
               repository, use AI tools to make improvements, and submit pull
               requests.
@@ -133,7 +133,7 @@
               href="https://github.com/besoeasy/ZeroNote"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 font-semibold text-sm"
+              class="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 font-semibold text-sm dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
             >
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path
@@ -149,7 +149,7 @@
 
         <!-- Support Card -->
         <div
-          class="group relative overflow-hidden bg-gradient-to-br from-orange-500 to-orange-600 rounded-3xl p-8 hover:shadow-xl transition-all duration-300"
+          class="group relative overflow-hidden bg-gradient-to-br from-orange-500 to-orange-600 rounded-3xl p-8 hover:shadow-xl transition-all duration-300 dark:from-orange-600 dark:to-orange-700"
         >
           <div
             class="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-white/10 rounded-full blur-3xl"
@@ -179,7 +179,7 @@
               href="https://sponsor.besoeasy.com/"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-2 px-6 py-3 bg-white text-orange-600 rounded-xl hover:bg-orange-50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 font-semibold text-sm"
+              class="inline-flex items-center gap-2 px-6 py-3 bg-white text-orange-600 rounded-xl hover:bg-orange-50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 font-semibold text-sm dark:bg-white/90 dark:text-orange-700 dark:hover:bg-white"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path

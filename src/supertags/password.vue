@@ -1,13 +1,13 @@
 <template>
-  <div class="p-4 bg-blue-50 rounded-xl border border-blue-200 shadow-sm">
-    <div class="text-xs font-semibold text-blue-600 mb-2 uppercase tracking-wide">Password</div>
+  <div class="p-4 bg-blue-50 rounded-xl border border-blue-200 shadow-sm dark:bg-blue-950/30 dark:border-blue-500/30">
+    <div class="text-xs font-semibold text-blue-600 mb-2 uppercase tracking-wide dark:text-blue-200">Password</div>
     <div class="flex items-center justify-between gap-3">
-      <div class="text-sm text-blue-900 font-mono font-bold select-all flex-1 break-all">
+      <div class="text-sm text-blue-900 font-mono font-bold select-all flex-1 break-all dark:text-blue-100">
         {{ showPassword ? value : "••••••••••••" }}
       </div>
       <button
         @click="showPassword = !showPassword"
-        class="px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 rounded-lg transition-colors flex-shrink-0"
+        class="px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 rounded-lg transition-colors flex-shrink-0 dark:text-blue-200 dark:hover:bg-blue-500/15"
       >
         {{ showPassword ? "Hide" : "Show" }}
       </button>

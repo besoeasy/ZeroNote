@@ -1,11 +1,11 @@
 <template>
-  <div class="p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
-    <div class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Tags</div>
+  <div class="p-4 bg-white rounded-xl border border-gray-200 shadow-sm dark:bg-slate-950 dark:border-slate-800">
+    <div class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide dark:text-slate-400">Tags</div>
     <div class="flex flex-wrap gap-2">
       <span
         v-for="tag in parsedTags"
         :key="tag"
-        class="px-3 py-1 bg-gray-900 text-white text-sm rounded-full"
+        class="px-3 py-1 bg-gray-900 text-white text-sm rounded-full dark:bg-slate-100 dark:text-slate-900"
       >
         {{ tag }}
       </span>

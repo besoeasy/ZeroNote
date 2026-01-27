@@ -1,14 +1,14 @@
 <template>
   <div class="flex flex-col gap-3 w-full">
-    <span class="text-sm font-semibold text-gray-900 tracking-tight">Address</span>
+    <span class="text-sm font-semibold text-gray-900 tracking-tight dark:text-slate-100">Address</span>
     <a
-      class="group relative bg-white px-4 py-3 rounded-xl select-all text-gray-900 border border-gray-200 hover:border-blue-400 transition-all duration-200 shadow-sm hover:shadow-md"
+      class="group relative bg-white px-4 py-3 rounded-xl select-all text-gray-900 border border-gray-200 hover:border-blue-400 transition-all duration-200 shadow-sm hover:shadow-md dark:bg-slate-950 dark:text-slate-100 dark:border-slate-800 dark:hover:border-blue-400/70"
       :href="mapUrl"
       target="_blank"
       rel="noopener noreferrer"
     >
       <span class="text-sm leading-relaxed">{{ value }}</span>
-      <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
       </svg>
     </a>
@@ -33,7 +33,7 @@
         <span>Show on Map</span>
       </span>
     </button>
-    <div v-if="showMap && lat && lon" class="w-full rounded-2xl overflow-hidden border border-gray-200 shadow-lg bg-white">
+    <div v-if="showMap && lat && lon" class="w-full rounded-2xl overflow-hidden border border-gray-200 shadow-lg bg-white dark:bg-slate-950 dark:border-slate-800">
       <iframe
         :src="computedEmbedUrl"
         width="100%"

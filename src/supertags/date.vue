@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full p-6 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 flex items-center gap-6">
+  <div class="w-full p-6 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 flex items-center gap-6 dark:bg-slate-950 dark:border-slate-800">
     <div class="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex-shrink-0 shadow-md">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path
@@ -11,9 +11,9 @@
       </svg>
     </div>
     <div class="flex flex-col flex-1 min-w-0">
-      <span class="text-sm text-gray-500 font-semibold tracking-wide uppercase mb-2">Date</span>
-      <span class="text-xl font-bold text-gray-900 select-all leading-tight">{{ value }}</span>
-      <span v-if="relative" class="text-base text-gray-600 mt-2 font-medium">{{ relative }}</span>
+      <span class="text-sm text-gray-500 font-semibold tracking-wide uppercase mb-2 dark:text-slate-400">Date</span>
+      <span class="text-xl font-bold text-gray-900 select-all leading-tight dark:text-slate-100">{{ value }}</span>
+      <span v-if="relative" class="text-base text-gray-600 mt-2 font-medium dark:text-slate-300">{{ relative }}</span>
     </div>
   </div>
 </template>
