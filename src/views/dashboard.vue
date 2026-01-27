@@ -632,7 +632,7 @@ const loadNotes = async () => {
 const startNewNote = () => {
   const newNoteId =
     Date.now().toString(36) + Math.random().toString(36).substr(2);
-  router.push(`/notes/${newNoteId}`);
+  router.push(`/notes/${newNoteId}/edit`);
 };
 
 defineExpose({
