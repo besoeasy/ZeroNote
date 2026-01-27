@@ -57,6 +57,16 @@ export async function uploadNoteTextToFileDrop(
   return uploadToFileDrop(file, { uploadUrl });
 }
 
+export async function uploadHtmlToFileDrop(
+  html,
+  {
+    filename = `zeronote-${new Date().toISOString().replace(/[:.]/g, "-")}.html`,
+    uploadUrl,
+  } = {}
+) {
+  return uploadNoteTextToFileDrop(html, { filename, mimeType: "text/html", uploadUrl });
+}
+
 export async function copyToClipboard(text) {
   if (navigator?.clipboard?.writeText) {
     await navigator.clipboard.writeText(text);

@@ -20,7 +20,7 @@
     <div class="flex-1 overflow-auto bg-gray-50">
       <div class="mx-auto p-6 md:p-12">
         <!-- Two Column Layout -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div ref="shareContainerRef" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <!-- Left Column - Tags & Metadata -->
           <div class="lg:col-span-1 space-y-4">
             <!-- Render all tags in order -->
@@ -111,7 +111,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { fetchNoteById, softDeleteNote } from "@/db";
 import { parseNote } from "@/utils/noteParser";
@@ -123,7 +123,7 @@ import { getSupertagComponent } from "@/supertags";
 
 import ParseReferences from "@/components/parsed/References.vue";
 import ParseAttachments from "@/components/parsed/Attachments.vue";
-import { uploadNoteTextToFileDrop, copyToClipboard } from "@/utils/fileDrop";
+import { uploadHtmlToFileDrop, copyToClipboard } from "@/utils/fileDrop";
 
 const route = useRoute();
 const router = useRouter();
@@ -133,6 +133,7 @@ const noteId = ref(null);
 const isLoaded = ref(false);
 const isSharing = ref(false);
 const shareResult = ref(null);
+const shareContainerRef = ref(null);
 
 // Initialize marked
 const markedInstance = new Marked({
@@ -192,8 +193,20 @@ const handleTempShare = async () => {
 
   try {
     const baseName = noteId.value ? String(noteId.value) : "note";
-    const filename = `zeronote-${baseName}.md`;
-    const res = await uploadNoteTextToFileDrop(note.value.content, { filename });
+    const filename = `zeronote-${baseName}.html`;
+
+    const sharedBody = shareContainerRef.value?.outerHTML;
+    if (!sharedBody) {
+      throw new Error("Nothing to share yet—try again after the note finishes rendering");
+    }
+
+    const html = buildSharedNoteHtml({
+      title: parsed.value?.title || `ZeroNote ${baseName}`,
+      updatedAt: note.value?.updatedAt,
+      body: sharedBody,
+    });
+
+    const res = await uploadHtmlToFileDrop(html, { filename });
     shareResult.value = res;
     await copyToClipboard(res.url);
   } catch (error) {
@@ -202,6 +215,54 @@ const handleTempShare = async () => {
   } finally {
     isSharing.value = false;
   }
+};
+
+const buildSharedNoteHtml = ({ title, updatedAt, body }) => {
+  const safeTitle = String(title || "ZeroNote Shared Note")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+
+  const updated = updatedAt ? `Updated ${format(updatedAt)}` : "";
+
+  // Important: don't include literal closing-tag sequences in strings/comments in this SFC.
+  return [
+    "<!doctype html>",
+    '<html lang="en">',
+    "  <head>",
+    '    <meta charset="utf-8" />',
+    '    <meta name="viewport" content="width=device-width, initial-scale=1" />',
+    `    <title>${safeTitle}</title>`,
+    '    <script src="https://cdn.tailwindcss.com"></scr' + "ipt>",
+    "    <style>",
+    "      /* Match ZeroNote's markdown styling used in note view */",
+    "      .prose { color: #1f2937; }",
+    "      .prose h1, .prose h2, .prose h3, .prose h4 { font-weight: 700; margin-top: 1.5em; margin-bottom: 0.5em; }",
+    "      .prose p { margin-bottom: 1em; line-height: 1.75; }",
+    "      .prose a { color: #2563eb; text-decoration: none; }",
+    "      .prose a:hover { text-decoration: underline; }",
+    "      .prose code { background-color: #f3f4f6; padding: 0.125rem 0.25rem; border-radius: 0.25rem; font-size: 0.875em; }",
+    "      .prose pre { background-color: #1f2937; color: #f9fafb; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }",
+    "      .prose pre code { background-color: transparent; padding: 0; color: inherit; }",
+    "      .prose ul, .prose ol { margin-left: 1.5rem; margin-bottom: 1rem; }",
+    "      .prose li { margin-bottom: 0.5rem; }",
+    "    </st" + "yle>",
+    "  </head>",
+    '  <body class="bg-gray-50">',
+    '    <main class="mx-auto max-w-6xl p-6 md:p-12">',
+    '      <header class="mb-6">',
+    `        <h1 class="text-2xl font-bold text-gray-900">${safeTitle}</h1>`,
+    updated ? `        <div class="text-sm text-gray-500 mt-1">${updated}</div>` : "",
+    "      </header>",
+    body,
+    '      <footer class="mt-10 text-xs text-gray-400">Shared from ZeroNote</footer>',
+    "    </main>",
+    "  </body>",
+    "</html>",
+  ]
+    .filter(Boolean)
+    .join("\n");
 };
 
 const copyShareUrl = async () => {
