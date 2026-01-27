@@ -38,7 +38,7 @@
 
           <!-- Right Column - Content -->
           <div class="lg:col-span-2">
-            <div class="flex items-center justify-between shrink-0 mb-6">
+            <div data-share-exclude class="flex items-center justify-between shrink-0 mb-6">
               <div class="text-sm text-gray-500">
                 Updated {{ formatDate(note.updatedAt) }}
               </div>
@@ -72,6 +72,7 @@
 
             <div
               v-if="shareResult"
+              data-share-exclude
               class="mb-6 flex items-center justify-between gap-3 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300"
             >
               <div class="min-w-0">
@@ -195,10 +196,14 @@ const handleTempShare = async () => {
     const baseName = noteId.value ? String(noteId.value) : "note";
     const filename = `zeronote-${baseName}.html`;
 
-    const sharedBody = shareContainerRef.value?.outerHTML;
-    if (!sharedBody) {
+    const sourceEl = shareContainerRef.value;
+    if (!sourceEl) {
       throw new Error("Nothing to share yet—try again after the note finishes rendering");
     }
+
+    const clone = sourceEl.cloneNode(true);
+    clone.querySelectorAll("[data-share-exclude]").forEach((el) => el.remove());
+    const sharedBody = clone.outerHTML;
 
     const html = buildSharedNoteHtml({
       title: parsed.value?.title || `ZeroNote ${baseName}`,
