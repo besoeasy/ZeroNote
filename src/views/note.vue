@@ -50,7 +50,7 @@
                   title="Upload this note to FileDrop and copy the link"
                 >
                   <Share2 class="w-4 h-4" :class="isSharing ? 'animate-pulse' : ''" />
-                  <span class="hidden md:inline">{{ isSharing ? "Sharing..." : "Temp Share" }}</span>
+                  <span class="hidden md:inline">{{ isSharing ? "Sharing..." : "Share" }}</span>
                 </button>
                 <router-link
                   :to="`/notes/${noteId}/edit`"
