@@ -11,6 +11,7 @@ import S3 from "@/views/s3.vue";
 import Sync from "@/views/sync.vue";
 import ImportView from "@/views/import.vue";
 import About from "@/views/about.vue";
+import IpfsNote from "@/views/ipfs-note.vue";
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -68,6 +69,12 @@ const router = createRouter({
       path: "/about",
       name: "about",
       component: About,
+    },
+    {
+      // Supports public share links like: https://zeronote.js.org/#/Qm... or #/bafy...
+      path: "/:cid(Qm[1-9A-HJ-NP-Za-km-z]{44}|bafy[a-z2-7]{50,})",
+      name: "ipfs-note",
+      component: IpfsNote,
     },
   ],
 });

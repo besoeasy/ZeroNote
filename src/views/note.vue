@@ -77,7 +77,7 @@
             >
               <div class="min-w-0">
                 <div class="text-xs font-semibold text-emerald-900">Temporary link ready</div>
-                <div class="text-xs text-emerald-800 truncate">{{ shareResult.url }}</div>
+                <div class="text-xs text-emerald-800 truncate">{{ shareResult.shareUrl }}</div>
               </div>
               <button
                 @click="copyShareUrl"
@@ -124,7 +124,7 @@ import { getSupertagComponent } from "@/supertags";
 
 import ParseReferences from "@/components/parsed/References.vue";
 import ParseAttachments from "@/components/parsed/Attachments.vue";
-import { uploadHtmlToFileDrop, copyToClipboard } from "@/utils/fileDrop";
+import { uploadNoteTextToFileDrop, copyToClipboard } from "@/utils/fileDrop";
 
 const route = useRoute();
 const router = useRouter();
@@ -194,26 +194,14 @@ const handleTempShare = async () => {
 
   try {
     const baseName = noteId.value ? String(noteId.value) : "note";
-    const filename = `zeronote-${baseName}.html`;
+    const filename = `zeronote-${baseName}.md`;
+    const res = await uploadNoteTextToFileDrop(note.value.content, { filename });
 
-    const sourceEl = shareContainerRef.value;
-    if (!sourceEl) {
-      throw new Error("Nothing to share yet—try again after the note finishes rendering");
-    }
+    const publicBase = (import.meta?.env?.VITE_PUBLIC_ZERONOTE_BASE || "https://zeronote.js.org").replace(/\/$/, "");
+    const shareUrl = `${publicBase}/#/${res.cid}`;
 
-    const clone = sourceEl.cloneNode(true);
-    clone.querySelectorAll("[data-share-exclude]").forEach((el) => el.remove());
-    const sharedBody = clone.outerHTML;
-
-    const html = buildSharedNoteHtml({
-      title: parsed.value?.title || `ZeroNote ${baseName}`,
-      updatedAt: note.value?.updatedAt,
-      body: sharedBody,
-    });
-
-    const res = await uploadHtmlToFileDrop(html, { filename });
-    shareResult.value = res;
-    await copyToClipboard(res.url);
+    shareResult.value = { ...res, shareUrl };
+    await copyToClipboard(shareUrl);
   } catch (error) {
     console.error("Temp share failed:", error);
     alert(error?.message || "Failed to share note");
@@ -271,9 +259,9 @@ const buildSharedNoteHtml = ({ title, updatedAt, body }) => {
 };
 
 const copyShareUrl = async () => {
-  if (!shareResult.value?.url) return;
+  if (!shareResult.value?.shareUrl) return;
   try {
-    await copyToClipboard(shareResult.value.url);
+    await copyToClipboard(shareResult.value.shareUrl);
   } catch {
     alert("Failed to copy link");
   }
