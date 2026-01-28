@@ -60,29 +60,7 @@
       <!-- Content Stream -->
       <main class="flex-1">
         
-        <!-- Pinned Section (Showcase) -->
-        <div v-if="pinnedNotes.length > 0 && !trashOnly && !searchQuery" class="mb-12">
-            <div class="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
-               <span class="text-blue-500">📌</span> Pinned
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-               <div 
-                  v-for="note in pinnedNotes" 
-                  :key="note.id"
-                  @click="openNote(note)"
-                  class="group relative p-6 rounded-3xl bg-blue-50/50 border border-blue-100 cursor-pointer hover:shadow-xl hover:shadow-blue-500/10 transition-all dark:bg-blue-900/10 dark:border-blue-500/20 dark:hover:bg-blue-900/20"
-               >
-                  <div class="flex items-start justify-between mb-3">
-                     <span class="text-2xl">{{ note.parsed.icon || '📌' }}</span>
-                     <div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
-                        <button @click.stop="togglePin(note)" class="p-1.5 rounded-lg bg-blue-200 text-blue-700 hover:bg-blue-300 dark:bg-blue-800 dark:text-blue-200"><PinOff class="w-3.5 h-3.5" /></button>
-                     </div>
-                  </div>
-                  <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200 mb-1 line-clamp-1">{{ note.parsed.title || 'Untitled' }}</h3>
-                  <p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">{{ note.parsed.content || 'No preview...' }}</p>
-               </div>
-            </div>
-        </div>
+
 
         <!-- Filters Row -->
         <div class="flex items-center gap-3 mb-8 overflow-x-auto pb-4 scrollbar-hide">
@@ -122,10 +100,10 @@
         </div>
 
         <!-- Notes List -->
-        <div v-if="!isLoading && otherNotes.length > 0" class="flex flex-col gap-4">
+        <div v-if="!isLoading && filteredNotes.length > 0" class="flex flex-col gap-4">
            <TransitionGroup name="list">
              <div 
-               v-for="note in otherNotes" 
+               v-for="note in filteredNotes" 
                :key="note.id" 
                @click="openNote(note)"
                 class="group relative flex flex-col md:flex-row gap-6 p-6 md:p-8 rounded-3xl bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 hover:shadow-xl hover:shadow-slate-200/50 transition-all cursor-pointer overflow-hidden dark:bg-slate-900/40 dark:border-slate-800/50 dark:hover:bg-slate-900/80 dark:hover:border-slate-700 dark:hover:shadow-noner"
@@ -319,16 +297,7 @@ const filteredNotes = computed(() => {
   });
 });
 
-const pinnedNotes = computed(() => {
-   return filteredNotes.value.filter(n => n.parsed.pinned && !n.deletedAt);
-});
 
-const otherNotes = computed(() => {
-   // If we have a search query, or are viewing trash/files, we might want to show everything in one list.
-   // But for the default view, we want pinned notes SEPARATE.
-   if (searchQuery.value || trashOnly.value) return filteredNotes.value;
-   return filteredNotes.value.filter(n => !n.parsed.pinned || n.deletedAt);
-});
 
 const greeting = computed(() => {
    const hrs = new Date().getHours();
