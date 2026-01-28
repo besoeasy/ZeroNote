@@ -10,33 +10,31 @@
     <div class="relative z-10 max-w-5xl mx-auto px-4 md:px-8 py-8 md:py-12 flex flex-col min-h-screen">
       
       <!-- Header / Command Center -->
-      <header class="flex flex-col gap-8 mb-12">
+      <header class="flex flex-col gap-6 mb-8 md:mb-12">
         <!-- Top Bar -->
         <div class="flex items-center justify-between">
-          <h1 class="text-3xl font-black tracking-tighter text-slate-900 dark:text-white">
-            ZERONOTE<span class="text-blue-500">.</span>
-          </h1>
-          <div class="flex items-center gap-4">
-             <button 
-                class="p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-all border border-transparent hover:border-slate-300 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-900 dark:hover:border-slate-800"
-                @click="pinnedOnly = !pinnedOnly"
-                :class="{'text-blue-600 bg-blue-50 border-blue-200 dark:text-blue-400 dark:bg-blue-950/30 dark:border-blue-900/50': pinnedOnly}"
-                title="Toggle Pinned"
-             >
-                <span class="font-bold">📌</span>
-             </button>
+          <div>
+             <h1 class="text-3xl md:text-4xl font-black tracking-tighter text-slate-900 dark:text-white">
+               {{ greeting }}<span class="text-blue-500">.</span>
+             </h1>
+             <p class="text-slate-500 font-medium mt-1 dark:text-slate-400">
+                You have {{ notes.length }} notes captured in the void.
+             </p>
+          </div>
+          
+          <div class="flex items-center gap-3">
              <button 
                 class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition-all shadow-lg shadow-blue-900/20 active:scale-95 flex items-center gap-2"
                 @click="startNewNote"
              >
                 <Plus class="w-4 h-4" />
-                <span>Create</span>
+                <span class="hidden md:inline">Create Note</span>
              </button>
           </div>
         </div>
 
         <!-- Big Search Input -->
-        <div class="relative group">
+        <div class="relative group mt-4">
           <div class="absolute inset-0 bg-blue-500/10 rounded-2xl blur-lg transition-opacity opacity-0 group-focus-within:opacity-100 dark:bg-blue-500/20"></div>
           <div class="relative bg-white/70 backdrop-blur-xl border border-slate-200 rounded-2xl flex items-center p-2 transition-all group-focus-within:border-blue-500/50 group-focus-within:ring-1 group-focus-within:ring-blue-500/50 shadow-sm dark:bg-slate-900/80 dark:border-slate-800">
              <Search class="w-6 h-6 text-slate-400 ml-4 mr-4 dark:text-slate-500" />
@@ -44,7 +42,7 @@
                 ref="searchInputRef"
                 v-model="searchQuery"
                 type="text" 
-                placeholder="Search your mind..." 
+                placeholder="Search everything..." 
                 class="w-full bg-transparent border-none outline-none text-xl md:text-2xl font-medium placeholder-slate-400 py-3 text-slate-800 dark:text-white dark:placeholder-slate-600"
              />
              <div class="hidden md:flex items-center gap-3 pr-4">
@@ -61,6 +59,31 @@
 
       <!-- Content Stream -->
       <main class="flex-1">
+        
+        <!-- Pinned Section (Showcase) -->
+        <div v-if="pinnedNotes.length > 0 && !trashOnly && !searchQuery" class="mb-12">
+            <div class="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+               <span class="text-blue-500">📌</span> Pinned
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+               <div 
+                  v-for="note in pinnedNotes" 
+                  :key="note.id"
+                  @click="openNote(note)"
+                  class="group relative p-6 rounded-3xl bg-blue-50/50 border border-blue-100 cursor-pointer hover:shadow-xl hover:shadow-blue-500/10 transition-all dark:bg-blue-900/10 dark:border-blue-500/20 dark:hover:bg-blue-900/20"
+               >
+                  <div class="flex items-start justify-between mb-3">
+                     <span class="text-2xl">{{ note.parsed.icon || '📌' }}</span>
+                     <div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                        <button @click.stop="togglePin(note)" class="p-1.5 rounded-lg bg-blue-200 text-blue-700 hover:bg-blue-300 dark:bg-blue-800 dark:text-blue-200"><PinOff class="w-3.5 h-3.5" /></button>
+                     </div>
+                  </div>
+                  <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200 mb-1 line-clamp-1">{{ note.parsed.title || 'Untitled' }}</h3>
+                  <p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">{{ note.parsed.content || 'No preview...' }}</p>
+               </div>
+            </div>
+        </div>
+
         <!-- Filters Row -->
         <div class="flex items-center gap-3 mb-8 overflow-x-auto pb-4 scrollbar-hide">
            <button 
@@ -99,10 +122,10 @@
         </div>
 
         <!-- Notes List -->
-        <div v-if="!isLoading && filteredNotes.length > 0" class="flex flex-col gap-4">
+        <div v-if="!isLoading && otherNotes.length > 0" class="flex flex-col gap-4">
            <TransitionGroup name="list">
              <div 
-               v-for="note in filteredNotes" 
+               v-for="note in otherNotes" 
                :key="note.id" 
                @click="openNote(note)"
                 class="group relative flex flex-col md:flex-row gap-6 p-6 md:p-8 rounded-3xl bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 hover:shadow-xl hover:shadow-slate-200/50 transition-all cursor-pointer overflow-hidden dark:bg-slate-900/40 dark:border-slate-800/50 dark:hover:bg-slate-900/80 dark:hover:border-slate-700 dark:hover:shadow-noner"
@@ -157,8 +180,30 @@
                  </div>
 
                  <!-- Action Arrow (Visible on Hover) -->
-                 <div class="hidden md:flex items-center justify-center text-slate-400 opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all duration-300 dark:text-slate-700">
-                    <ArrowRight class="w-6 h-6" />
+                 <div class="hidden md:flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-4 group-hover:translate-x-0">
+                    <button 
+                       @click.stop="togglePin(note)" 
+                       class="p-2 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-blue-600 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-blue-400"
+                       title="Pin/Unpin"
+                    >
+                       <Pin class="w-4 h-4" :class="{'fill-current text-blue-500': note.parsed.pinned}" />
+                    </button>
+                    <button 
+                       v-if="!note.deletedAt"
+                       @click.stop="toggleDelete(note)" 
+                       class="p-2 rounded-xl text-slate-400 hover:bg-red-50 hover:text-red-600 dark:text-slate-500 dark:hover:bg-red-900/30 dark:hover:text-red-400"
+                       title="Delete"
+                    >
+                       <Trash2 class="w-4 h-4" />
+                    </button>
+                    <button 
+                       v-else
+                       @click.stop="restoreNote(note)" 
+                       class="p-2 rounded-xl text-slate-400 hover:bg-green-50 hover:text-green-600 dark:text-slate-500 dark:hover:bg-green-900/30 dark:hover:text-green-400"
+                       title="Restore"
+                    >
+                       <RotateCcw class="w-4 h-4" />
+                    </button>
                  </div>
               </div>
            </TransitionGroup>
@@ -188,7 +233,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import { fetchNotes, db } from "@/db";
-import { Search, Plus, ArrowRight } from "lucide-vue-next";
+import { Search, Plus, ArrowRight, Pin, Trash2, RotateCcw, PinOff } from "lucide-vue-next";
 import { format } from "timeago.js";
 import { supertagRegistry } from "@/supertags";
 
@@ -273,6 +318,47 @@ const filteredNotes = computed(() => {
     return b.updatedAt - a.updatedAt;
   });
 });
+
+const pinnedNotes = computed(() => {
+   return filteredNotes.value.filter(n => n.parsed.pinned && !n.deletedAt);
+});
+
+const otherNotes = computed(() => {
+   // If we have a search query, or are viewing trash/files, we might want to show everything in one list.
+   // But for the default view, we want pinned notes SEPARATE.
+   if (searchQuery.value || trashOnly.value) return filteredNotes.value;
+   return filteredNotes.value.filter(n => !n.parsed.pinned || n.deletedAt);
+});
+
+const greeting = computed(() => {
+   const hrs = new Date().getHours();
+   if (hrs < 12) return 'Good Morning';
+   if (hrs < 18) return 'Good Afternoon';
+   return 'Good Evening';
+});
+
+const togglePin = async (note) => {
+   const isPinned = !!note.parsed.pinned;
+   await db.notes.update(note.id, { 
+       'parsed.pinned': !isPinned,
+       updatedAt: Date.now() 
+   });
+   // Refresh local state roughly
+   const idx = notes.value.findIndex(n => n.id === note.id);
+   if (idx !== -1) {
+       notes.value[idx].parsed.pinned = !isPinned;
+   }
+};
+
+const toggleDelete = async (note) => {
+   await db.notes.update(note.id, { deletedAt: Date.now(), updatedAt: Date.now() });
+   await loadNotes(); // Reload easiest way to ensure consistency
+};
+
+const restoreNote = async (note) => {
+   await db.notes.update(note.id, { deletedAt: null, updatedAt: Date.now() });
+   await loadNotes();
+};
 
 const quickFilters = computed(() => [
    { id: 'all', label: 'All', isActive: () => !pinnedOnly.value && !filesOnly.value && !trashOnly.value, action: clearAllFilters },
