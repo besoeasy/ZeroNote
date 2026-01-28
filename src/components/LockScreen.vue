@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-50 via-white to-violet-50 p-6 relative overflow-hidden dark:from-slate-950 dark:via-slate-950 dark:to-slate-900"
+    class="w-full min-h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-50 via-white to-violet-50 p-6 relative overflow-hidden dark:from-slate-950 dark:via-slate-950 dark:to-slate-900"
   >
     <!-- Animated Background Elements -->
     <div
@@ -89,13 +89,13 @@
             <!-- Warning Message (Below Strength Indicator) -->
             <div
               v-if="showWarning"
-              class="w-full max-w-md p-4 bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-300 rounded-2xl animate-shake shadow-md dark:from-red-950/40 dark:to-orange-900/30 dark:border-red-500/40"
+              class="w-full max-w-md p-4 bg-linear-to-r from-red-50 to-orange-50 border-2 border-red-300 rounded-2xl animate-shake shadow-md dark:from-red-950/40 dark:to-orange-900/30 dark:border-red-500/40"
             >
               <p
                 class="text-sm text-red-800 font-bold flex items-center justify-center gap-2 dark:text-red-200"
               >
                 <svg
-                  class="w-5 h-5 flex-shrink-0 animate-pulse"
+                  class="w-5 h-5 shrink-0 animate-pulse"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -117,10 +117,10 @@
         <!-- Show ZeroNote branding when no input -->
         <div v-else>
           <div
-            class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-violet-600 rounded-3xl mb-6 shadow-lg animate-shimmer relative overflow-hidden"
+            class="inline-flex items-center justify-center w-20 h-20 bg-linear-to-br from-blue-600 to-violet-600 rounded-3xl mb-6 shadow-lg animate-shimmer relative overflow-hidden"
           >
             <div
-              class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 animate-shimmer-slide"
+              class="absolute inset-0 bg-linear-to-r from-transparent via-white to-transparent opacity-20 animate-shimmer-slide"
             ></div>
             <Lock class="w-10 h-10 text-white relative z-10" />
           </div>
@@ -128,7 +128,7 @@
             class="text-5xl font-black text-gray-900 mb-3 tracking-tight uppercase dark:text-white"
           >
             Zero<span
-              class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600 animate-gradient"
+              class="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-violet-600 animate-gradient"
               >Note</span
             >
           </h1>
@@ -142,19 +142,43 @@
       <div
         class="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 backdrop-blur-sm bg-opacity-95 dark:bg-slate-950/85 dark:border-slate-800"
       >
+        <div class="mb-6 text-center">
+          <p class="text-sm font-semibold text-blue-700 dark:text-blue-300">Welcome back</p>
+          <p class="text-xs text-gray-500 dark:text-slate-400">Unlock your local vault in seconds</p>
+        </div>
+
         <!-- Password Input -->
         <div class="mb-5">
           <label class="block text-sm font-semibold text-gray-700 mb-2 dark:text-slate-300"
             >Master Password</label
           >
-          <input
-            v-model="passwordInput"
-            type="password"
-            placeholder="Enter your master password"
-            class="w-full p-4 text-base border-2 border-gray-200 rounded-xl bg-gray-50 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-400 dark:focus:bg-slate-900 dark:focus:ring-blue-500/30"
-            @input="checkPasswordStrength"
-            @keyup.enter="unlockApp"
-          />
+          <div class="relative group">
+            <div
+              class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-blue-600/70 dark:text-blue-300/70 group-focus-within:text-blue-600"
+            >
+              <KeyRound class="w-5 h-5" />
+            </div>
+            <input
+              v-model="passwordInput"
+              :type="showPassword ? 'text' : 'password'"
+              placeholder="Enter your master password"
+              class="w-full p-4 pl-12 pr-12 text-base border-2 border-gray-200 rounded-xl bg-gray-50 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-400 dark:focus:bg-slate-900 dark:focus:ring-blue-500/30"
+              @input="checkPasswordStrength"
+              @keyup.enter="unlockApp"
+            />
+            <button
+              type="button"
+              @click="showPassword = !showPassword"
+              class="absolute inset-y-0 right-0 px-3 text-gray-500 hover:text-gray-800 transition-colors dark:text-slate-400 dark:hover:text-slate-200"
+              :aria-label="showPassword ? 'Hide password' : 'Show password'"
+            >
+              <Eye v-if="!showPassword" class="w-5 h-5" />
+              <EyeOff v-else class="w-5 h-5" />
+            </button>
+          </div>
+          <p class="mt-2 text-xs text-gray-500 dark:text-slate-400">
+            Minimum 12 characters recommended.
+          </p>
         </div>
 
         <!-- PIN Input -->
@@ -162,23 +186,40 @@
           <label class="block text-sm font-semibold text-gray-700 mb-2 dark:text-slate-300"
             >PIN (Optional)</label
           >
-          <input
-            v-model="pinInput"
-            type="password"
-            inputmode="numeric"
-            pattern="[0-9]*"
-            placeholder="Enter numeric PIN"
-            class="w-full p-4 text-base border-2 border-gray-200 rounded-xl bg-gray-50 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-400 dark:focus:bg-slate-900 dark:focus:ring-blue-500/30"
-            @input="validatePin"
-            @keyup.enter="unlockApp"
-            maxlength="16"
-          />
+          <div class="relative group">
+            <div
+              class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-violet-600/70 dark:text-violet-300/70 group-focus-within:text-violet-600"
+            >
+              <Hash class="w-5 h-5" />
+            </div>
+            <input
+              v-model="pinInput"
+              :type="showPin ? 'text' : 'password'"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              placeholder="Enter numeric PIN"
+              class="w-full p-4 pl-12 pr-12 text-base border-2 border-gray-200 rounded-xl bg-gray-50 focus:border-violet-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-violet-100 transition-all duration-200 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-violet-400 dark:focus:bg-slate-900 dark:focus:ring-violet-500/30"
+              @input="validatePin"
+              @keyup.enter="unlockApp"
+              maxlength="16"
+            />
+            <button
+              type="button"
+              @click="showPin = !showPin"
+              class="absolute inset-y-0 right-0 px-3 text-gray-500 hover:text-gray-800 transition-colors dark:text-slate-400 dark:hover:text-slate-200"
+              :aria-label="showPin ? 'Hide PIN' : 'Show PIN'"
+            >
+              <Eye v-if="!showPin" class="w-5 h-5" />
+              <EyeOff v-else class="w-5 h-5" />
+            </button>
+          </div>
+          <p class="mt-2 text-xs text-gray-500 dark:text-slate-400">Press Enter to unlock.</p>
         </div>
 
         <!-- Account Identifier -->
         <div
           v-if="AccountIdentifier"
-          class="mb-6 p-4 bg-gradient-to-br from-blue-50 to-violet-50 border border-blue-100 rounded-xl dark:from-blue-950/40 dark:to-violet-950/30 dark:border-blue-500/20"
+          class="mb-6 p-4 bg-linear-to-br from-blue-50 to-violet-50 border border-blue-100 rounded-xl dark:from-blue-950/40 dark:to-violet-950/30 dark:border-blue-500/20"
         >
           <p
             class="text-xs font-semibold text-gray-600 mb-1 uppercase tracking-wide dark:text-slate-400"
@@ -193,10 +234,13 @@
         <!-- Unlock Button -->
         <button
           @click="unlockApp"
-          class="w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white text-base font-bold rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+          class="group relative w-full px-6 py-4 bg-linear-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white text-base font-bold rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 overflow-hidden"
           :disabled="passwordInput.length === 0"
         >
-          <span class="flex items-center justify-center">
+          <span
+            class="absolute inset-0 bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 animate-shimmer-slide"
+          ></span>
+          <span class="relative flex items-center justify-center">
             <Unlock class="w-5 h-5 mr-2" />
             DECRYPT & UNLOCK
           </span>
@@ -245,13 +289,15 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import { Lock, Unlock } from "lucide-vue-next";
+import { Lock, Unlock, KeyRound, Hash, Eye, EyeOff } from "lucide-vue-next";
 
 import sha512 from "crypto-js/sha512";
 
 const passwordInput = ref("");
 const pinInput = ref("");
 const passwordStrength = ref(0);
+const showPassword = ref(false);
+const showPin = ref(false);
 
 const emit = defineEmits(["unlock"]);
 
