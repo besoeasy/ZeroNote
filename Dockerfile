@@ -1,17 +1,17 @@
 # ===== Stage 1: Build Vite app (multi-arch) =====
-FROM --platform=$BUILDPLATFORM docker.io/oven/bun AS builder
+FROM --platform=$BUILDPLATFORM docker.io/library/node:lts AS builder
 
 WORKDIR /app
 
 # Copy package files
-COPY package.json bun.lockb* ./
-RUN bun install --frozen-lockfile
+COPY package.json package-lock.json* ./
+RUN npm install
 
 # Copy source
 COPY . .
 
 # Build production assets
-RUN bun run build
+RUN npm run build
 
 # ===== Stage 2: Serve with Nginx (multi-arch) =====
 FROM docker.io/library/nginx:alpine
