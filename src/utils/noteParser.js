@@ -239,7 +239,49 @@ function extractReferences(content) {
   // Remove duplicates
   const unique = Array.from(new Set(matches));
   // Return as array of objects for compatibility
-  return unique.map(url => ({ url }));
+  return unique.map((url) => {
+    const normalized = url.trim();
+    const meta = getReferenceMeta(normalized);
+    return {
+      url: normalized,
+      type: meta.type,
+      platform: meta.platform,
+    };
+  });
+}
+
+function getReferenceMeta(url) {
+  for (const [type, patterns] of Object.entries(URL_PATTERNS)) {
+    for (const pattern of patterns) {
+      const testPattern = new RegExp(pattern.source, pattern.flags.replace("g", ""));
+      if (testPattern.test(url)) {
+        return {
+          type,
+          platform: getPlatformLabel(type),
+        };
+      }
+    }
+  }
+
+  return {
+    type: "link",
+    platform: "External Link",
+  };
+}
+
+function getPlatformLabel(type) {
+  switch (type) {
+    case "youtube":
+      return "YouTube";
+    case "instagram":
+      return "Instagram";
+    case "twitter":
+      return "X / Twitter";
+    case "reddit":
+      return "Reddit";
+    default:
+      return "External Link";
+  }
 }
 
 /**

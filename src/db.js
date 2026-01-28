@@ -75,10 +75,24 @@ export async function addNote(content, files = [], customId = null) {
  * @returns {Array} - Array of notes with parsed data
  */
 export async function fetchNotes(page = 1, searchQuery = "", typeFilter = "all") {
-  let notes;
+  const offset = (page - 1) * itemsPerPage;
 
-  // Always return all notes (including deleted) for dashboard display
-  notes = await db.notes.toArray();
+  const shouldFilter = Boolean(searchQuery) || typeFilter !== "all";
+
+  if (!shouldFilter) {
+    const pageNotes = await db.notes.orderBy("updatedAt").reverse().offset(offset).limit(itemsPerPage).toArray();
+    return pageNotes.map((note) => {
+      const content = decryptData(note.content);
+      const parsed = parseNote(content);
+      return {
+        ...note,
+        content,
+        parsed,
+      };
+    });
+  }
+
+  let notes = await db.notes.toArray();
 
   // Decrypt and parse
   notes = notes.map((note) => {
@@ -106,7 +120,6 @@ export async function fetchNotes(page = 1, searchQuery = "", typeFilter = "all")
   notes.sort((a, b) => b.updatedAt - a.updatedAt);
 
   // Apply pagination after filtering
-  const offset = (page - 1) * itemsPerPage;
   notes = notes.slice(offset, offset + itemsPerPage);
 
   return notes;
