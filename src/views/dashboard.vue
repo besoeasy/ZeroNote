@@ -1,14 +1,19 @@
 <template>
   <!-- Notes Grid View -->
-  <div class="w-full mx-auto p-2 md:p-8 pt-8 md:pt-8">
-    <div class="w-full">
+  <div class="w-full mx-auto p-2 md:p-8 pt-8 md:pt-8 relative min-h-screen">
+    <!-- Ambient Background -->
+    <div class="absolute inset-0 z-0 pointer-events-none opacity-40 mix-blend-multiply">
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-100/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-100/50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+    </div>
+    <div class="w-full relative z-10">
       <div class="flex flex-col lg:flex-row gap-6">
         <!-- Main Column -->
         <div class="flex-1 min-w-0">
           <!-- Command Bar (Sticky) -->
           <div class="sticky top-4 z-30 mb-6">
             <div class="relative group">
-              <div class="absolute -inset-0.5 rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-500 bg-linear-to-r from-gray-200 via-gray-100 to-white dark:from-slate-800 dark:via-slate-900 dark:to-slate-950"></div>
+              <div class="absolute -inset-0.5 rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-500 bg-linear-to-r from-blue-900/20 via-indigo-900/20 to-slate-900/20 dark:from-blue-400/20 dark:via-indigo-400/20 dark:to-white/20"></div>
               <div class="relative bg-white/90 backdrop-blur-xl border border-gray-100 rounded-3xl shadow-sm overflow-hidden dark:bg-slate-950/80 dark:border-slate-800">
                 <div class="p-4 md:p-5">
                   <div class="flex flex-col md:flex-row md:items-center gap-3">
@@ -20,7 +25,7 @@
                         v-model="searchQuery"
                         type="text"
                         placeholder="Search notes..."
-                        class="w-full pl-12 pr-12 py-3.5 bg-transparent rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 text-gray-700 placeholder-gray-400 transition-all dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:ring-slate-600"
+                        class="w-full pl-12 pr-12 py-4 bg-white/60 rounded-2xl border border-blue-100/50 focus:bg-white focus:border-blue-950/20 focus:outline-none focus:ring-4 focus:ring-blue-900/5 text-slate-800 placeholder-slate-400 transition-all duration-300 dark:bg-slate-900/50 dark:border-slate-800 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:bg-slate-900 dark:focus:border-blue-500/30 dark:focus:ring-blue-500/10 shadow-sm shadow-blue-900/5"
                       />
                       <div class="absolute right-3 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-1 pointer-events-none">
                         <kbd class="px-1.5 py-0.5 text-[10px] font-black text-gray-400 bg-gray-50 border border-gray-200 rounded dark:bg-slate-900 dark:border-slate-700 dark:text-slate-500">/</kbd>
@@ -30,7 +35,7 @@
                     <!-- Actions -->
                     <div class="flex items-center gap-2">
                       <button
-                        class="inline-flex items-center justify-center px-4 py-3 rounded-2xl bg-gray-900 text-white text-sm font-black hover:bg-black transition-all duration-300 shadow-lg shadow-gray-900/15 hover:shadow-xl hover:shadow-gray-900/20"
+                        class="inline-flex items-center justify-center px-6 py-3.5 rounded-2xl bg-blue-950 text-white text-sm font-bold hover:bg-blue-900 hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl shadow-blue-950/20 hover:shadow-blue-950/30 z-20"
                         @click="startNewNote"
                         title="New Note"
                       >
@@ -53,7 +58,7 @@
                     <div class="flex items-center gap-2 flex-wrap">
                       <button
                         class="px-3 py-1.5 rounded-full text-xs font-black transition-all duration-300"
-                        :class="pinnedOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900' : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
+                        :class="pinnedOnly ? 'bg-blue-950 text-white shadow-lg shadow-blue-950/25 dark:bg-blue-600 dark:text-white' : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
                         @click="pinnedOnly = !pinnedOnly"
                       >
                         📌 Pinned
@@ -61,7 +66,7 @@
 
                       <button
                         class="px-3 py-1.5 rounded-full text-xs font-black transition-all duration-300"
-                        :class="hasAttachmentsOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900' : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
+                        :class="hasAttachmentsOnly ? 'bg-blue-950 text-white shadow-lg shadow-blue-950/25 dark:bg-blue-600 dark:text-white' : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
                         @click="hasAttachmentsOnly = !hasAttachmentsOnly"
                       >
                         📎 Attachments
@@ -69,7 +74,7 @@
 
                       <button
                         class="px-3 py-1.5 rounded-full text-xs font-black transition-all duration-300"
-                        :class="showDeleted ? 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800' : 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900'"
+                        :class="showDeleted ? 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800' : 'bg-blue-950 text-white shadow-lg shadow-blue-950/25 dark:bg-blue-600 dark:text-white'"
                         @click="showDeleted = !showDeleted"
                       >
                         {{ showDeleted ? '👁️ Deleted: ON' : '🙈 Deleted: OFF' }}
@@ -95,7 +100,7 @@
 
                   <!-- Active Filter Summary -->
                   <div v-if="activeFilterChips.length" class="mt-3 flex items-center gap-2 flex-wrap">
-                    <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest dark:text-slate-500">Active</div>
+                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest dark:text-slate-500">Active Filters</div>
                     <div
                       v-for="chip in activeFilterChips"
                       :key="chip.key"
@@ -131,7 +136,7 @@
                 :style="{ '--accent-color': getCardAccentColor(note) }"
               >
                 <!-- Card Body -->
-                <div class="card-body h-full flex flex-col relative bg-white rounded-3xl overflow-hidden transition-all duration-500 border border-gray-100 dark:bg-slate-950 dark:border-slate-800">
+                <div class="card-body h-full flex flex-col relative bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden transition-all duration-500 border border-slate-200/60 dark:bg-slate-950 dark:border-slate-800/60 group-hover:border-blue-500/30 dark:group-hover:border-blue-400/30 group-hover:shadow-2xl group-hover:shadow-blue-900/5">
                   
                   <!-- Top Gradient Accent -->
                   <div 
@@ -165,12 +170,12 @@
                     </div>
 
                     <!-- Title -->
-                    <h3 class="text-xl font-bold text-gray-900 mb-3 leading-tight group-hover:text-(--accent-color) transition-colors duration-300 line-clamp-2 dark:text-slate-100">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2 leading-snug group-hover:text-(--accent-color) transition-colors duration-300 line-clamp-2 dark:text-slate-200">
                       {{ note.parsed.title || "Untitled Note" }}
                     </h3>
 
                     <!-- Content Preview -->
-                    <p class="text-sm text-gray-500 leading-relaxed line-clamp-3 mb-6 font-medium opacity-90 dark:text-slate-400">
+                    <p class="text-[13px] text-gray-500 leading-relaxed line-clamp-3 mb-5 font-medium opacity-80 dark:text-slate-400 group-hover:text-gray-600 dark:group-hover:text-slate-300 transition-colors">
                       {{ note.parsed.content || "No additional text..." }}
                     </p>
 
@@ -240,7 +245,7 @@
             class="text-center py-32 animate-fade-in"
           >
             <div
-              class="inline-flex items-center justify-center w-24 h-24 bg-gray-50/50 rounded-full mb-6 shadow-lg shadow-gray-100 animate-float dark:bg-slate-900/50 dark:shadow-slate-900/50"
+              class="inline-flex items-center justify-center w-24 h-24 bg-linear-to-tr from-blue-50 to-slate-100 rounded-full mb-6 shadow-xl shadow-blue-900/5 animate-float dark:bg-slate-800/50 dark:shadow-slate-900/50 border border-white dark:border-slate-700/50"
             >
               <FileText class="w-10 h-10 text-gray-300/80 dark:text-slate-600" />
             </div>
@@ -261,8 +266,8 @@
         <aside class="hidden lg:block w-full lg:w-80 xl:w-96 shrink-0">
           <div class="sticky top-24 max-h-[calc(100vh-8rem)] overflow-auto pr-1">
             <div class="relative group">
-              <div class="absolute -inset-0.5 rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-500 bg-linear-to-br from-gray-200 via-gray-100 to-white dark:from-slate-900/80 dark:via-slate-900/40 dark:to-slate-950"></div>
-              <div class="relative bg-white border border-gray-100 rounded-3xl shadow-sm overflow-hidden dark:bg-slate-950 dark:border-slate-800">
+              <div class="absolute -inset-0.5 rounded-3xl blur opacity-30 group-hover:opacity-40 transition duration-500 bg-linear-to-br from-blue-900/10 via-slate-900/10 to-transparent dark:from-blue-900/20 dark:via-slate-900/20 dark:to-transparent"></div>
+              <div class="relative bg-white/50 backdrop-blur-md border border-white/40 rounded-3xl shadow-sm overflow-hidden dark:bg-slate-950/50 dark:border-slate-800/50">
                 <div class="p-6 border-b border-gray-100 dark:border-slate-800">
                   <div class="flex items-start justify-between gap-3">
                     <div class="min-w-0">
@@ -285,21 +290,21 @@
                   <div class="grid grid-cols-3 gap-2 mb-4">
                     <button
                       class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
-                      :class="pinnedOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
+                      :class="pinnedOnly ? 'bg-blue-950 text-white shadow-lg shadow-blue-950/25 dark:bg-blue-600 dark:text-white' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
                       @click="pinnedOnly = !pinnedOnly"
                     >
                       📌 Pinned
                     </button>
                     <button
                       class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
-                      :class="hasAttachmentsOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
+                      :class="hasAttachmentsOnly ? 'bg-blue-950 text-white shadow-lg shadow-blue-950/25 dark:bg-blue-600 dark:text-white' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
                       @click="hasAttachmentsOnly = !hasAttachmentsOnly"
                     >
                       📎 Files
                     </button>
                     <button
                       class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
-                      :class="showDeleted ? 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800' : 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900'"
+                      :class="showDeleted ? 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800' : 'bg-blue-950 text-white shadow-lg shadow-blue-950/25 dark:bg-blue-600 dark:text-white'"
                       @click="showDeleted = !showDeleted"
                     >
                       {{ showDeleted ? '👁️ Del' : '🙈 Del' }}
@@ -323,8 +328,8 @@
                       class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300"
                       :class="
                         selectedSupertag === null
-                          ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900'
-                          : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'
+                          ? 'bg-blue-950 text-white shadow-lg shadow-blue-950/25 dark:bg-blue-600 dark:text-white'
+                          : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'
                       "
                     >
                       <span class="flex items-center gap-2">
@@ -341,8 +346,8 @@
                       class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300"
                       :class="
                         selectedSupertag === tag.name
-                          ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900'
-                          : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'
+                          ? 'bg-blue-950 text-white shadow-lg shadow-blue-950/25 dark:bg-blue-600 dark:text-white'
+                          : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'
                       "
                     >
                       <span class="flex items-center gap-2 min-w-0">
@@ -391,21 +396,21 @@
           <div class="grid grid-cols-3 gap-2 mb-4">
             <button
               class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
-              :class="pinnedOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
+              :class="pinnedOnly ? 'bg-blue-950 text-white shadow-lg shadow-blue-950/25 dark:bg-blue-600 dark:text-white' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
               @click="pinnedOnly = !pinnedOnly"
             >
               📌 Pinned
             </button>
             <button
               class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
-              :class="hasAttachmentsOnly ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
+              :class="hasAttachmentsOnly ? 'bg-blue-950 text-white shadow-lg shadow-blue-950/25 dark:bg-blue-600 dark:text-white' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'"
               @click="hasAttachmentsOnly = !hasAttachmentsOnly"
             >
               📎 Files
             </button>
             <button
               class="px-3 py-2 rounded-2xl text-xs font-black transition-all duration-300"
-              :class="showDeleted ? 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800' : 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900'"
+              :class="showDeleted ? 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800' : 'bg-blue-950 text-white shadow-lg shadow-blue-950/25 dark:bg-blue-600 dark:text-white'"
               @click="showDeleted = !showDeleted"
             >
               {{ showDeleted ? '👁️ Del' : '🙈 Del' }}
@@ -428,8 +433,8 @@
               class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300"
               :class="
                 selectedSupertag === null
-                  ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'
+                  ? 'bg-blue-950 text-white shadow-lg shadow-blue-950/25 dark:bg-blue-600 dark:text-white'
+                  : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'
               "
             >
               <span class="flex items-center gap-2">
@@ -446,8 +451,8 @@
               class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300"
               :class="
                 selectedSupertag === tag.name
-                  ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/20 dark:bg-slate-100 dark:text-slate-900'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'
+                  ? 'bg-blue-950 text-white shadow-lg shadow-blue-950/25 dark:bg-blue-600 dark:text-white'
+                  : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800'
               "
             >
               <span class="flex items-center gap-2 min-w-0">
