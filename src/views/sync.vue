@@ -1,29 +1,13 @@
 <template>
-  <main
-    class="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-gray-50 to-white px-4 py-12 dark:from-slate-950 dark:to-slate-900"
-  >
+  <main class="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-gray-50 to-white px-4 py-12 dark:from-slate-950 dark:to-slate-900">
     <div class="w-full max-w-6xl mx-auto animate-fade-in-up">
       <!-- Header -->
       <header class="text-center mb-16">
-        <h1
-          class="text-5xl md:text-6xl font-black text-gray-900 mb-4 tracking-tight dark:text-slate-100"
-        >
-          Data
-          <span
-            class="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-violet-600"
-            >Hub</span
-          >
-        </h1>
-        <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed dark:text-slate-300">
-          Import, backup, and sync your notes. Choose a method below:
-        </p>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed dark:text-slate-300">Import, backup, and sync your notes. Choose a method below:</p>
       </header>
 
       <!-- Sync Options Grid -->
-      <section
-        aria-label="Sync and Backup Methods"
-        class="grid grid-cols-1 md:grid-cols-2 gap-8"
-      >
+      <section aria-label="Sync and Backup Methods" class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- P2P Sync Card -->
         <router-link
           to="/p2p"
@@ -41,13 +25,7 @@
             <div
               class="flex items-center justify-center w-20 h-20 bg-blue-50 rounded-2xl mb-6 group-hover:bg-blue-100 group-hover:scale-110 transition-all duration-300 dark:bg-blue-500/10 dark:group-hover:bg-blue-500/20"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-10 w-10 text-blue-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -58,23 +36,15 @@
             </div>
 
             <!-- Content -->
-            <h2
-              class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors dark:text-slate-100 dark:group-hover:text-blue-300"
-            >
+            <h2 class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors dark:text-slate-100 dark:group-hover:text-blue-300">
               Peer-to-Peer
             </h2>
-            <p class="text-gray-600 leading-relaxed mb-6 dark:text-slate-300">
-              Encrypted device-to-device sync
-            </p>
+            <p class="text-gray-600 leading-relaxed mb-6 dark:text-slate-300">Encrypted device-to-device sync</p>
 
             <!-- Features -->
             <ul class="space-y-2 text-sm text-gray-500 dark:text-slate-400">
               <li class="flex items-center gap-2">
-                <svg
-                  class="w-4 h-4 text-blue-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fill-rule="evenodd"
                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -84,11 +54,7 @@
                 End-to-end encrypted
               </li>
               <li class="flex items-center gap-2">
-                <svg
-                  class="w-4 h-4 text-blue-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fill-rule="evenodd"
                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -100,22 +66,10 @@
             </ul>
 
             <!-- Arrow -->
-            <div
-              class="mt-6 flex items-center text-blue-600 font-semibold text-sm group-hover:translate-x-2 transition-transform dark:text-blue-300"
-            >
+            <div class="mt-6 flex items-center text-blue-600 font-semibold text-sm group-hover:translate-x-2 transition-transform dark:text-blue-300">
               Learn more
-              <svg
-                class="w-4 h-4 ml-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5l7 7-7 7"
-                />
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
               </svg>
             </div>
           </div>
@@ -138,19 +92,8 @@
             <div
               class="flex items-center justify-center w-20 h-20 bg-emerald-50 rounded-2xl mb-6 group-hover:bg-emerald-100 group-hover:scale-110 transition-all duration-300 dark:bg-emerald-500/10 dark:group-hover:bg-emerald-500/20"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-10 w-10 text-emerald-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M3 15a4 4 0 004 4h10a4 4 0 100-8h-1.26A8 8 0 103 15z"
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h10a4 4 0 100-8h-1.26A8 8 0 103 15z" />
               </svg>
             </div>
 
@@ -160,18 +103,12 @@
             >
               S3 / MinIO
             </h2>
-            <p class="text-gray-600 leading-relaxed mb-6 dark:text-slate-300">
-              Encrypted cloud backup & sync
-            </p>
+            <p class="text-gray-600 leading-relaxed mb-6 dark:text-slate-300">Encrypted cloud backup & sync</p>
 
             <!-- Features -->
             <ul class="space-y-2 text-sm text-gray-500 dark:text-slate-400">
               <li class="flex items-center gap-2">
-                <svg
-                  class="w-4 h-4 text-emerald-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fill-rule="evenodd"
                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -181,11 +118,7 @@
                 Cloud storage
               </li>
               <li class="flex items-center gap-2">
-                <svg
-                  class="w-4 h-4 text-emerald-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fill-rule="evenodd"
                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -197,22 +130,10 @@
             </ul>
 
             <!-- Arrow -->
-            <div
-              class="mt-6 flex items-center text-emerald-600 font-semibold text-sm group-hover:translate-x-2 transition-transform dark:text-emerald-300"
-            >
+            <div class="mt-6 flex items-center text-emerald-600 font-semibold text-sm group-hover:translate-x-2 transition-transform dark:text-emerald-300">
               Learn more
-              <svg
-                class="w-4 h-4 ml-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5l7 7-7 7"
-                />
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
               </svg>
             </div>
           </div>
@@ -235,13 +156,7 @@
             <div
               class="flex items-center justify-center w-20 h-20 bg-amber-50 rounded-2xl mb-6 group-hover:bg-amber-100 group-hover:scale-110 transition-all duration-300 dark:bg-amber-500/10 dark:group-hover:bg-amber-500/20"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-10 w-10 text-amber-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -252,23 +167,15 @@
             </div>
 
             <!-- Content -->
-            <h2
-              class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors dark:text-slate-100 dark:group-hover:text-amber-300"
-            >
+            <h2 class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors dark:text-slate-100 dark:group-hover:text-amber-300">
               Local Backup
             </h2>
-            <p class="text-gray-600 leading-relaxed mb-6 dark:text-slate-300">
-              Unencrypted export/import
-            </p>
+            <p class="text-gray-600 leading-relaxed mb-6 dark:text-slate-300">Unencrypted export/import</p>
 
             <!-- Features -->
             <ul class="space-y-2 text-sm text-gray-500 dark:text-slate-400">
               <li class="flex items-center gap-2">
-                <svg
-                  class="w-4 h-4 text-amber-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg class="w-4 h-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fill-rule="evenodd"
                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -278,11 +185,7 @@
                 Simple & fast
               </li>
               <li class="flex items-center gap-2">
-                <svg
-                  class="w-4 h-4 text-amber-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg class="w-4 h-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fill-rule="evenodd"
                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -294,22 +197,10 @@
             </ul>
 
             <!-- Arrow -->
-            <div
-              class="mt-6 flex items-center text-amber-600 font-semibold text-sm group-hover:translate-x-2 transition-transform dark:text-amber-300"
-            >
+            <div class="mt-6 flex items-center text-amber-600 font-semibold text-sm group-hover:translate-x-2 transition-transform dark:text-amber-300">
               Learn more
-              <svg
-                class="w-4 h-4 ml-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5l7 7-7 7"
-                />
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
               </svg>
             </div>
           </div>
@@ -332,19 +223,8 @@
             <div
               class="flex items-center justify-center w-20 h-20 bg-indigo-50 rounded-2xl mb-6 group-hover:bg-indigo-100 group-hover:scale-110 transition-all duration-300 dark:bg-indigo-500/10 dark:group-hover:bg-indigo-500/20"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-10 w-10 text-indigo-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 3v10m0 0l3-3m-3 3l-3-3M4 17a2 2 0 002 2h12a2 2 0 002-2"
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v10m0 0l3-3m-3 3l-3-3M4 17a2 2 0 002 2h12a2 2 0 002-2" />
               </svg>
             </div>
 
@@ -354,18 +234,12 @@
             >
               Import
             </h2>
-            <p class="text-gray-600 leading-relaxed mb-6 dark:text-slate-300">
-              Bring data from other apps (CSV)
-            </p>
+            <p class="text-gray-600 leading-relaxed mb-6 dark:text-slate-300">Bring data from other apps (CSV)</p>
 
             <!-- Features -->
             <ul class="space-y-2 text-sm text-gray-500 dark:text-slate-400">
               <li class="flex items-center gap-2">
-                <svg
-                  class="w-4 h-4 text-indigo-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg class="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fill-rule="evenodd"
                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -375,11 +249,7 @@
                 Map CSV columns to supertags
               </li>
               <li class="flex items-center gap-2">
-                <svg
-                  class="w-4 h-4 text-indigo-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg class="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fill-rule="evenodd"
                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -391,22 +261,10 @@
             </ul>
 
             <!-- Arrow -->
-            <div
-              class="mt-6 flex items-center text-indigo-600 font-semibold text-sm group-hover:translate-x-2 transition-transform dark:text-indigo-300"
-            >
+            <div class="mt-6 flex items-center text-indigo-600 font-semibold text-sm group-hover:translate-x-2 transition-transform dark:text-indigo-300">
               Learn more
-              <svg
-                class="w-4 h-4 ml-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5l7 7-7 7"
-                />
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
               </svg>
             </div>
           </div>
