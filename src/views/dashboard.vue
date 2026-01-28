@@ -106,9 +106,12 @@
                :key="note.id" 
                @click="openNote(note)"
                 class="group relative flex flex-col md:flex-row gap-6 p-6 md:p-8 rounded-3xl bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 hover:shadow-xl hover:shadow-slate-200/50 transition-all cursor-pointer overflow-hidden dark:bg-slate-900/40 dark:border-slate-800/50 dark:hover:bg-slate-900/80 dark:hover:border-slate-700 dark:hover:shadow-noner"
+                :class="{'opacity-70 grayscale hover:grayscale-0': note.deletedAt}"
               >
                  <!-- Selection Indicator -->
-                 <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
+                 <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"
+                      :class="{'bg-red-500': note.deletedAt}"
+                 ></div>
 
                  <!-- Icon / Graphic -->
                  <div class="shrink-0">
@@ -143,6 +146,14 @@
                           </span>
                        </div>
                     </div>
+                    </div>
+
+
+                 <!-- Deleted Indicator -->
+                 <div v-if="note.deletedAt" class="absolute top-6 right-6 z-20">
+                    <span class="px-2 py-1 rounded-md bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-wider dark:bg-red-900/20 dark:border-red-500/30 dark:text-red-400">
+                       Deleted
+                    </span>
                  </div>
 
                  <!-- Action Arrow (Visible on Hover) -->
@@ -190,7 +201,7 @@ const isLoading = ref(false);
 const notes = ref([]);
 const pinnedOnly = ref(false);
 const filesOnly = ref(false); // Renamed from hasAttachmentsOnly for brevity in this view
-const showDeleted = ref(false); // Default to false for cleaner look
+const trashOnly = ref(false); 
 const searchInputRef = ref(null);
 
 // Reuse core logic
@@ -212,7 +223,7 @@ const startNewNote = () => {
 };
 
 const openNote = (note) => {
-  if (!note.deletedAt) router.push(`/notes/${note.id}`);
+   router.push(`/notes/${note.id}`);
 };
 
 const formatShortDate = (timestamp) => {
@@ -224,7 +235,15 @@ const formatShortDate = (timestamp) => {
 const filteredNotes = computed(() => {
   let filtered = notes.value;
 
-  if (!showDeleted.value) filtered = filtered.filter((note) => !note.deletedAt);
+  // By default we show everything, but filter if specific toggles are on
+  if (trashOnly.value) {
+     filtered = filtered.filter((note) => note.deletedAt);
+  } else {
+     // If not in trash mode, we still show deleted notes but we might want to hide them if "Pinned" or "Files" are selected? 
+     // For now, let's keep them unless specifically filtered out by Pinned/Files logic which usually applies to active notes? 
+     // Actually, let's just keep them in the stream as requested, but filtered down by other criteria.
+  }
+
   if (pinnedOnly.value) filtered = filtered.filter((note) => !!note?.parsed?.pinned);
   if (filesOnly.value) filtered = filtered.filter((note) => (note?.attachments?.length || 0) > 0);
   
@@ -237,28 +256,35 @@ const filteredNotes = computed(() => {
     filtered = filtered.filter(
       (note) =>
         note.parsed.title?.toLowerCase().includes(query) ||
-        note.parsed.content?.toLowerCase().includes(query) // Simpler search for this view
+        note.parsed.content?.toLowerCase().includes(query) 
     );
   }
 
   return filtered.slice().sort((a, b) => {
+    // 1. Sort by Deleted status (Active first, Deleted last)
+    if (a.deletedAt && !b.deletedAt) return 1;
+    if (!a.deletedAt && b.deletedAt) return -1;
+    
+    // 2. Sort by Pinned (Pinned first)
     if (a.parsed.pinned && !b.parsed.pinned) return -1;
     if (!a.parsed.pinned && b.parsed.pinned) return 1;
+    
+    // 3. Sort by Date (Newest first)
     return b.updatedAt - a.updatedAt;
   });
 });
 
 const quickFilters = computed(() => [
-   { id: 'all', label: 'All', isActive: () => !pinnedOnly.value && !filesOnly.value && !showDeleted.value, action: clearAllFilters },
+   { id: 'all', label: 'All', isActive: () => !pinnedOnly.value && !filesOnly.value && !trashOnly.value, action: clearAllFilters },
    { id: 'files', label: 'Files', isActive: () => filesOnly.value, action: () => filesOnly.value = !filesOnly.value },
-   { id: 'deleted', label: 'Trash', isActive: () => showDeleted.value, action: () => showDeleted.value = !showDeleted.value }
+   { id: 'deleted', label: 'Trash Only', isActive: () => trashOnly.value, action: () => trashOnly.value = !trashOnly.value }
 ]);
 
 const clearAllFilters = () => {
     searchQuery.value = "";
     pinnedOnly.value = false;
     filesOnly.value = false;
-    showDeleted.value = false;
+    trashOnly.value = false;
     selectedSupertag.value = null;
 }
 
@@ -291,8 +317,7 @@ const availableSupertags = computed(() => supertagRegistry.getAllSupertags());
 
 const supertagCounts = computed(() => {
   const counts = {};
-  const base = notes.value
-    .filter((n) => (showDeleted.value ? true : !n.deletedAt))
+  const base = notes.value;
   
   for (const note of base) {
     const tags = note?.parsed?.tags;
