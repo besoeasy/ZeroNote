@@ -1,5 +1,5 @@
 # ===== Stage 1: Build Vite app (multi-arch) =====
-FROM --platform=$BUILDPLATFORM docker.io/oven/bun:alpine AS builder
+FROM --platform=$BUILDPLATFORM docker.io/oven/bun AS builder
 
 WORKDIR /app
 
