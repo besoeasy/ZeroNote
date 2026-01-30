@@ -7,7 +7,6 @@ import NoteEdit from "@/views/note-edit.vue";
 import Backup from "@/views/backup.vue";
 import Stats from "@/views/stats.vue";
 import p2p from "@/views/p2p.vue";
-import S3 from "@/views/s3.vue";
 import Sync from "@/views/sync.vue";
 import ImportView from "@/views/import.vue";
 import About from "@/views/about.vue";
@@ -52,8 +51,7 @@ const router = createRouter({
     },
     {
       path: "/s3",
-      name: "s3",
-      component: S3,
+      redirect: "/dashboard",
     },
     {
       path: "/data",
