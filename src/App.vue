@@ -55,6 +55,8 @@
               <component :is="theme.resolvedTheme === 'dark' ? Sun : Moon" class="w-5 h-5" />
             </button>
 
+            <S3StatusIndicator />
+
             <div class="flex items-center gap-1.5 rounded-2xl bg-gray-50 p-1.5 shadow-inner border border-gray-100 dark:bg-gray-900/60 dark:border-gray-800">
               <router-link
                 to="/data"
@@ -107,6 +109,7 @@
       </main>
     </div>
 
+    <S3AutoSync />
     <ToastHost />
   </div>
 </template>
@@ -116,6 +119,8 @@ import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import LockScreen from "@/components/LockScreen.vue";
 import ToastHost from "@/components/ToastHost.vue";
+import S3AutoSync from "@/components/S3AutoSync.vue";
+import S3StatusIndicator from "@/components/S3StatusIndicator.vue";
 import { Plus, Lock, Database, BarChart3, ArrowLeft, Sun, Moon } from "lucide-vue-next";
 import { useThemeStore } from "@/stores/theme.js";
 
