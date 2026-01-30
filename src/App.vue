@@ -6,102 +6,106 @@
 
     <div v-else class="min-h-screen bg-white flex flex-col transition-colors duration-300 dark:bg-gray-950">
       <header
-        class="sticky top-0 z-50 w-full bg-white/85 backdrop-blur-md border-b border-gray-200 transition-colors duration-300 dark:bg-gray-950/75 dark:border-gray-800"
+        class="sticky top-0 z-50 w-full bg-transparent transition-colors duration-300"
         :class="s3PanelOpen ? 'lg:pl-80' : ''"
       >
-        <div class="w-full px-3 sm:px-6 py-2.5 sm:py-3 flex items-center gap-2 sm:gap-4">
-          <router-link
-            to="/dashboard"
-            class="group flex items-center gap-2 rounded-2xl px-2 py-1.5 hover:bg-gray-100 transition-all duration-300 dark:hover:bg-gray-900/60"
-            title="ZeroNote"
-          >
-            <div class="relative w-10 h-10 rounded-2xl bg-linear-to-br from-blue-600 to-violet-600 text-white flex items-center justify-center shadow-sm transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-0.5 overflow-hidden">
-              <div class="absolute inset-0 bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 animate-shimmer-slide"></div>
-              <span class="text-sm font-semibold relative">ZN</span>
-            </div>
-            <div class="hidden sm:flex flex-col leading-tight">
-              <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">ZeroNote</span>
-              <span class="text-[11px] text-gray-500 dark:text-gray-400">Private notes</span>
-            </div>
-          </router-link>
-
-          <div class="flex-1"></div>
-
-          <div class="flex items-center gap-2">
-            <button
-              v-if="isDashboard"
-              @click="handleNewNote"
-              class="group relative h-10 px-3.5 rounded-xl bg-linear-to-r from-gray-900 to-gray-800 text-white flex items-center gap-2 hover:from-gray-800 hover:to-gray-700 transition-all duration-300 shadow-sm hover:shadow-lg active:scale-[0.98] overflow-hidden dark:from-white dark:to-gray-100 dark:text-gray-900 dark:hover:from-white dark:hover:to-gray-200"
-              title="New Note"
-            >
-              <span class="absolute inset-0 bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 animate-shimmer-slide"></span>
-              <Plus class="w-5 h-5" />
-              <span class="hidden sm:inline text-sm font-medium">New</span>
-            </button>
+        <div class="w-full px-3 sm:px-6 py-3 sm:py-4">
+          <nav class="relative w-full flex items-center gap-2 sm:gap-4 rounded-3xl border border-gray-200/70 bg-white/80 p-2 sm:p-3 shadow-[0_10px_40px_rgba(15,23,42,0.12)] backdrop-blur-xl transition-all duration-300 dark:border-gray-800/70 dark:bg-gray-950/70">
+            <div class="pointer-events-none absolute inset-0 rounded-3xl bg-linear-to-r from-transparent via-white/40 to-transparent opacity-0 animate-shimmer-slide"></div>
 
             <router-link
-              v-else
               to="/dashboard"
-              class="h-10 px-3 rounded-xl bg-gray-100 text-gray-900 flex items-center gap-2 hover:bg-gray-200 transition-all duration-300 active:scale-[0.98] dark:bg-gray-900/70 dark:text-gray-100 dark:hover:bg-gray-900"
-              title="Back to Notes"
+              class="group relative flex items-center gap-2 rounded-2xl px-2 py-1.5 hover:bg-gray-100/80 transition-all duration-300 dark:hover:bg-gray-900/60"
+              title="ZeroNote"
             >
-              <ArrowLeft class="w-5 h-5" />
-              <span class="hidden sm:inline text-sm font-medium">Back</span>
+              <div class="relative w-10 h-10 rounded-2xl bg-linear-to-br from-indigo-600 via-blue-600 to-fuchsia-600 text-white flex items-center justify-center shadow-md transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-0.5 overflow-hidden">
+                <div class="absolute inset-0 bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-25 animate-shimmer-slide"></div>
+                <span class="text-sm font-semibold relative tracking-wide">ZN</span>
+              </div>
+              <div class="hidden sm:flex flex-col leading-tight">
+                <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">ZeroNote</span>
+                <span class="text-[11px] text-gray-500 dark:text-gray-400">Private notes</span>
+              </div>
             </router-link>
 
-            <button
-              @click="theme.toggle"
-              class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
-              :title="theme.resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
-              aria-label="Toggle theme"
-            >
-              <component :is="theme.resolvedTheme === 'dark' ? Sun : Moon" class="w-5 h-5" />
-            </button>
+            <div class="flex-1"></div>
 
-            <div class="flex items-center gap-1.5 rounded-2xl bg-gray-50 p-1.5 shadow-inner border border-gray-100 dark:bg-gray-900/60 dark:border-gray-800">
-              <router-link
-                to="/data"
-                class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-white transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
-                title="Data Hub"
-                aria-label="Data Hub"
+            <div class="flex items-center gap-2">
+              <button
+                v-if="isDashboard"
+                @click="handleNewNote"
+                class="group relative h-10 px-3.5 rounded-xl bg-linear-to-r from-indigo-600 via-blue-600 to-fuchsia-600 text-white flex items-center gap-2 hover:brightness-110 transition-all duration-300 shadow-md hover:shadow-2xl active:scale-[0.98] overflow-hidden"
+                title="New Note"
               >
-                <Database class="w-5 h-5" />
-              </router-link>
+                <span class="absolute inset-0 bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></span>
+                <Plus class="w-5 h-5" />
+                <span class="hidden sm:inline text-sm font-medium">New</span>
+              </button>
 
               <router-link
-                to="/stats"
-                class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-white transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
-                title="Statistics"
-                aria-label="Statistics"
+                v-else
+                to="/dashboard"
+                class="h-10 px-3 rounded-xl bg-gray-100/80 text-gray-900 flex items-center gap-2 hover:bg-gray-200/80 transition-all duration-300 active:scale-[0.98] dark:bg-gray-900/70 dark:text-gray-100 dark:hover:bg-gray-900"
+                title="Back to Notes"
               >
-                <BarChart3 class="w-5 h-5" />
-              </router-link>
-
-              <router-link
-                to="/about"
-                class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-white transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
-                title="About ZeroNote"
-                aria-label="About ZeroNote"
-              >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+                <ArrowLeft class="w-5 h-5" />
+                <span class="hidden sm:inline text-sm font-medium">Back</span>
               </router-link>
 
               <button
-                @click="handleLogout"
-                class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-white transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
-                title="Lock App"
-                aria-label="Lock app"
+                @click="theme.toggle"
+                class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
+                :title="theme.resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+                aria-label="Toggle theme"
               >
-                <Lock class="w-5 h-5" />
+                <component :is="theme.resolvedTheme === 'dark' ? Sun : Moon" class="w-5 h-5" />
               </button>
+
+              <div class="relative flex items-center gap-1.5 rounded-2xl bg-gray-50/80 p-1.5 shadow-inner border border-gray-100/80 dark:bg-gray-900/60 dark:border-gray-800/80">
+                <router-link
+                  to="/data"
+                  class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-white/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
+                  title="Data Hub"
+                  aria-label="Data Hub"
+                >
+                  <Database class="w-5 h-5" />
+                </router-link>
+
+                <router-link
+                  to="/stats"
+                  class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-white/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
+                  title="Statistics"
+                  aria-label="Statistics"
+                >
+                  <BarChart3 class="w-5 h-5" />
+                </router-link>
+
+                <router-link
+                  to="/about"
+                  class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-white/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
+                  title="About ZeroNote"
+                  aria-label="About ZeroNote"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </router-link>
+
+                <button
+                  @click="handleLogout"
+                  class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-white/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
+                  title="Lock App"
+                  aria-label="Lock app"
+                >
+                  <Lock class="w-5 h-5" />
+                </button>
+              </div>
             </div>
-          </div>
+          </nav>
         </div>
       </header>
 
@@ -124,7 +128,7 @@
 
     <aside
       v-if="isUnlocked && !isPublicShareRoute"
-      class="fixed left-0 top-16 bottom-0 w-80 max-w-[90vw] z-40 border-r border-gray-200 bg-white/95 backdrop-blur-xl shadow-2xl transition-all duration-300 dark:bg-gray-950/90 dark:border-gray-800"
+      class="fixed left-0 top-20 sm:top-24 bottom-0 w-80 max-w-[90vw] z-40 border-r border-gray-200 bg-white/95 backdrop-blur-xl shadow-2xl transition-all duration-300 dark:bg-gray-950/90 dark:border-gray-800"
       :class="s3PanelOpen ? 'translate-x-0' : '-translate-x-full'"
     >
       <div class="h-full flex flex-col">
