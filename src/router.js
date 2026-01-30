@@ -50,10 +50,6 @@ const router = createRouter({
       component: p2p,
     },
     {
-      path: "/s3",
-      redirect: "/dashboard",
-    },
-    {
       path: "/data",
       alias: "/sync",
       name: "data",

@@ -58,8 +58,6 @@
               <component :is="theme.resolvedTheme === 'dark' ? Sun : Moon" class="w-5 h-5" />
             </button>
 
-            <S3StatusIndicator />
-
             <div class="flex items-center gap-1.5 rounded-2xl bg-gray-50 p-1.5 shadow-inner border border-gray-100 dark:bg-gray-900/60 dark:border-gray-800">
               <router-link
                 to="/data"
