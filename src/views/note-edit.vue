@@ -26,9 +26,9 @@
     </div>
 
     <!-- Main Editor Layout -->
-    <div class="flex-1 overflow-hidden flex">
+    <div class="flex-1 overflow-hidden flex flex-col lg:flex-row">
       <!-- Left Sidebar - Available Tags (1/3) -->
-      <div class="w-1/3 border-r border-gray-200 bg-white overflow-y-auto dark:bg-slate-950 dark:border-slate-800">
+      <div class="w-full lg:w-1/3 border-b lg:border-b-0 lg:border-r border-gray-200 bg-white overflow-y-auto max-h-[45vh] lg:max-h-none dark:bg-slate-950 dark:border-slate-800">
         <div class="p-6">
           <div class="mb-6">
             <h3 class="text-sm font-semibold text-gray-900 mb-2 dark:text-slate-100">Available Tags</h3>
@@ -54,7 +54,7 @@
                   v-for="tag in getTagsByCategory(category)"
                   :key="tag.name"
                   @click="insertTag(tag)"
-                  class="w-full text-left px-3 py-2.5 rounded-lg border border-gray-200 hover:border-gray-900 hover:bg-gray-50 transition-all group dark:border-slate-800 dark:hover:border-slate-600 dark:hover:bg-slate-900"
+                  class="w-full text-left px-3 py-2 rounded-lg border border-gray-200 hover:border-gray-900 hover:bg-gray-50 transition-all group dark:border-slate-800 dark:hover:border-slate-600 dark:hover:bg-slate-900"
                 >
                   <div class="flex items-start gap-3">
                     <span class="text-xl shrink-0">{{ tag.icon }}</span>
@@ -62,9 +62,9 @@
                       <div class="flex items-center gap-2 mb-1">
                         <span class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ tag.displayName }}</span>
                       </div>
-                      <code class="text-xs text-gray-600 font-mono mt-2 block w-fit dark:text-slate-300">#@{{ tag.example }}</code>
+                      <code class="hidden md:block text-xs text-gray-600 font-mono mt-2 w-fit dark:text-slate-300">#@{{ tag.example }}</code>
 
-                      <p class="text-xs text-gray-500 mt-1 dark:text-slate-400">{{ tag.description }}</p>
+                      <p class="hidden md:block text-xs text-gray-500 mt-1 dark:text-slate-400">{{ tag.description }}</p>
                     </div>
                   </div>
                 </button>
