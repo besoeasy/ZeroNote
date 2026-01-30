@@ -53,6 +53,18 @@
               </router-link>
 
               <button
+                v-if="isUnlocked && !isPublicShareRoute"
+                @click="toggleS3Panel(!s3PanelOpen)"
+                class="group relative h-10 px-3 rounded-xl bg-emerald-500/10 text-emerald-700 border border-emerald-200/60 flex items-center gap-2 hover:bg-emerald-500/15 transition-all duration-300 active:scale-[0.98] dark:bg-emerald-500/10 dark:text-emerald-200 dark:border-emerald-500/30"
+                :title="s3PanelOpen ? 'Hide S3 Sync' : 'Show S3 Sync'"
+                aria-label="Toggle S3 Sync"
+              >
+                <span class="absolute inset-0 rounded-xl bg-linear-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></span>
+                <span class="relative inline-flex h-2.5 w-2.5 rounded-full" :class="s3IndicatorDotClass"></span>
+                <span class="relative hidden sm:inline text-xs font-semibold">S3</span>
+              </button>
+
+              <button
                 @click="theme.toggle"
                 class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
                 :title="theme.resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
@@ -114,17 +126,6 @@
       </main>
     </div>
 
-    <button
-      v-if="!s3PanelOpen && isUnlocked && !isPublicShareRoute"
-      @click="toggleS3Panel(true)"
-      class="fixed left-2 top-1/2 -translate-y-1/2 z-50 group flex items-center gap-2 rounded-2xl px-3 py-2 bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
-      title="Show S3 Sync"
-      aria-label="Show S3 Sync"
-    >
-      <span class="absolute inset-0 rounded-2xl bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-25 animate-shimmer-slide"></span>
-      <span class="relative inline-flex h-2.5 w-2.5 rounded-full" :class="s3IndicatorDotClass"></span>
-      <span class="relative text-xs font-semibold">S3</span>
-    </button>
 
     <aside
       v-if="isUnlocked && !isPublicShareRoute"
