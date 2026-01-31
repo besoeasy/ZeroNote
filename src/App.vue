@@ -16,15 +16,10 @@
             <router-link
               to="/dashboard"
               class="group relative flex items-center gap-2 rounded-2xl px-2 py-1.5 hover:bg-gray-100/80 transition-all duration-300 dark:hover:bg-gray-900/60"
-              title="ZeroNote"
+              title="ZERO NOTE"
             >
-              <div class="relative w-10 h-10 rounded-2xl bg-linear-to-br from-indigo-600 via-blue-600 to-fuchsia-600 text-white flex items-center justify-center shadow-md transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-0.5 overflow-hidden">
-                <div class="absolute inset-0 bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-25 animate-shimmer-slide"></div>
-                <span class="text-sm font-semibold relative tracking-wide">ZN</span>
-              </div>
-              <div class="hidden sm:flex flex-col leading-tight">
-                <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">ZeroNote</span>
-                <span class="text-[11px] text-gray-500 dark:text-gray-400">Private notes</span>
+              <div class="text-base sm:text-lg font-black tracking-[0.35em] text-gray-900 dark:text-gray-100">
+                ZERO NOTE
               </div>
             </router-link>
 
