@@ -1,11 +1,5 @@
 <template>
   <div class="min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-blue-500/30 overflow-x-hidden transition-colors duration-300 dark:bg-slate-950 dark:text-slate-200">
-    <!-- Ambient Glow effects -->
-    <div class="fixed inset-0 pointer-events-none z-0">
-      <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-500/10 rounded-full blur-[120px] dark:bg-blue-900/10"></div>
-      <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-500/10 rounded-full blur-[120px] dark:bg-indigo-900/10"></div>
-    </div>
-
     <!-- Main Container -->
     <div class="relative z-10 max-w-5xl mx-auto px-4 md:px-8 py-8 md:py-12 flex flex-col min-h-screen">
       
