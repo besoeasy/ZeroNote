@@ -16,9 +16,24 @@
     </div>
 
     <!-- Stats Grid -->
-    <div v-else class="space-y-10 animate-fade-in-up">
-      <!-- Primary Stats Row -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div v-else class="space-y-12 animate-fade-in-up">
+      <!-- Page Header -->
+      <div class="text-center space-y-3">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-gray-900 dark:text-slate-100">
+          Insights
+        </h1>
+        <p class="text-base sm:text-lg text-gray-600 dark:text-slate-400 max-w-2xl mx-auto">
+          Your workspace analytics and app information
+        </p>
+      </div>
+      <!-- Stats Section -->
+      <div class="space-y-6">
+        <div class="flex items-center gap-3">
+          <div class="h-px flex-1 bg-gray-200 dark:bg-slate-800"></div>
+          <h2 class="text-sm font-bold uppercase tracking-widest text-gray-400 dark:text-slate-500">Statistics</h2>
+          <div class="h-px flex-1 bg-gray-200 dark:bg-slate-800"></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <!-- Total Notes Card -->
         <div
           class="group relative overflow-hidden bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 dark:bg-slate-950 dark:border-slate-800"
@@ -94,15 +109,18 @@
           </div>
         </div>
       </div>
+      </div>
 
       <!-- System Info Section -->
-      <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 dark:bg-slate-900/40 dark:border-slate-800">
-        <div class="flex items-center gap-3 mb-8">
-          <HardDrive class="w-6 h-6 text-gray-700 dark:text-slate-300" />
-          <h3 class="text-xl font-bold text-gray-900 dark:text-slate-100">System Status</h3>
+      <div class="space-y-6">
+        <div class="flex items-center gap-3">
+          <div class="h-px flex-1 bg-gray-200 dark:bg-slate-800"></div>
+          <h2 class="text-sm font-bold uppercase tracking-widest text-gray-400 dark:text-slate-500">System</h2>
+          <div class="h-px flex-1 bg-gray-200 dark:bg-slate-800"></div>
         </div>
+        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 dark:bg-slate-950 dark:border-slate-800">
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           <!-- DB Info -->
           <div class="space-y-2">
             <span
@@ -144,20 +162,27 @@
             </div>
           </div>
         </div>
+        </div>
       </div>
 
-      <!-- About ZERO NOTE -->
+      <!-- About Section -->
       <div class="space-y-8">
-        <div class="text-center">
-          <h2 class="text-4xl md:text-5xl font-black text-gray-900 tracking-tight uppercase dark:text-slate-100">
+        <div class="flex items-center gap-3">
+          <div class="h-px flex-1 bg-gray-200 dark:bg-slate-800"></div>
+          <h2 class="text-sm font-bold uppercase tracking-widest text-gray-400 dark:text-slate-500">About</h2>
+          <div class="h-px flex-1 bg-gray-200 dark:bg-slate-800"></div>
+        </div>
+
+        <div class="text-center space-y-4">
+          <h3 class="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 tracking-tight dark:text-slate-100">
             ZERO NOTE
-          </h2>
-          <p class="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto mt-3 dark:text-slate-300">
+          </h3>
+          <p class="text-base sm:text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto dark:text-slate-300">
             A privacy-focused, local-first note-taking application. All your data stays on your device with optional encrypted sync.
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <div class="group bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 dark:bg-slate-950 dark:border-slate-800">
             <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors dark:bg-blue-500/10 dark:group-hover:bg-blue-500/20">
               <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -195,8 +220,8 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="group relative overflow-hidden bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 dark:bg-slate-950 dark:border-slate-800">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          <div class="group relative overflow-hidden bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 hover:shadow-xl transition-all duration-300 dark:bg-slate-950 dark:border-slate-800">
             <div class="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-gray-50 rounded-full blur-3xl opacity-50 group-hover:opacity-100 transition-opacity dark:bg-slate-800/40"></div>
             <div class="relative z-10">
               <div class="flex items-center gap-3 mb-4">
@@ -217,7 +242,7 @@
             </div>
           </div>
 
-          <div class="group relative overflow-hidden bg-orange-600 rounded-3xl p-8 hover:shadow-xl transition-all duration-300 dark:bg-orange-700">
+          <div class="group relative overflow-hidden bg-orange-600 rounded-3xl p-6 sm:p-8 hover:shadow-xl transition-all duration-300 dark:bg-orange-700">
             <div class="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
             <div class="relative z-10">
               <div class="flex items-center gap-3 mb-4">
