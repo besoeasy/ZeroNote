@@ -12,7 +12,7 @@
       <!-- Header / Command Center -->
       <header class="flex flex-col gap-6 mb-8 md:mb-12">
         <!-- Top Bar -->
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
              <h1 class="text-3xl md:text-4xl font-black tracking-tighter text-slate-900 dark:text-white">
                {{ greeting }}<span class="text-blue-500">.</span>
@@ -22,9 +22,9 @@
              </p>
           </div>
           
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-3 w-full sm:w-auto">
              <button 
-                class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition-all shadow-lg shadow-blue-900/20 active:scale-95 flex items-center gap-2"
+                class="w-full sm:w-auto px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition-all shadow-lg shadow-blue-900/20 active:scale-95 flex items-center justify-center gap-2"
                 @click="startNewNote"
              >
                 <Plus class="w-4 h-4" />
@@ -36,14 +36,15 @@
         <!-- Big Search Input -->
         <div class="relative group mt-4">
           <div class="absolute inset-0 bg-blue-500/10 rounded-2xl blur-lg transition-opacity opacity-0 group-focus-within:opacity-100 dark:bg-blue-500/20"></div>
-          <div class="relative bg-white/70 backdrop-blur-xl border border-slate-200 rounded-2xl flex items-center p-2 transition-all group-focus-within:border-blue-500/50 group-focus-within:ring-1 group-focus-within:ring-blue-500/50 shadow-sm dark:bg-slate-900/80 dark:border-slate-800">
+          <div class="relative bg-white/70 backdrop-blur-xl border border-slate-200 rounded-2xl flex items-center p-2 sm:p-3 transition-all group-focus-within:border-blue-500/50 group-focus-within:ring-1 group-focus-within:ring-blue-500/50 shadow-sm dark:bg-slate-900/80 dark:border-slate-800">
              <Search class="w-6 h-6 text-slate-400 ml-4 mr-4 dark:text-slate-500" />
              <input 
                 ref="searchInputRef"
                 v-model="searchQuery"
                 type="text" 
                 placeholder="Search everything..." 
-                class="w-full bg-transparent border-none outline-none text-xl md:text-2xl font-medium placeholder-slate-400 py-3 text-slate-800 dark:text-white dark:placeholder-slate-600"
+                aria-label="Search notes"
+                class="w-full bg-transparent border-none outline-none text-lg sm:text-xl md:text-2xl font-medium placeholder-slate-400 py-3 text-slate-800 dark:text-white dark:placeholder-slate-600"
              />
              <div class="hidden md:flex items-center gap-3 pr-4">
                 <span v-if="filteredNotes.length > 0" class="text-xs font-bold text-slate-400 uppercase tracking-widest dark:text-slate-500">
@@ -106,7 +107,7 @@
                v-for="note in filteredNotes" 
                :key="note.id" 
                @click="openNote(note)"
-                class="group relative flex flex-col md:flex-row gap-6 p-6 md:p-8 rounded-3xl bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 hover:shadow-xl hover:shadow-slate-200/50 transition-all cursor-pointer overflow-hidden dark:bg-slate-900/40 dark:border-slate-800/50 dark:hover:bg-slate-900/80 dark:hover:border-slate-700 dark:hover:shadow-noner"
+                class="group relative flex flex-col md:flex-row gap-5 sm:gap-6 p-5 sm:p-6 md:p-8 rounded-3xl bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 hover:shadow-xl hover:shadow-slate-200/50 transition-all cursor-pointer overflow-hidden dark:bg-slate-900/40 dark:border-slate-800/50 dark:hover:bg-slate-900/80 dark:hover:border-slate-700 dark:hover:shadow-none"
                 :class="{'opacity-70 grayscale hover:grayscale-0': note.deletedAt}"
               >
                  <!-- Selection Indicator -->
@@ -117,7 +118,7 @@
                  <!-- Icon / Graphic -->
                  <div class="shrink-0">
                     <div 
-                       class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-sm transition-colors duration-500 dark:shadow-inner"
+                       class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl shadow-sm transition-colors duration-500 dark:shadow-inner"
                        :style="{ backgroundColor: getCardAccentColor(note) + '15', color: getCardAccentColor(note) }"
                     >
                        {{ note.parsed.icon || '📄' }}
@@ -138,7 +139,7 @@
                     </p>
 
                     <!-- Metadata Footer -->
-                    <div class="flex items-center gap-4 text-xs font-medium text-slate-400 group-hover:text-slate-500 transition-colors dark:text-slate-600 dark:group-hover:text-slate-500">
+                              <div class="flex flex-wrap items-center gap-3 text-xs font-medium text-slate-400 group-hover:text-slate-500 transition-colors dark:text-slate-600 dark:group-hover:text-slate-500">
                        <span class="uppercase tracking-wider">{{ formatShortDate(note.updatedAt) }}</span>
                        
                        <div class="flex gap-2">
@@ -147,7 +148,33 @@
                           </span>
                        </div>
                     </div>
-                    </div>
+                              <div class="mt-4 flex items-center gap-2 md:hidden">
+                                 <button 
+                                    @click.stop="togglePin(note)" 
+                                    class="flex-1 px-3 py-2 rounded-xl text-xs font-semibold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors dark:text-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700"
+                                    title="Pin/Unpin"
+                                 >
+                                    <span v-if="note.parsed.pinned">Unpin</span>
+                                    <span v-else>Pin</span>
+                                 </button>
+                                 <button 
+                                    v-if="!note.deletedAt"
+                                    @click.stop="toggleDelete(note)" 
+                                    class="flex-1 px-3 py-2 rounded-xl text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition-colors dark:text-red-300 dark:bg-red-900/30 dark:hover:bg-red-900/40"
+                                    title="Delete"
+                                 >
+                                    Delete
+                                 </button>
+                                 <button 
+                                    v-else
+                                    @click.stop="restoreNote(note)" 
+                                    class="flex-1 px-3 py-2 rounded-xl text-xs font-semibold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 transition-colors dark:text-emerald-300 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/40"
+                                    title="Restore"
+                                 >
+                                    Restore
+                                 </button>
+                              </div>
+                              </div>
 
 
                  <!-- Deleted Indicator -->
