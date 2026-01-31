@@ -10,7 +10,7 @@
         :class="s3PanelOpen ? 'lg:pl-80' : ''"
       >
         <div class="w-full px-3 sm:px-6 py-3 sm:py-4">
-          <nav class="relative w-full flex items-center gap-2 sm:gap-4 rounded-3xl border border-gray-200/70 bg-white/80 p-2 sm:p-3 shadow-[0_10px_40px_rgba(15,23,42,0.12)] backdrop-blur-xl transition-all duration-300 dark:border-gray-800/70 dark:bg-gray-950/70">
+          <nav class="relative w-full flex flex-wrap items-center gap-2 sm:gap-4 gap-y-2 rounded-3xl border border-gray-200/70 bg-white/80 p-2 sm:p-3 shadow-[0_10px_40px_rgba(15,23,42,0.12)] backdrop-blur-xl transition-all duration-300 dark:border-gray-800/70 dark:bg-gray-950/70">
             <div class="pointer-events-none absolute inset-0 rounded-3xl bg-linear-to-r from-transparent via-white/40 to-transparent opacity-0 animate-shimmer-slide"></div>
 
             <router-link
@@ -28,9 +28,9 @@
               </div>
             </router-link>
 
-            <div class="flex-1"></div>
+            <div class="hidden sm:block flex-1"></div>
 
-            <div class="flex items-center gap-2">
+            <div class="flex w-full sm:w-auto items-center justify-end flex-wrap gap-2">
               <button
                 v-if="isDashboard"
                 @click="handleNewNote"
