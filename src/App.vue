@@ -6,29 +6,20 @@
 
     <div v-else class="min-h-screen bg-white flex transition-colors duration-300 dark:bg-gray-950">
       <!-- Sticky Sidebar -->
-      <aside class="hidden md:flex fixed left-0 top-0 h-screen w-20 lg:w-64 flex-col border-r border-gray-200/70 bg-white/80 backdrop-blur-xl transition-all duration-300 z-50 dark:border-gray-800/70 dark:bg-gray-950/70">
+      <aside class="hidden md:flex fixed left-0 top-0 h-screen w-20 flex-col border-r border-gray-200/70 bg-white/80 backdrop-blur-xl transition-all duration-300 z-50 dark:border-gray-800/70 dark:bg-gray-950/70">
         <div class="flex flex-col h-full p-4">
           <!-- Logo -->
           <router-link
             to="/dashboard"
-            class="group relative flex flex-col lg:flex-row items-center gap-2 lg:gap-3 rounded-2xl px-3 py-3 mb-6 hover:bg-gray-100/80 transition-all duration-300 dark:hover:bg-gray-900/60"
+            class="group relative flex items-center justify-center rounded-2xl px-3 py-3 mb-6 hover:bg-gray-100/80 transition-all duration-300 dark:hover:bg-gray-900/60"
             title="ZERO NOTE"
           >
-            <div class="relative flex items-center justify-center w-10 h-10 lg:w-9 lg:h-9 rounded-xl bg-linear-to-br from-indigo-600 via-blue-600 to-fuchsia-600 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-300 shrink-0">
+            <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-linear-to-br from-indigo-600 via-blue-600 to-fuchsia-600 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-300 shrink-0">
               <div class="absolute inset-0 rounded-xl bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></div>
               <svg class="w-6 h-6 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18.5c-3.66-.91-6-4.84-6-8.5V8.72l6-3.16 6 3.16V12c0 3.66-2.34 7.59-6 8.5z"/>
                 <circle cx="12" cy="12" r="2.5"/>
               </svg>
-            </div>
-            
-            <div class="hidden lg:flex flex-col leading-none">
-              <span class="text-lg font-black tracking-tight text-gray-900 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-linear-to-r group-hover:from-indigo-600 group-hover:via-blue-600 group-hover:to-fuchsia-600 transition-all duration-300 dark:text-gray-100">
-                ZERO
-              </span>
-              <span class="text-xs font-bold tracking-[0.2em] text-gray-500 group-hover:text-gray-600 transition-colors duration-300 dark:text-gray-400 dark:group-hover:text-gray-300">
-                NOTE
-              </span>
             </div>
           </router-link>
 
@@ -37,44 +28,40 @@
             <button
               v-if="isDashboard"
               @click="handleNewNote"
-              class="group relative h-12 px-3 rounded-xl bg-linear-to-r from-indigo-600 via-blue-600 to-fuchsia-600 text-white flex items-center justify-center lg:justify-start gap-3 hover:brightness-110 transition-all duration-300 shadow-md hover:shadow-2xl active:scale-[0.98] overflow-hidden"
+              class="group relative h-12 px-3 rounded-xl bg-linear-to-r from-indigo-600 via-blue-600 to-fuchsia-600 text-white flex items-center justify-center hover:brightness-110 transition-all duration-300 shadow-md hover:shadow-2xl active:scale-[0.98] overflow-hidden"
               title="New Note"
             >
               <span class="absolute inset-0 bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></span>
               <Plus class="w-5 h-5 relative z-10 shrink-0" />
-              <span class="hidden lg:inline text-sm font-medium relative z-10">New Note</span>
             </button>
 
             <router-link
               v-else
               to="/dashboard"
-              class="h-12 px-3 rounded-xl bg-gray-100/80 text-gray-900 flex items-center justify-center lg:justify-start gap-3 hover:bg-gray-200/80 transition-all duration-300 active:scale-[0.98] dark:bg-gray-900/70 dark:text-gray-100 dark:hover:bg-gray-900"
-              title="Back to Notes"
+              class="h-12 px-3 rounded-xl bg-gray-100/80 text-gray-900 flex items-center justify-center hover:bg-gray-200/80 transition-all duration-300 active:scale-[0.98] dark:bg-gray-900/70 dark:text-gray-100 dark:hover:bg-gray-900"
+              title="Back to Dashboard"
             >
               <ArrowLeft class="w-5 h-5 shrink-0" />
-              <span class="hidden lg:inline text-sm font-medium">Back</span>
             </router-link>
 
             <div class="h-px bg-gray-200 my-2 dark:bg-gray-800"></div>
 
             <router-link
               to="/data"
-              class="h-12 px-3 rounded-xl flex items-center justify-center lg:justify-start gap-3 text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
+              class="h-12 px-3 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
               :class="route.path === '/data' ? 'bg-gray-100/80 dark:bg-gray-900/60' : ''"
               title="Data Hub"
             >
               <Database class="w-5 h-5 shrink-0" />
-              <span class="hidden lg:inline text-sm font-medium">Data Hub</span>
             </router-link>
 
             <router-link
               to="/insights"
-              class="h-12 px-3 rounded-xl flex items-center justify-center lg:justify-start gap-3 text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
+              class="h-12 px-3 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
               :class="route.path === '/insights' ? 'bg-gray-100/80 dark:bg-gray-900/60' : ''"
               title="Insights"
             >
               <BarChart3 class="w-5 h-5 shrink-0" />
-              <span class="hidden lg:inline text-sm font-medium">Insights</span>
             </router-link>
           </nav>
 
@@ -85,36 +72,33 @@
             <button
               v-if="isUnlocked && !isPublicShareRoute"
               @click="toggleS3Panel(!s3PanelOpen)"
-              class="group relative h-12 px-3 rounded-xl bg-emerald-500/10 text-emerald-700 border border-emerald-200/60 flex items-center justify-center lg:justify-start gap-3 hover:bg-emerald-500/15 transition-all duration-300 active:scale-[0.98] dark:bg-emerald-500/10 dark:text-emerald-200 dark:border-emerald-500/30"
+              class="group relative h-12 px-3 rounded-xl bg-emerald-500/10 text-emerald-700 border border-emerald-200/60 flex items-center justify-center hover:bg-emerald-500/15 transition-all duration-300 active:scale-[0.98] dark:bg-emerald-500/10 dark:text-emerald-200 dark:border-emerald-500/30"
               :title="s3PanelOpen ? 'Hide S3 Sync' : 'Show S3 Sync'"
             >
               <span class="absolute inset-0 rounded-xl bg-linear-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></span>
               <span class="relative inline-flex h-2.5 w-2.5 rounded-full shrink-0" :class="s3IndicatorDotClass"></span>
-              <span class="hidden lg:inline text-sm font-semibold relative">S3 Sync</span>
             </button>
 
             <button
               @click="theme.toggle"
-              class="h-12 px-3 rounded-xl flex items-center justify-center lg:justify-start gap-3 text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
+              class="h-12 px-3 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
               :title="theme.resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
             >
               <component :is="theme.resolvedTheme === 'dark' ? Sun : Moon" class="w-5 h-5 shrink-0" />
-              <span class="hidden lg:inline text-sm font-medium">{{ theme.resolvedTheme === 'dark' ? 'Light' : 'Dark' }}</span>
             </button>
 
             <button
               @click="handleLogout"
-              class="h-12 px-3 rounded-xl flex items-center justify-center lg:justify-start gap-3 text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
+              class="h-12 px-3 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
               title="Lock App"
             >
               <Lock class="w-5 h-5 shrink-0" />
-              <span class="hidden lg:inline text-sm font-medium">Lock</span>
             </button>
           </div>
         </div>
       </aside>
 
-      <main class="flex-1 w-full overflow-auto md:ml-20 lg:ml-64" :class="s3PanelOpen ? 'lg:pr-80' : ''">
+      <main class="flex-1 w-full overflow-auto md:ml-20" :class="s3PanelOpen ? 'lg:pr-80' : ''">
         <RouterView />
       </main>
     </div>
@@ -122,159 +106,203 @@
 
     <aside
       v-if="isUnlocked && !isPublicShareRoute"
-      class="fixed right-0 top-0 bottom-0 w-80 max-w-[90vw] z-40 border-l border-gray-200 bg-white/95 backdrop-blur-xl shadow-2xl transition-all duration-300 dark:bg-gray-950/90 dark:border-gray-800"
+      class="fixed right-0 top-0 bottom-0 w-80 max-w-[90vw] z-40 border-l border-gray-200/70 bg-white/80 backdrop-blur-xl shadow-2xl transition-all duration-300 dark:bg-gray-950/70 dark:border-gray-800/70"
       :class="s3PanelOpen ? 'translate-x-0' : 'translate-x-full'"
     >
       <div class="h-full flex flex-col">
-        <div class="p-4 border-b border-gray-200 dark:border-gray-800">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="inline-flex h-2.5 w-2.5 rounded-full" :class="s3IndicatorDotClass"></span>
-              <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">S3 Sync</div>
+        <!-- Header -->
+        <div class="p-6 border-b border-gray-200/70 dark:border-gray-800/70">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-linear-to-br from-emerald-600 to-teal-600 shadow-lg">
+                <span class="inline-flex h-2.5 w-2.5 rounded-full bg-white" :class="s3Connected ? 'animate-pulse' : 'opacity-50'"></span>
+              </div>
+              <div>
+                <h2 class="text-base font-black text-gray-900 dark:text-gray-100">S3 Sync</h2>
+                <p class="text-xs text-gray-500 dark:text-gray-400">{{ s3IndicatorLabel }}</p>
+              </div>
             </div>
             <button
               @click="toggleS3Panel(false)"
-              class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-all duration-300 dark:text-gray-300 dark:hover:bg-gray-900"
+              class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
               aria-label="Hide S3 Sync"
-              title="Hide S3 Sync"
+              title="Close"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
-          <div class="mt-2 flex items-center justify-between text-xs">
-            <span class="text-gray-500 dark:text-gray-400">{{ s3IndicatorLabel }}</span>
-            <span v-if="s3LastSync" class="text-gray-400 dark:text-gray-500">{{ new Date(s3LastSync).toLocaleTimeString() }}</span>
+          <div v-if="s3LastSync" class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Last synced {{ new Date(s3LastSync).toLocaleTimeString() }}</span>
           </div>
         </div>
 
-        <div class="p-4 space-y-4 overflow-y-auto">
-          <div class="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3 text-xs text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">
-            Configure your S3-compatible storage. Auto-sync runs on changes and every 15 minutes.
+        <!-- Content -->
+        <div class="p-6 space-y-6 overflow-y-auto flex-1">
+          <!-- Info Alert -->
+          <div class="rounded-xl border border-emerald-200/60 bg-emerald-50/50 p-4 dark:border-emerald-500/30 dark:bg-emerald-500/10">
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p class="text-xs leading-relaxed text-emerald-700 dark:text-emerald-300">
+                Configure S3-compatible storage. Auto-sync runs on changes and every 15 minutes.
+              </p>
+            </div>
           </div>
 
-          <form @submit.prevent="applyConfig" class="space-y-3">
+          <!-- Configuration Form -->
+          <form @submit.prevent="applyConfig" class="space-y-4">
             <div>
-              <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Endpoint</label>
+              <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Endpoint URL</label>
               <input
                 v-model="config.endpoint"
-                placeholder="e.g. http://localhost:9000"
+                placeholder="http://localhost:9000"
                 required
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-xs"
+                class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100 text-sm transition-all duration-300 placeholder:text-gray-400"
               />
             </div>
-            <div class="grid grid-cols-1 gap-3">
+            
+            <div class="grid grid-cols-1 gap-4">
               <div>
-                <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Access Key</label>
+                <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Access Key ID</label>
                 <input
                   v-model="config.accessKeyId"
                   required
-                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-xs"
+                  class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100 text-sm transition-all duration-300"
                 />
               </div>
               <div>
-                <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Secret Key</label>
+                <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Secret Access Key</label>
                 <input
                   v-model="config.secretAccessKey"
                   type="password"
                   required
-                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-xs"
+                  class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100 text-sm transition-all duration-300"
                 />
               </div>
             </div>
-            <div class="grid grid-cols-1 gap-3">
+            
+            <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Bucket</label>
+                <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Bucket Name</label>
                 <input
                   v-model="config.bucket"
                   required
-                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-xs"
+                  class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100 text-sm transition-all duration-300"
                 />
               </div>
               <div>
-                <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Region</label>
+                <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Region</label>
                 <input
                   v-model="config.region"
-                  placeholder="e.g. us-east-1"
+                  placeholder="us-east-1"
                   required
-                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-xs"
+                  class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100 text-sm transition-all duration-300 placeholder:text-gray-400"
                 />
               </div>
             </div>
-            <div class="flex items-center gap-2">
-              <input type="checkbox" v-model="config.useSSL" id="useSSL" class="rounded border-gray-300 dark:border-gray-600 text-emerald-600 focus:ring-emerald-400" />
-              <label for="useSSL" class="text-xs text-gray-600 dark:text-gray-300">Use SSL</label>
-            </div>
-            <button type="submit" class="w-full px-3 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors font-semibold text-xs">
+            
+            <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-900/50 cursor-pointer transition-colors">
+              <input type="checkbox" v-model="config.useSSL" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-emerald-600 focus:ring-emerald-500 focus:ring-2 transition-all" />
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Use SSL/TLS</span>
+            </label>
+            
+            <button type="submit" class="w-full px-4 py-3 bg-linear-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:brightness-110 transition-all duration-300 font-semibold text-sm shadow-lg hover:shadow-xl active:scale-[0.98]">
               Connect to S3
             </button>
           </form>
 
-          <div v-if="s3Status" class="rounded-xl border border-gray-200 bg-white p-3 text-xs dark:border-gray-800 dark:bg-gray-900">
-            <div class="flex items-center justify-between mb-2">
-              <span class="font-semibold text-gray-800 dark:text-gray-100">Status</span>
+          <!-- Status Card -->
+          <div v-if="s3Status" class="rounded-xl border border-gray-200/70 bg-white/50 p-4 backdrop-blur-sm dark:border-gray-800/70 dark:bg-gray-900/50">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100">Connection Status</h3>
               <span
                 :class="
                   s3Status.connected
                     ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
                     : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
                 "
-                class="px-2 py-1 rounded-full text-[10px] font-semibold"
+                class="px-3 py-1 rounded-full text-xs font-semibold"
               >
                 {{ s3Status.connected ? "Connected" : "Disconnected" }}
               </span>
             </div>
-            <div class="grid grid-cols-2 gap-2">
-              <div class="rounded-lg bg-gray-50 p-2 dark:bg-gray-950">
-                <div class="text-[10px] text-gray-500">Total Notes</div>
-                <div class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ s3Status.totalNotes || 0 }}</div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="rounded-xl bg-gray-50 p-3 dark:bg-gray-950/50">
+                <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">Total Notes</div>
+                <div class="text-xl font-black text-gray-900 dark:text-gray-100">{{ s3Status.totalNotes || 0 }}</div>
               </div>
-              <div v-if="s3Status.oldestEntry" class="rounded-lg bg-gray-50 p-2 dark:bg-gray-950">
-                <div class="text-[10px] text-gray-500">Oldest</div>
-                <div class="text-[11px] font-semibold text-gray-900 dark:text-gray-100">{{ new Date(s3Status.oldestEntry).toLocaleDateString() }}</div>
+              <div v-if="s3Status.oldestEntry" class="rounded-xl bg-gray-50 p-3 dark:bg-gray-950/50">
+                <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">Oldest Note</div>
+                <div class="text-xs font-bold text-gray-900 dark:text-gray-100">{{ new Date(s3Status.oldestEntry).toLocaleDateString() }}</div>
               </div>
             </div>
           </div>
 
-          <div class="space-y-2">
+          <!-- Sync Controls -->
+          <div class="space-y-3">
             <button
               @click="fullSync"
               :disabled="syncing || !s3Connected"
-              class="w-full px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed dark:disabled:bg-slate-700 dark:disabled:text-slate-300 font-semibold text-xs flex items-center justify-center gap-2"
+              class="w-full px-4 py-3 bg-linear-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:brightness-110 transition-all duration-300 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed dark:disabled:from-gray-700 dark:disabled:to-gray-700 font-semibold text-sm flex items-center justify-center gap-2 shadow-lg hover:shadow-xl active:scale-[0.98]"
             >
-              <svg v-if="syncing" class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg v-if="syncing" class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
               {{ syncing ? 'Syncing...' : 'Sync Now' }}
             </button>
 
-            <div v-if="syncing" class="rounded-lg bg-gray-50 p-2 text-[10px] text-gray-600 dark:bg-gray-950 dark:text-gray-300">
-              <div class="font-semibold mb-1 text-center">{{ statusMessage }}</div>
-              <div class="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-1.5 mb-1">
-                <div class="bg-emerald-500 h-1.5 rounded-full transition-all" :style="{ width: total > 0 ? (progress / total * 100) + '%' : '0%' }"></div>
+            <!-- Progress -->
+            <div v-if="syncing" class="rounded-xl bg-gray-50 p-4 dark:bg-gray-950/50">
+              <div class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 text-center">{{ statusMessage }}</div>
+              <div class="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2 mb-2 overflow-hidden">
+                <div class="bg-linear-to-r from-emerald-500 to-teal-500 h-2 rounded-full transition-all duration-300" :style="{ width: total > 0 ? (progress / total * 100) + '%' : '0%' }"></div>
               </div>
-              <div class="text-center">{{ progress }} / {{ total }} notes</div>
+              <div class="text-xs text-center text-gray-600 dark:text-gray-400">{{ progress }} / {{ total }} notes</div>
             </div>
 
-            <div v-if="syncResult" class="rounded-lg border border-emerald-200 bg-emerald-50/80 p-2 text-[10px] text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">
-              Uploaded {{ syncResult.uploaded.new + syncResult.uploaded.updated }}, Downloaded {{ syncResult.downloaded.new + syncResult.downloaded.updated }}
+            <!-- Result -->
+            <div v-if="syncResult" class="rounded-xl border border-emerald-200/60 bg-emerald-50/50 p-3 dark:border-emerald-500/30 dark:bg-emerald-500/10">
+              <div class="flex items-center gap-2 mb-2">
+                <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="text-xs font-semibold text-emerald-700 dark:text-emerald-300">Sync Complete</span>
+              </div>
+              <div class="text-xs text-emerald-600 dark:text-emerald-400">
+                Uploaded {{ syncResult.uploaded.new + syncResult.uploaded.updated }}, Downloaded {{ syncResult.downloaded.new + syncResult.downloaded.updated }}
+              </div>
             </div>
           </div>
 
-          <div v-if="syncLogs.length" class="rounded-xl border border-gray-200 bg-white p-3 text-[10px] dark:border-gray-800 dark:bg-gray-900">
-            <div class="flex items-center justify-between mb-2">
-              <span class="font-semibold text-gray-700 dark:text-gray-100">Sync Logs</span>
-              <button @click="syncLogs = []" class="text-[10px] text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">Clear</button>
+          <!-- Sync Logs -->
+          <div v-if="syncLogs.length" class="rounded-xl border border-gray-200/70 bg-white/50 p-4 backdrop-blur-sm dark:border-gray-800/70 dark:bg-gray-900/50">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100">Sync Logs</h3>
+              <button @click="syncLogs = []" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 font-medium transition-colors">Clear</button>
             </div>
-            <div class="bg-gray-100 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg p-2 max-h-40 overflow-y-auto font-mono">
-              <div v-for="(log, i) in syncLogs" :key="i" class="text-gray-700 dark:text-gray-300 py-0.5">{{ log }}</div>
+            <div class="bg-gray-50 dark:bg-gray-950/50 rounded-xl p-3 max-h-40 overflow-y-auto">
+              <div v-for="(log, i) in syncLogs" :key="i" class="text-[11px] font-mono text-gray-700 dark:text-gray-300 py-1 leading-relaxed">{{ log }}</div>
             </div>
           </div>
 
-          <div v-if="error" class="rounded-lg border border-red-200 bg-red-50/80 p-2 text-[10px] text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300">
-            {{ error }}
+          <!-- Error Alert -->
+          <div v-if="error" class="rounded-xl border border-red-200/60 bg-red-50/50 p-4 backdrop-blur-sm dark:border-red-500/30 dark:bg-red-500/10">
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-red-600 shrink-0 mt-0.5 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p class="text-xs text-red-700 dark:text-red-300">{{ error }}</p>
+            </div>
           </div>
         </div>
       </div>
