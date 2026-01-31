@@ -4,8 +4,98 @@
 
     <LockScreen v-else-if="!isUnlocked" @unlock="handleUnlock" />
 
-    <div v-else class="min-h-screen bg-white flex transition-colors duration-300 dark:bg-gray-950">
-      <!-- Sticky Sidebar -->
+    <div v-else class="min-h-screen bg-white flex flex-col md:flex-row transition-colors duration-300 dark:bg-gray-950">
+      <!-- Mobile Navbar (visible on small screens) -->
+      <nav class="md:hidden sticky top-0 z-50 w-full bg-white/80 backdrop-blur-xl border-b border-gray-200/70 dark:bg-gray-950/80 dark:border-gray-800/70">
+        <div class="flex items-center justify-between px-4 py-3">
+          <!-- Logo -->
+          <router-link
+            to="/dashboard"
+            class="group relative flex items-center gap-2 rounded-xl px-2 py-1.5 hover:bg-gray-100/80 transition-all duration-300 dark:hover:bg-gray-900/60"
+            title="ZERO NOTE"
+          >
+            <div class="relative flex items-center justify-center w-8 h-8 rounded-lg bg-linear-to-br from-indigo-600 via-blue-600 to-fuchsia-600 shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-300">
+              <div class="absolute inset-0 rounded-lg bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></div>
+              <svg class="w-5 h-5 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18.5c-3.66-.91-6-4.84-6-8.5V8.72l6-3.16 6 3.16V12c0 3.66-2.34 7.59-6 8.5z"/>
+                <circle cx="12" cy="12" r="2.5"/>
+              </svg>
+            </div>
+            <div class="flex flex-col leading-none">
+              <span class="text-sm font-black tracking-tight text-gray-900 dark:text-gray-100">ZERO</span>
+              <span class="text-[9px] font-bold tracking-[0.15em] text-gray-500 dark:text-gray-400">NOTE</span>
+            </div>
+          </router-link>
+
+          <!-- Mobile Actions -->
+          <div class="flex items-center gap-2">
+            <button
+              v-if="isDashboard"
+              @click="handleNewNote"
+              class="group relative h-9 px-3 rounded-lg bg-linear-to-r from-indigo-600 via-blue-600 to-fuchsia-600 text-white flex items-center gap-1.5 hover:brightness-110 transition-all duration-300 shadow-md active:scale-[0.95]"
+              title="New Note"
+            >
+              <Plus class="w-4 h-4" />
+              <span class="text-xs font-medium">New</span>
+            </button>
+
+            <router-link
+              v-else
+              to="/dashboard"
+              class="h-9 px-3 rounded-lg bg-gray-100/80 text-gray-900 flex items-center gap-1.5 hover:bg-gray-200/80 transition-all duration-300 dark:bg-gray-900/70 dark:text-gray-100"
+              title="Back"
+            >
+              <ArrowLeft class="w-4 h-4" />
+              <span class="text-xs font-medium">Back</span>
+            </router-link>
+
+            <button
+              @click="theme.toggle"
+              class="w-9 h-9 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-100/80 transition-all duration-300 dark:text-gray-300 dark:hover:bg-gray-900/60"
+              :title="theme.resolvedTheme === 'dark' ? 'Light mode' : 'Dark mode'"
+            >
+              <component :is="theme.resolvedTheme === 'dark' ? Sun : Moon" class="w-4 h-4" />
+            </button>
+
+            <router-link
+              to="/data"
+              class="w-9 h-9 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-100/80 transition-all duration-300 dark:text-gray-300 dark:hover:bg-gray-900/60"
+              :class="route.path === '/data' ? 'bg-gray-100/80 dark:bg-gray-900/60' : ''"
+              title="Data Hub"
+            >
+              <Database class="w-4 h-4" />
+            </router-link>
+
+            <router-link
+              to="/insights"
+              class="w-9 h-9 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-100/80 transition-all duration-300 dark:text-gray-300 dark:hover:bg-gray-900/60"
+              :class="route.path === '/insights' ? 'bg-gray-100/80 dark:bg-gray-900/60' : ''"
+              title="Insights"
+            >
+              <BarChart3 class="w-4 h-4" />
+            </router-link>
+
+            <button
+              v-if="isUnlocked && !isPublicShareRoute"
+              @click="toggleS3Panel(!s3PanelOpen)"
+              class="relative w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-700 border border-emerald-200/60 flex items-center justify-center hover:bg-emerald-500/15 transition-all duration-300 dark:bg-emerald-500/10 dark:text-emerald-200 dark:border-emerald-500/30"
+              :title="s3PanelOpen ? 'Hide S3' : 'Show S3'"
+            >
+              <span class="inline-flex h-2 w-2 rounded-full" :class="s3IndicatorDotClass"></span>
+            </button>
+
+            <button
+              @click="handleLogout"
+              class="w-9 h-9 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-100/80 transition-all duration-300 dark:text-gray-300 dark:hover:bg-gray-900/60"
+              title="Lock"
+            >
+              <Lock class="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Desktop Sidebar (visible on md and up) -->
       <aside class="hidden md:flex fixed left-0 top-0 h-screen w-20 flex-col border-r border-gray-200/70 bg-white/80 backdrop-blur-xl transition-all duration-300 z-50 dark:border-gray-800/70 dark:bg-gray-950/70">
         <div class="flex flex-col h-full p-4">
           <!-- Logo -->
@@ -98,7 +188,7 @@
         </div>
       </aside>
 
-      <main class="flex-1 w-full overflow-auto md:ml-20" :class="s3PanelOpen ? 'lg:pr-80' : ''">
+      <main class="flex-1 w-full overflow-auto md:ml-20" :class="s3PanelOpen ? 'md:pr-80' : ''">
         <RouterView />
       </main>
     </div>
