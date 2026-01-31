@@ -15,11 +15,26 @@
 
             <router-link
               to="/dashboard"
-              class="group relative flex items-center gap-2 rounded-2xl px-2 py-1.5 hover:bg-gray-100/80 transition-all duration-300 dark:hover:bg-gray-900/60"
+              class="group relative flex items-center gap-2 sm:gap-3 rounded-2xl px-3 py-2 hover:bg-gray-100/80 transition-all duration-300 dark:hover:bg-gray-900/60"
               title="ZERO NOTE"
             >
-              <div class="text-base sm:text-lg font-black tracking-[0.35em] text-gray-900 dark:text-gray-100">
-                ZERO NOTE
+              <!-- Logo Icon -->
+              <div class="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-indigo-600 via-blue-600 to-fuchsia-600 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-300">
+                <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></div>
+                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18.5c-3.66-.91-6-4.84-6-8.5V8.72l6-3.16 6 3.16V12c0 3.66-2.34 7.59-6 8.5z"/>
+                  <circle cx="12" cy="12" r="2.5"/>
+                </svg>
+              </div>
+              
+              <!-- Logo Text -->
+              <div class="flex flex-col leading-none">
+                <span class="text-base sm:text-lg font-black tracking-tight text-gray-900 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:via-blue-600 group-hover:to-fuchsia-600 transition-all duration-300 dark:text-gray-100">
+                  ZERO
+                </span>
+                <span class="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gray-500 group-hover:text-gray-600 transition-colors duration-300 dark:text-gray-400 dark:group-hover:text-gray-300">
+                  NOTE
+                </span>
               </div>
             </router-link>
 
