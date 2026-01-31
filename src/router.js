@@ -5,11 +5,10 @@ import Dashboard from "@/views/dashboard.vue";
 import Note from "@/views/note.vue";
 import NoteEdit from "@/views/note-edit.vue";
 import Backup from "@/views/backup.vue";
-import Stats from "@/views/stats.vue";
+import Insights from "@/views/insights.vue";
 import p2p from "@/views/p2p.vue";
 import Sync from "@/views/sync.vue";
 import ImportView from "@/views/import.vue";
-import About from "@/views/about.vue";
 import IpfsNote from "@/views/ipfs-note.vue";
 
 const router = createRouter({
@@ -40,9 +39,9 @@ const router = createRouter({
       component: Backup,
     },
     {
-      path: "/stats",
-      name: "stats",
-      component: Stats,
+      path: "/insights",
+      name: "insights",
+      component: Insights,
     },
     {
       path: "/p2p",
@@ -59,11 +58,6 @@ const router = createRouter({
       path: "/import",
       name: "import",
       component: ImportView,
-    },
-    {
-      path: "/about",
-      name: "about",
-      component: About,
     },
     {
       // Supports encrypted share links like: https://zeronote.js.org/#/ok/Qm.../<key>

@@ -79,27 +79,12 @@
                 </router-link>
 
                 <router-link
-                  to="/stats"
+                  to="/insights"
                   class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-white/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
-                  title="Statistics"
-                  aria-label="Statistics"
+                  title="Insights"
+                  aria-label="Insights"
                 >
                   <BarChart3 class="w-5 h-5" />
-                </router-link>
-
-                <router-link
-                  to="/about"
-                  class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-white/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
-                  title="About ZeroNote"
-                  aria-label="About ZeroNote"
-                >
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
                 </router-link>
 
                 <button
