@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.917.0",
+    "aws4fetch": "^1.0.20",
     "@tailwindcss/vite": "^4.0.1",
     "axios": "^1.8.2",
     "crypto-js": "^4.2.0",

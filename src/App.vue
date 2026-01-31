@@ -299,15 +299,7 @@ import ToastHost from "@/components/ToastHost.vue";
 import { Plus, Lock, Database, BarChart3, ArrowLeft, Sun, Moon } from "lucide-vue-next";
 import { useThemeStore } from "@/stores/theme.js";
 import { db, getAllNotes } from "@/db";
-import {
-  S3Client,
-  ListObjectsV2Command,
-  PutObjectCommand,
-  GetObjectCommand,
-  HeadBucketCommand,
-  CreateBucketCommand,
-  DeleteObjectCommand,
-} from "@aws-sdk/client-s3";
+import { AwsClient } from "aws4fetch";
 
 const isUnlocked = ref(false);
 const route = useRoute();
@@ -440,15 +432,11 @@ function isS3Configured() {
 }
 
 function createS3Client() {
-  const endpoint = config.endpoint.replace(/\/$/, "");
-  return new S3Client({
+  return new AwsClient({
+    accessKeyId: config.accessKeyId,
+    secretAccessKey: config.secretAccessKey,
     region: config.region || "us-east-1",
-    endpoint,
-    forcePathStyle: true,
-    credentials: {
-      accessKeyId: config.accessKeyId,
-      secretAccessKey: config.secretAccessKey,
-    },
+    service: "s3",
   });
 }
 
@@ -463,10 +451,11 @@ function ensureClient() {
 }
 
 async function ensureBucket() {
+  const url = `${config.endpoint}/${BUCKET_NAME}`;
   try {
-    await s3Client.send(new HeadBucketCommand({ Bucket: BUCKET_NAME }));
+    await s3Client.fetch(url, { method: "HEAD" });
   } catch (err) {
-    await s3Client.send(new CreateBucketCommand({ Bucket: BUCKET_NAME }));
+    await s3Client.fetch(url, { method: "PUT" });
   }
 }
 
@@ -486,32 +475,43 @@ function applyConfig() {
 async function checkS3Status() {
   if (!ensureClient()) return;
   try {
-    let bucketExists = true;
-    try {
-      await s3Client.send(new HeadBucketCommand({ Bucket: BUCKET_NAME }));
-    } catch (err) {
-      bucketExists = false;
-    }
-    if (!bucketExists) {
-      await s3Client.send(new CreateBucketCommand({ Bucket: BUCKET_NAME }));
+    const bucketUrl = `${config.endpoint}/${BUCKET_NAME}`;
+    let bucketResp = await s3Client.fetch(bucketUrl, { method: "HEAD" });
+    if (bucketResp.status === 404) {
+      await s3Client.fetch(bucketUrl, { method: "PUT" });
     }
     s3Status.value.connected = true;
     s3Connected.value = true;
 
     let totalNotes = 0;
     let oldestEntry = null;
-    const listRes = await s3Client.send(new ListObjectsV2Command({ Bucket: BUCKET_NAME, Prefix: `${userID}/` }));
-    if (listRes.Contents) {
+    
+    const listUrl = `${config.endpoint}/${BUCKET_NAME}?list-type=2&prefix=${encodeURIComponent(userID + "/")}`;
+    const listResp = await s3Client.fetch(listUrl);
+    const xmlText = await listResp.text();
+    
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+    const contents = xmlDoc.getElementsByTagName("Contents");
+    
+    if (contents.length > 0) {
       const uniqueNotes = new Set();
-      for (const obj of listRes.Contents) {
-        const filename = obj.Key.split("/").pop();
-        const match = filename.match(/^(.+)-(\d+)\.json$/);
-        if (match) {
-          const [, noteID] = match;
-          uniqueNotes.add(noteID);
-          const lastModified = new Date(obj.LastModified);
-          if (!oldestEntry || lastModified < oldestEntry) {
-            oldestEntry = lastModified;
+      for (let i = 0; i < contents.length; i++) {
+        const keyEl = contents[i].getElementsByTagName("Key")[0];
+        const lastModifiedEl = contents[i].getElementsByTagName("LastModified")[0];
+        
+        if (keyEl) {
+          const filename = keyEl.textContent.split("/").pop();
+          const match = filename.match(/^(.+)-(\d+)\.json$/);
+          if (match) {
+            const [, noteID] = match;
+            uniqueNotes.add(noteID);
+            if (lastModifiedEl) {
+              const lastModified = new Date(lastModifiedEl.textContent);
+              if (!oldestEntry || lastModified < oldestEntry) {
+                oldestEntry = lastModified;
+              }
+            }
           }
         }
       }
@@ -538,9 +538,23 @@ async function fullSync() {
     addSyncLog("🔄 Starting full sync...");
     await ensureBucket();
     const localNotes = await getAllNotes();
-    const listRes = await s3Client.send(new ListObjectsV2Command({ Bucket: BUCKET_NAME, Prefix: `${userID}/` }));
+    
+    const listUrl = `${config.endpoint}/${BUCKET_NAME}?list-type=2&prefix=${encodeURIComponent(userID + "/")}`;
+    const listResp = await s3Client.fetch(listUrl);
+    const xmlText = await listResp.text();
+    
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+    const contents = xmlDoc.getElementsByTagName("Contents");
+    
+    const cloudObjects = [];
+    for (let i = 0; i < contents.length; i++) {
+      const keyEl = contents[i].getElementsByTagName("Key")[0];
+      if (keyEl) {
+        cloudObjects.push({ Key: keyEl.textContent });
+      }
+    }
 
-    const cloudObjects = listRes.Contents || [];
     const cloudNotes = {};
     const filesToDelete = [];
 
@@ -586,31 +600,32 @@ async function fullSync() {
       if (needsUpload) {
         if (cloudNote) {
           try {
-            await s3Client.send(new DeleteObjectCommand({ Bucket: BUCKET_NAME, Key: cloudNote.key }));
+            const deleteUrl = `${config.endpoint}/${BUCKET_NAME}/${cloudNote.key}`;
+            await s3Client.fetch(deleteUrl, { method: "DELETE" });
           } catch (e) {
             addSyncLog("⚠️ Failed to delete old version:", e?.message || e);
           }
         }
 
         const s3Key = `${userID}/${localNote.id}-${localTimestamp}.json`;
-        await s3Client.send(
-          new PutObjectCommand({
-            Bucket: BUCKET_NAME,
-            Key: s3Key,
-            Body: JSON.stringify({
-              noteID: localNote.id,
-              userID,
-              content: localNote.content,
-              updatedAt: localNote.updatedAt,
-              deletedAt: localNote.deletedAt || null,
-              attachments: (localNote.attachments || []).map((att) => ({
-                ...att,
-                data: att.data ? arrayBufferToBase64(att.data) : null,
-              })),
-            }),
-            ContentType: "application/json",
-          })
-        );
+        const noteBody = JSON.stringify({
+          noteID: localNote.id,
+          userID,
+          content: localNote.content,
+          updatedAt: localNote.updatedAt,
+          deletedAt: localNote.deletedAt || null,
+          attachments: (localNote.attachments || []).map((att) => ({
+            ...att,
+            data: att.data ? arrayBufferToBase64(att.data) : null,
+          })),
+        });
+        
+        const putUrl = `${config.endpoint}/${BUCKET_NAME}/${s3Key}`;
+        await s3Client.fetch(putUrl, {
+          method: "PUT",
+          body: noteBody,
+          headers: { "Content-Type": "application/json" },
+        });
 
         if (cloudNote) uploaded.updated++;
         else uploaded.new++;
@@ -622,8 +637,9 @@ async function fullSync() {
       const existsLocal = await db.notes.get(noteID);
 
       if (!existsLocal || new Date(existsLocal.updatedAt).getTime() < cloudNote.timestamp) {
-        const getObjRes = await s3Client.send(new GetObjectCommand({ Bucket: BUCKET_NAME, Key: cloudNote.key }));
-        const data = await streamToString(getObjRes.Body);
+        const getUrl = `${config.endpoint}/${BUCKET_NAME}/${cloudNote.key}`;
+        const resp = await s3Client.fetch(getUrl);
+        const data = await resp.text();
         const noteData = JSON.parse(data);
 
         if (existsLocal) {
@@ -651,7 +667,8 @@ async function fullSync() {
     if (filesToDelete.length > 0) {
       for (const key of filesToDelete) {
         try {
-          await s3Client.send(new DeleteObjectCommand({ Bucket: BUCKET_NAME, Key: key }));
+          const deleteUrl = `${config.endpoint}/${BUCKET_NAME}/${key}`;
+          await s3Client.fetch(deleteUrl, { method: "DELETE" });
         } catch (e) {
           addSyncLog("⚠️ Failed to delete:", e?.message || e);
         }
