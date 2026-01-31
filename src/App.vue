@@ -4,119 +4,117 @@
 
     <LockScreen v-else-if="!isUnlocked" @unlock="handleUnlock" />
 
-    <div v-else class="min-h-screen bg-white flex flex-col transition-colors duration-300 dark:bg-gray-950">
-      <header
-        class="sticky top-0 z-50 w-full bg-transparent transition-colors duration-300"
-        :class="s3PanelOpen ? 'lg:pl-80' : ''"
-      >
-        <div class="w-full px-3 sm:px-6 py-3 sm:py-4">
-          <nav class="relative w-full flex flex-wrap items-center gap-2 sm:gap-4 gap-y-2 rounded-3xl border border-gray-200/70 bg-white/80 p-2 sm:p-3 shadow-[0_10px_40px_rgba(15,23,42,0.12)] backdrop-blur-xl transition-all duration-300 dark:border-gray-800/70 dark:bg-gray-950/70">
-            <div class="pointer-events-none absolute inset-0 rounded-3xl bg-linear-to-r from-transparent via-white/40 to-transparent opacity-0 animate-shimmer-slide"></div>
+    <div v-else class="min-h-screen bg-white flex transition-colors duration-300 dark:bg-gray-950">
+      <!-- Sticky Sidebar -->
+      <aside class="hidden md:flex fixed left-0 top-0 h-screen w-20 lg:w-64 flex-col border-r border-gray-200/70 bg-white/80 backdrop-blur-xl transition-all duration-300 z-50 dark:border-gray-800/70 dark:bg-gray-950/70">
+        <div class="flex flex-col h-full p-4">
+          <!-- Logo -->
+          <router-link
+            to="/dashboard"
+            class="group relative flex flex-col lg:flex-row items-center gap-2 lg:gap-3 rounded-2xl px-3 py-3 mb-6 hover:bg-gray-100/80 transition-all duration-300 dark:hover:bg-gray-900/60"
+            title="ZERO NOTE"
+          >
+            <div class="relative flex items-center justify-center w-10 h-10 lg:w-9 lg:h-9 rounded-xl bg-linear-to-br from-indigo-600 via-blue-600 to-fuchsia-600 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-300 shrink-0">
+              <div class="absolute inset-0 rounded-xl bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></div>
+              <svg class="w-6 h-6 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18.5c-3.66-.91-6-4.84-6-8.5V8.72l6-3.16 6 3.16V12c0 3.66-2.34 7.59-6 8.5z"/>
+                <circle cx="12" cy="12" r="2.5"/>
+              </svg>
+            </div>
+            
+            <div class="hidden lg:flex flex-col leading-none">
+              <span class="text-lg font-black tracking-tight text-gray-900 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-linear-to-r group-hover:from-indigo-600 group-hover:via-blue-600 group-hover:to-fuchsia-600 transition-all duration-300 dark:text-gray-100">
+                ZERO
+              </span>
+              <span class="text-xs font-bold tracking-[0.2em] text-gray-500 group-hover:text-gray-600 transition-colors duration-300 dark:text-gray-400 dark:group-hover:text-gray-300">
+                NOTE
+              </span>
+            </div>
+          </router-link>
+
+          <!-- Navigation Items -->
+          <nav class="flex-1 flex flex-col gap-2">
+            <button
+              v-if="isDashboard"
+              @click="handleNewNote"
+              class="group relative h-12 px-3 rounded-xl bg-linear-to-r from-indigo-600 via-blue-600 to-fuchsia-600 text-white flex items-center justify-center lg:justify-start gap-3 hover:brightness-110 transition-all duration-300 shadow-md hover:shadow-2xl active:scale-[0.98] overflow-hidden"
+              title="New Note"
+            >
+              <span class="absolute inset-0 bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></span>
+              <Plus class="w-5 h-5 relative z-10 shrink-0" />
+              <span class="hidden lg:inline text-sm font-medium relative z-10">New Note</span>
+            </button>
 
             <router-link
+              v-else
               to="/dashboard"
-              class="group relative flex items-center gap-2 sm:gap-3 rounded-2xl px-3 py-2 hover:bg-gray-100/80 transition-all duration-300 dark:hover:bg-gray-900/60"
-              title="ZERO NOTE"
+              class="h-12 px-3 rounded-xl bg-gray-100/80 text-gray-900 flex items-center justify-center lg:justify-start gap-3 hover:bg-gray-200/80 transition-all duration-300 active:scale-[0.98] dark:bg-gray-900/70 dark:text-gray-100 dark:hover:bg-gray-900"
+              title="Back to Notes"
             >
-              <!-- Logo Icon -->
-              <div class="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-indigo-600 via-blue-600 to-fuchsia-600 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-300">
-                <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></div>
-                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18.5c-3.66-.91-6-4.84-6-8.5V8.72l6-3.16 6 3.16V12c0 3.66-2.34 7.59-6 8.5z"/>
-                  <circle cx="12" cy="12" r="2.5"/>
-                </svg>
-              </div>
-              
-              <!-- Logo Text -->
-              <div class="flex flex-col leading-none">
-                <span class="text-base sm:text-lg font-black tracking-tight text-gray-900 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:via-blue-600 group-hover:to-fuchsia-600 transition-all duration-300 dark:text-gray-100">
-                  ZERO
-                </span>
-                <span class="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gray-500 group-hover:text-gray-600 transition-colors duration-300 dark:text-gray-400 dark:group-hover:text-gray-300">
-                  NOTE
-                </span>
-              </div>
+              <ArrowLeft class="w-5 h-5 shrink-0" />
+              <span class="hidden lg:inline text-sm font-medium">Back</span>
             </router-link>
 
-            <div class="hidden sm:block flex-1"></div>
+            <div class="h-px bg-gray-200 my-2 dark:bg-gray-800"></div>
 
-            <div class="flex w-full sm:w-auto items-center justify-end flex-wrap gap-2">
-              <button
-                v-if="isDashboard"
-                @click="handleNewNote"
-                class="group relative h-10 px-3.5 rounded-xl bg-linear-to-r from-indigo-600 via-blue-600 to-fuchsia-600 text-white flex items-center gap-2 hover:brightness-110 transition-all duration-300 shadow-md hover:shadow-2xl active:scale-[0.98] overflow-hidden"
-                title="New Note"
-              >
-                <span class="absolute inset-0 bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></span>
-                <Plus class="w-5 h-5" />
-                <span class="hidden sm:inline text-sm font-medium">New</span>
-              </button>
+            <router-link
+              to="/data"
+              class="h-12 px-3 rounded-xl flex items-center justify-center lg:justify-start gap-3 text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
+              :class="route.path === '/data' ? 'bg-gray-100/80 dark:bg-gray-900/60' : ''"
+              title="Data Hub"
+            >
+              <Database class="w-5 h-5 shrink-0" />
+              <span class="hidden lg:inline text-sm font-medium">Data Hub</span>
+            </router-link>
 
-              <router-link
-                v-else
-                to="/dashboard"
-                class="h-10 px-3 rounded-xl bg-gray-100/80 text-gray-900 flex items-center gap-2 hover:bg-gray-200/80 transition-all duration-300 active:scale-[0.98] dark:bg-gray-900/70 dark:text-gray-100 dark:hover:bg-gray-900"
-                title="Back to Notes"
-              >
-                <ArrowLeft class="w-5 h-5" />
-                <span class="hidden sm:inline text-sm font-medium">Back</span>
-              </router-link>
-
-              <button
-                v-if="isUnlocked && !isPublicShareRoute"
-                @click="toggleS3Panel(!s3PanelOpen)"
-                class="group relative h-10 px-3 rounded-xl bg-emerald-500/10 text-emerald-700 border border-emerald-200/60 flex items-center gap-2 hover:bg-emerald-500/15 transition-all duration-300 active:scale-[0.98] dark:bg-emerald-500/10 dark:text-emerald-200 dark:border-emerald-500/30"
-                :title="s3PanelOpen ? 'Hide S3 Sync' : 'Show S3 Sync'"
-                aria-label="Toggle S3 Sync"
-              >
-                <span class="absolute inset-0 rounded-xl bg-linear-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></span>
-                <span class="relative inline-flex h-2.5 w-2.5 rounded-full" :class="s3IndicatorDotClass"></span>
-                <span class="relative hidden sm:inline text-xs font-semibold">S3</span>
-              </button>
-
-              <button
-                @click="theme.toggle"
-                class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
-                :title="theme.resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
-                aria-label="Toggle theme"
-              >
-                <component :is="theme.resolvedTheme === 'dark' ? Sun : Moon" class="w-5 h-5" />
-              </button>
-
-              <div class="relative flex items-center gap-1.5 rounded-2xl bg-gray-50/80 p-1.5 shadow-inner border border-gray-100/80 dark:bg-gray-900/60 dark:border-gray-800/80">
-                <router-link
-                  to="/data"
-                  class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-white/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
-                  title="Data Hub"
-                  aria-label="Data Hub"
-                >
-                  <Database class="w-5 h-5" />
-                </router-link>
-
-                <router-link
-                  to="/insights"
-                  class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-white/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
-                  title="Insights"
-                  aria-label="Insights"
-                >
-                  <BarChart3 class="w-5 h-5" />
-                </router-link>
-
-                <button
-                  @click="handleLogout"
-                  class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-white/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
-                  title="Lock App"
-                  aria-label="Lock app"
-                >
-                  <Lock class="w-5 h-5" />
-                </button>
-              </div>
-            </div>
+            <router-link
+              to="/insights"
+              class="h-12 px-3 rounded-xl flex items-center justify-center lg:justify-start gap-3 text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
+              :class="route.path === '/insights' ? 'bg-gray-100/80 dark:bg-gray-900/60' : ''"
+              title="Insights"
+            >
+              <BarChart3 class="w-5 h-5 shrink-0" />
+              <span class="hidden lg:inline text-sm font-medium">Insights</span>
+            </router-link>
           </nav>
-        </div>
-      </header>
 
-      <main class="flex-1 w-full overflow-auto" :class="s3PanelOpen ? 'lg:pl-80' : ''">
+          <!-- Bottom Actions -->
+          <div class="flex flex-col gap-2 mt-4">
+            <div class="h-px bg-gray-200 mb-2 dark:bg-gray-800"></div>
+            
+            <button
+              v-if="isUnlocked && !isPublicShareRoute"
+              @click="toggleS3Panel(!s3PanelOpen)"
+              class="group relative h-12 px-3 rounded-xl bg-emerald-500/10 text-emerald-700 border border-emerald-200/60 flex items-center justify-center lg:justify-start gap-3 hover:bg-emerald-500/15 transition-all duration-300 active:scale-[0.98] dark:bg-emerald-500/10 dark:text-emerald-200 dark:border-emerald-500/30"
+              :title="s3PanelOpen ? 'Hide S3 Sync' : 'Show S3 Sync'"
+            >
+              <span class="absolute inset-0 rounded-xl bg-linear-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></span>
+              <span class="relative inline-flex h-2.5 w-2.5 rounded-full shrink-0" :class="s3IndicatorDotClass"></span>
+              <span class="hidden lg:inline text-sm font-semibold relative">S3 Sync</span>
+            </button>
+
+            <button
+              @click="theme.toggle"
+              class="h-12 px-3 rounded-xl flex items-center justify-center lg:justify-start gap-3 text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
+              :title="theme.resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+            >
+              <component :is="theme.resolvedTheme === 'dark' ? Sun : Moon" class="w-5 h-5 shrink-0" />
+              <span class="hidden lg:inline text-sm font-medium">{{ theme.resolvedTheme === 'dark' ? 'Light' : 'Dark' }}</span>
+            </button>
+
+            <button
+              @click="handleLogout"
+              class="h-12 px-3 rounded-xl flex items-center justify-center lg:justify-start gap-3 text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
+              title="Lock App"
+            >
+              <Lock class="w-5 h-5 shrink-0" />
+              <span class="hidden lg:inline text-sm font-medium">Lock</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="flex-1 w-full overflow-auto md:ml-20 lg:ml-64" :class="s3PanelOpen ? 'lg:pr-80' : ''">
         <RouterView />
       </main>
     </div>
@@ -124,8 +122,8 @@
 
     <aside
       v-if="isUnlocked && !isPublicShareRoute"
-      class="fixed left-0 top-20 sm:top-24 bottom-0 w-80 max-w-[90vw] z-40 border-r border-gray-200 bg-white/95 backdrop-blur-xl shadow-2xl transition-all duration-300 dark:bg-gray-950/90 dark:border-gray-800"
-      :class="s3PanelOpen ? 'translate-x-0' : '-translate-x-full'"
+      class="fixed right-0 top-0 bottom-0 w-80 max-w-[90vw] z-40 border-l border-gray-200 bg-white/95 backdrop-blur-xl shadow-2xl transition-all duration-300 dark:bg-gray-950/90 dark:border-gray-800"
+      :class="s3PanelOpen ? 'translate-x-0' : 'translate-x-full'"
     >
       <div class="h-full flex flex-col">
         <div class="p-4 border-b border-gray-200 dark:border-gray-800">
