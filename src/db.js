@@ -331,6 +331,63 @@ export function decryptData(encryptedData) {
 let lastMaintenanceRun = localStorage.getItem("lastDbMaintenance") || 0;
 const MAINTENANCE_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
 
+const TOMBSTONE_KEY = "ZERONOTE_PURGED_NOTES";
+const TOMBSTONE_RETENTION = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+/**
+ * Get list of purged note IDs (tombstones)
+ * @returns {Object} - Map of noteId to purge timestamp
+ */
+export function getPurgedNotes() {
+  try {
+    const data = localStorage.getItem(TOMBSTONE_KEY);
+    if (!data) return {};
+    return JSON.parse(data);
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Mark a note as permanently purged
+ * @param {string} noteId - Note ID to mark as purged
+ */
+function addToPurgedNotes(noteId) {
+  const purged = getPurgedNotes();
+  purged[noteId] = Date.now();
+  localStorage.setItem(TOMBSTONE_KEY, JSON.stringify(purged));
+}
+
+/**
+ * Check if a note was purged
+ * @param {string} noteId - Note ID to check
+ * @returns {boolean} - True if note was purged
+ */
+export function isNotePurged(noteId) {
+  const purged = getPurgedNotes();
+  return noteId in purged;
+}
+
+/**
+ * Clean old tombstones (> 30 days)
+ */
+function cleanOldTombstones() {
+  const purged = getPurgedNotes();
+  const now = Date.now();
+  let cleaned = false;
+  
+  for (const [noteId, timestamp] of Object.entries(purged)) {
+    if (now - timestamp > TOMBSTONE_RETENTION) {
+      delete purged[noteId];
+      cleaned = true;
+    }
+  }
+  
+  if (cleaned) {
+    localStorage.setItem(TOMBSTONE_KEY, JSON.stringify(purged));
+  }
+}
+
 export async function performDatabaseMaintenance() {
   const now = Date.now();
 
@@ -342,12 +399,27 @@ export async function performDatabaseMaintenance() {
 
   try {
     const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+    
+    // Get notes to purge before deleting
+    const notesToPurge = await db.notes
+      .filter((note) => note.deletedAt && now - Number(note.deletedAt) > SEVEN_DAYS)
+      .toArray();
+    
+    // Add to tombstone registry BEFORE deleting
+    for (const note of notesToPurge) {
+      addToPurgedNotes(note.id);
+    }
+    
+    // Now perform hard delete
     await db.notes.filter((note) => note.deletedAt && now - Number(note.deletedAt) > SEVEN_DAYS).delete();
+    
+    // Clean old tombstones
+    cleanOldTombstones();
 
     decryptionCache.clear();
 
     localStorage.setItem("lastDbMaintenance", now.toString());
-    console.log("Database maintenance completed");
+    console.log(`Database maintenance completed. Purged ${notesToPurge.length} note(s).`);
   } catch (error) {
     console.error("Database maintenance failed:", error);
   }

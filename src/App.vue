@@ -293,7 +293,7 @@ import LockScreen from "@/components/LockScreen.vue";
 import ToastHost from "@/components/ToastHost.vue";
 import { Plus, Lock, Database, BarChart3, ArrowLeft, Sun, Moon } from "lucide-vue-next";
 import { useThemeStore } from "@/stores/theme.js";
-import { db, getAllNotes } from "@/db";
+import { db, getAllNotes, getPurgedNotes, isNotePurged } from "@/db";
 import { AwsClient } from "aws4fetch";
 
 const isUnlocked = ref(false);
@@ -579,8 +579,8 @@ async function fullSync() {
       }
     }
 
-    const uploaded = { new: 0, updated: 0 };
-    const downloaded = { new: 0, updated: 0 };
+    const uploaded = { new: 0, updated: 0, deleted: 0 };
+    const downloaded = { new: 0, updated: 0, skipped: 0 };
 
     total.value = localNotes.length;
     for (let i = 0; i < localNotes.length; i++) {
@@ -593,6 +593,13 @@ async function fullSync() {
       const needsUpload = !cloudNote || localTimestamp > cloudNote.timestamp;
 
       if (needsUpload) {
+        // Skip upload for soft-deleted notes older than 7 days (should be purged)
+        const sevenDays = 7 * 24 * 60 * 60 * 1000;
+        if (localNote.deletedAt && Date.now() - localNote.deletedAt > sevenDays) {
+          addSyncLog(`⏭️ Skipping expired deleted note: ${localNote.id}`);
+          continue;
+        }
+
         if (cloudNote) {
           try {
             const deleteUrl = `${config.endpoint}/${BUCKET_NAME}/${cloudNote.key}`;
@@ -627,8 +634,32 @@ async function fullSync() {
       }
     }
 
+    // Delete purged notes from S3
+    const purgedNotes = getPurgedNotes();
+    for (const noteID of Object.keys(purgedNotes)) {
+      if (cloudNotes[noteID]) {
+        try {
+          const deleteUrl = `${config.endpoint}/${BUCKET_NAME}/${cloudNotes[noteID].key}`;
+          await s3Client.fetch(deleteUrl, { method: "DELETE" });
+          addSyncLog(`🗑️ Deleted purged note from S3: ${noteID}`);
+          uploaded.deleted++;
+          delete cloudNotes[noteID]; // Remove from download list
+        } catch (e) {
+          addSyncLog("⚠️ Failed to delete purged note:", e?.message || e);
+        }
+      }
+    }
+
     for (const noteID in cloudNotes) {
       const cloudNote = cloudNotes[noteID];
+      
+      // Skip if note was purged locally
+      if (isNotePurged(noteID)) {
+        addSyncLog(`⏭️ Skipping purged note: ${noteID}`);
+        downloaded.skipped++;
+        continue;
+      }
+      
       const existsLocal = await db.notes.get(noteID);
 
       if (!existsLocal || new Date(existsLocal.updatedAt).getTime() < cloudNote.timestamp) {
@@ -636,6 +667,14 @@ async function fullSync() {
         const resp = await s3Client.fetch(getUrl);
         const data = await resp.text();
         const noteData = JSON.parse(data);
+        
+        // Skip if deletedAt is older than 7 days
+        const sevenDays = 7 * 24 * 60 * 60 * 1000;
+        if (noteData.deletedAt && Date.now() - noteData.deletedAt > sevenDays) {
+          addSyncLog(`⏭️ Skipping expired deleted note from cloud: ${noteID}`);
+          downloaded.skipped++;
+          continue;
+        }
 
         if (existsLocal) {
           await db.notes.delete(noteID);
