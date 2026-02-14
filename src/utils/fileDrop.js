@@ -1,4 +1,4 @@
-const DEFAULT_FILEDROP_UPLOAD_URL = "https://filedrop.besoeasy.com/upload";
+const DEFAULT_FILEDROP_UPLOAD_URL = "https://originless.besoeasy.com/upload";
 
 function getFileDropUploadUrl() {
   const envUrl = import.meta?.env?.VITE_FILEDROP_UPLOAD_URL;
