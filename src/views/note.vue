@@ -125,7 +125,11 @@
 
                     <div v-if="shareResult" class="mt-5 p-4 rounded-2xl border border-emerald-200 bg-emerald-50 animate-in fade-in duration-200 dark:bg-emerald-950/30 dark:border-emerald-500/30">
                       <div class="text-xs font-semibold text-emerald-900 uppercase tracking-wide dark:text-emerald-100">Link ready</div>
-                      <div class="mt-1 text-sm font-bold text-emerald-900 break-all dark:text-emerald-100">{{ shareResult.shareUrl }}</div>
+                      <input
+                        :value="shareResult.shareUrl"
+                        readonly
+                        class="mt-2 w-full px-3 py-2 text-sm font-semibold text-emerald-900 bg-white border border-emerald-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-emerald-400 dark:bg-slate-950 dark:text-emerald-100 dark:border-emerald-500/40"
+                      />
                       <div class="mt-2 text-xs text-emerald-800 dark:text-emerald-200">Anyone with this link can decrypt. Treat it like a password.</div>
                     </div>
 
@@ -179,6 +183,19 @@
                       >
                         Done
                       </button>
+                    </div>
+
+                    <div class="mt-5 pt-4 border-t border-gray-200 text-sm text-gray-600 dark:border-slate-800 dark:text-slate-300">
+                      Anonymous share is powered by
+                      <a
+                        href="https://github.com/besoeasy/Originless"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="font-semibold underline decoration-gray-300 underline-offset-2 hover:text-gray-700 transition-colors duration-200 dark:decoration-slate-600 dark:hover:text-slate-200"
+                      >
+                        Originless
+                      </a>
+                      .
                     </div>
                   </div>
                 </div>
