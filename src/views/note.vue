@@ -125,12 +125,27 @@
 
                     <div v-if="shareResult" class="mt-5 p-4 rounded-2xl border border-emerald-200 bg-emerald-50 animate-in fade-in duration-200 dark:bg-emerald-950/30 dark:border-emerald-500/30">
                       <div class="text-xs font-semibold text-emerald-900 uppercase tracking-wide dark:text-emerald-100">Link ready</div>
+                      <div class="mt-2 text-xs font-semibold text-emerald-900 uppercase tracking-wide dark:text-emerald-100">Send with key embedded</div>
                       <input
                         :value="shareResult.shareUrl"
                         readonly
                         class="mt-2 w-full px-3 py-2 text-sm font-semibold text-emerald-900 bg-white border border-emerald-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-emerald-400 dark:bg-slate-950 dark:text-emerald-100 dark:border-emerald-500/40"
                       />
                       <div class="mt-2 text-xs text-emerald-800 dark:text-emerald-200">Anyone with this link can decrypt. Treat it like a password.</div>
+
+                      <div class="mt-4 pt-4 border-t border-emerald-200 dark:border-emerald-500/30">
+                        <div class="text-xs font-semibold text-emerald-900 uppercase tracking-wide dark:text-emerald-100">Send password yourself</div>
+                        <input
+                          :value="shareUrlWithoutKey"
+                          readonly
+                          class="mt-2 w-full px-3 py-2 text-sm font-semibold text-emerald-900 bg-white border border-emerald-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-emerald-400 dark:bg-slate-950 dark:text-emerald-100 dark:border-emerald-500/40"
+                        />
+                        <input
+                          :value="shareKeyRef"
+                          readonly
+                          class="mt-2 w-full px-3 py-2 text-sm font-semibold text-emerald-900 bg-white border border-emerald-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-emerald-400 dark:bg-slate-950 dark:text-emerald-100 dark:border-emerald-500/40"
+                        />
+                      </div>
                     </div>
 
                     <!-- Actions -->
@@ -163,18 +178,10 @@
 
                       <button
                         v-if="shareResult"
-                        @click="copyShareKey"
+                        @click="openShareInNewTab"
                         class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-2xl transition-all duration-200 dark:bg-slate-950 dark:text-slate-100 dark:border-slate-800 dark:hover:bg-slate-900"
                       >
-                        Copy key
-                      </button>
-
-                      <button
-                        v-if="shareResult"
-                        @click="copyShareCid"
-                        class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-2xl transition-all duration-200 dark:bg-slate-950 dark:text-slate-100 dark:border-slate-800 dark:hover:bg-slate-900"
-                      >
-                        Copy CID
+                        Open in new tab
                       </button>
 
                       <button
@@ -258,6 +265,7 @@ const shareProgress = ref({
   currentFilename: "",
 });
 const shareKeyRef = ref("");
+const publicShareBase = (import.meta?.env?.VITE_PUBLIC_ZERONOTE_BASE || "https://zeronote.js.org").replace(/\/$/, "");
 
 const toast = useToastStore();
 
@@ -280,6 +288,11 @@ const renderedMarkdown = computed(() => {
     console.error("Markdown rendering error:", error);
     return parsed.value.content;
   }
+});
+
+const shareUrlWithoutKey = computed(() => {
+  if (!shareResult.value?.cid) return "";
+  return `${publicShareBase}/#/ok/${shareResult.value.cid}`;
 });
 
 onMounted(async () => {
@@ -386,8 +399,7 @@ const startShare = async () => {
       mimeType: "application/json",
     });
 
-    const publicBase = (import.meta?.env?.VITE_PUBLIC_ZERONOTE_BASE || "https://zeronote.js.org").replace(/\/$/, "");
-    const shareUrl = `${publicBase}/#/ok/${res.cid}/${shareKey}`;
+    const shareUrl = `${publicShareBase}/#/ok/${res.cid}/${shareKey}`;
 
     shareResult.value = { ...res, shareUrl };
     await copyToClipboard(shareUrl);
@@ -412,23 +424,11 @@ const copyShareUrl = async () => {
   }
 };
 
-const copyShareKey = async () => {
-  if (!shareKeyRef.value) return;
-  try {
-    await copyToClipboard(shareKeyRef.value);
-    toast.success("Copied key.");
-  } catch {
-    toast.error("Failed to copy key.");
-  }
-};
-
-const copyShareCid = async () => {
-  if (!shareResult.value?.cid) return;
-  try {
-    await copyToClipboard(String(shareResult.value.cid));
-    toast.success("Copied CID.");
-  } catch {
-    toast.error("Failed to copy CID.");
+const openShareInNewTab = () => {
+  if (!shareResult.value?.shareUrl) return;
+  const opened = window.open(shareResult.value.shareUrl, "_blank", "noopener,noreferrer");
+  if (!opened) {
+    toast.error("Popup blocked. Please allow popups and try again.");
   }
 };
 
