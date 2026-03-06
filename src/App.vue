@@ -78,10 +78,12 @@
             <router-link
               v-if="isUnlocked && !isPublicShareRoute"
               to="/s3"
-              class="relative w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-700 border border-emerald-200/60 flex items-center justify-center hover:bg-emerald-500/15 transition-all duration-300 dark:bg-emerald-500/10 dark:text-emerald-200 dark:border-emerald-500/30"
-              title="S3 Sync Settings"
+              class="relative w-9 h-9 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-100/80 transition-all duration-300 dark:text-gray-300 dark:hover:bg-gray-900/60"
+              :class="route.path === '/s3' ? 'bg-gray-100/80 dark:bg-gray-900/60' : ''"
+              title="S3 Sync"
             >
-              <span class="inline-flex h-2 w-2 rounded-full" :class="s3IndicatorDotClass"></span>
+              <Cloud class="w-4 h-4" />
+              <span class="absolute top-1 right-1 inline-flex h-2 w-2 rounded-full ring-2 ring-white dark:ring-gray-950" :class="s3IndicatorDotClass"></span>
             </router-link>
 
             <button
@@ -162,11 +164,12 @@
             <router-link
               v-if="isUnlocked && !isPublicShareRoute"
               to="/s3"
-              class="group relative h-12 px-3 rounded-xl bg-emerald-500/10 text-emerald-700 border border-emerald-200/60 flex items-center justify-center hover:bg-emerald-500/15 transition-all duration-300 active:scale-[0.98] dark:bg-emerald-500/10 dark:text-emerald-200 dark:border-emerald-500/30"
-              title="S3 Sync Settings"
+              class="relative h-12 px-3 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
+              :class="route.path === '/s3' ? 'bg-gray-100/80 dark:bg-gray-900/60' : ''"
+              title="S3 Sync"
             >
-              <span class="absolute inset-0 rounded-xl bg-linear-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></span>
-              <span class="relative inline-flex h-2.5 w-2.5 rounded-full shrink-0" :class="s3IndicatorDotClass"></span>
+              <Cloud class="w-5 h-5 shrink-0" />
+              <span class="absolute top-2 right-2 inline-flex h-2.5 w-2.5 rounded-full ring-2 ring-white dark:ring-gray-950" :class="s3IndicatorDotClass"></span>
             </router-link>
 
             <button
@@ -203,7 +206,7 @@ import { ref, onMounted, onBeforeUnmount, computed, reactive, watch } from "vue"
 import { useRoute, useRouter } from "vue-router";
 import LockScreen from "@/components/LockScreen.vue";
 import ToastHost from "@/components/ToastHost.vue";
-import { Plus, Lock, Database, BarChart3, ArrowLeft, Sun, Moon } from "lucide-vue-next";
+import { Plus, Lock, Database, BarChart3, ArrowLeft, Sun, Moon, Cloud } from "lucide-vue-next";
 import { useThemeStore } from "@/stores/theme.js";
 import { db, getAllNotes, getPurgedNotes, isNotePurged } from "@/db";
 import { AwsClient } from "aws4fetch";
