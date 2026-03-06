@@ -75,6 +75,33 @@
           </div>
         </router-link>
 
+        <!-- S3 Sync Card -->
+        <router-link
+          to="/s3"
+          class="group relative overflow-hidden bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-emerald-200 dark:bg-slate-950 dark:border-slate-800 dark:focus:ring-emerald-500/30"
+          tabindex="0"
+          aria-label="S3 Sync: Automatic cloud sync via S3-compatible storage"
+        >
+          <div class="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 bg-emerald-100 rounded-full blur-3xl opacity-0 group-hover:opacity-70 transition-opacity duration-500 dark:bg-emerald-500/20"></div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-center w-20 h-20 bg-emerald-50 rounded-2xl mb-6 group-hover:bg-emerald-100 group-hover:scale-110 transition-all duration-300 dark:bg-emerald-500/10 dark:group-hover:bg-emerald-500/20">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors dark:text-slate-100 dark:group-hover:text-emerald-300">S3 Cloud Sync</h2>
+            <p class="text-gray-600 leading-relaxed mb-6 dark:text-slate-300">Auto-sync via S3-compatible storage</p>
+            <ul class="space-y-2 text-sm text-gray-500 dark:text-slate-400">
+              <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>AWS S3, Cloudflare R2, MinIO &amp; more</li>
+              <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>Auto-sync every 15 minutes</li>
+            </ul>
+            <div class="mt-6 flex items-center text-emerald-600 font-semibold text-sm group-hover:translate-x-2 transition-transform dark:text-emerald-300">
+              Configure
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+            </div>
+          </div>
+        </router-link>
+
         <!-- Local Backup Card -->
         <router-link
           to="/backup"

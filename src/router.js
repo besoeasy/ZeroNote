@@ -8,6 +8,7 @@ import Backup from "@/views/backup.vue";
 import Insights from "@/views/insights.vue";
 import p2p from "@/views/p2p.vue";
 import Sync from "@/views/sync.vue";
+import S3View from "@/views/s3.vue";
 import ImportView from "@/views/import.vue";
 import IpfsNote from "@/views/ipfs-note.vue";
 
@@ -53,6 +54,11 @@ const router = createRouter({
       alias: "/sync",
       name: "data",
       component: Sync,
+    },
+    {
+      path: "/s3",
+      name: "s3",
+      component: S3View,
     },
     {
       path: "/import",
