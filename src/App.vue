@@ -8,25 +8,6 @@
       <!-- Mobile Navbar (visible on small screens) -->
       <nav class="md:hidden sticky top-0 z-50 w-full bg-white/80 backdrop-blur-xl border-b border-gray-200/70 dark:bg-gray-950/80 dark:border-gray-800/70">
         <div class="flex items-center justify-between px-4 py-3">
-          <!-- Logo -->
-          <router-link
-            to="/dashboard"
-            class="group relative flex items-center gap-2 rounded-xl px-2 py-1.5 hover:bg-gray-100/80 transition-all duration-300 dark:hover:bg-gray-900/60"
-            title="ZERO NOTE"
-          >
-            <div class="relative flex items-center justify-center w-8 h-8 rounded-lg bg-linear-to-br from-indigo-600 via-blue-600 to-fuchsia-600 shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-300">
-              <div class="absolute inset-0 rounded-lg bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></div>
-              <svg class="w-5 h-5 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18.5c-3.66-.91-6-4.84-6-8.5V8.72l6-3.16 6 3.16V12c0 3.66-2.34 7.59-6 8.5z"/>
-                <circle cx="12" cy="12" r="2.5"/>
-              </svg>
-            </div>
-            <div class="flex flex-col leading-none">
-              <span class="text-sm font-black tracking-tight text-gray-900 dark:text-gray-100">ZERO</span>
-              <span class="text-[9px] font-bold tracking-[0.15em] text-gray-500 dark:text-gray-400">NOTE</span>
-            </div>
-          </router-link>
-
           <!-- Mobile Actions -->
           <div class="flex items-center gap-2">
             <button
@@ -108,21 +89,6 @@
       <!-- Desktop Sidebar (visible on md and up) -->
       <aside class="hidden md:flex fixed left-0 top-0 h-screen w-20 flex-col border-r border-gray-200/70 bg-white/80 backdrop-blur-xl transition-all duration-300 z-50 dark:border-gray-800/70 dark:bg-gray-950/70">
         <div class="flex flex-col h-full p-4">
-          <!-- Logo -->
-          <router-link
-            to="/dashboard"
-            class="group relative flex items-center justify-center rounded-2xl px-3 py-3 mb-6 hover:bg-gray-100/80 transition-all duration-300 dark:hover:bg-gray-900/60"
-            title="ZERO NOTE"
-          >
-            <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-linear-to-br from-indigo-600 via-blue-600 to-fuchsia-600 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-300 shrink-0">
-              <div class="absolute inset-0 rounded-xl bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></div>
-              <svg class="w-6 h-6 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18.5c-3.66-.91-6-4.84-6-8.5V8.72l6-3.16 6 3.16V12c0 3.66-2.34 7.59-6 8.5z"/>
-                <circle cx="12" cy="12" r="2.5"/>
-              </svg>
-            </div>
-          </router-link>
-
           <!-- Navigation Items -->
           <nav class="flex-1 flex flex-col gap-2">
             <button
