@@ -1,8 +1,7 @@
 name: vite
 
 on:
-  push:
-    branches: [ "main" ]
+  workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -28,7 +27,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -42,7 +41,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: "./dist"
 
       - name: Deploy to GitHub Pages
         id: deployment
