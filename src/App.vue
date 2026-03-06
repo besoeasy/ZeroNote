@@ -93,6 +93,14 @@
             >
               <Lock class="w-4 h-4" />
             </button>
+
+            <button
+              @click="showShortcutsModal = true"
+              class="w-9 h-9 rounded-lg flex items-center justify-center text-gray-500 hover:bg-gray-100/80 transition-all duration-300 dark:text-gray-500 dark:hover:bg-gray-900/60"
+              title="Keyboard Shortcuts (?)"
+            >
+              <span class="text-sm font-black">?</span>
+            </button>
           </div>
         </div>
       </nav>
@@ -123,6 +131,8 @@
               class="group relative h-12 px-3 rounded-xl bg-linear-to-r from-indigo-600 via-blue-600 to-fuchsia-600 text-white flex items-center justify-center hover:brightness-110 transition-all duration-300 shadow-md hover:shadow-2xl active:scale-[0.98] overflow-hidden"
               title="New Note (Ctrl+K)"
             >
+              <span class="absolute inset-0 bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></span>
+              <Plus class="w-5 h-5 relative z-10 shrink-0" />
             </button>
 
             <router-link
@@ -185,6 +195,14 @@
             >
               <Lock class="w-5 h-5 shrink-0" />
             </button>
+
+            <button
+              @click="showShortcutsModal = true"
+              class="h-12 px-3 rounded-xl flex items-center justify-center text-gray-500 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-500 dark:hover:bg-gray-900/60"
+              title="Keyboard Shortcuts (?)"
+            >
+              <span class="text-sm font-black">?</span>
+            </button>
           </div>
         </div>
       </aside>
@@ -194,6 +212,60 @@
       </main>
     </div>
 
+
+    <!-- Keyboard Shortcuts Modal -->
+    <transition
+      enter-active-class="transition-all duration-200"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-all duration-150"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="showShortcutsModal"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+        @click.self="showShortcutsModal = false"
+      >
+        <div class="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden">
+          <!-- Header -->
+          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+            <h3 class="text-base font-black text-gray-900 dark:text-gray-100">Keyboard Shortcuts</h3>
+            <button @click="showShortcutsModal = false" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-200 transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <!-- Groups -->
+          <div class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+            <div v-for="group in shortcutGroups" :key="group.label">
+              <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-3">{{ group.label }}</p>
+              <div class="space-y-1">
+                <div
+                  v-for="s in group.shortcuts"
+                  :key="s.description"
+                  class="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors duration-150"
+                >
+                  <span class="text-sm text-gray-700 dark:text-gray-300">{{ s.description }}</span>
+                  <div class="flex items-center gap-1">
+                    <kbd
+                      v-for="key in s.keys"
+                      :key="key"
+                      class="inline-flex items-center px-2 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-bold text-gray-600 dark:text-gray-300 shadow-sm"
+                    >{{ key }}</kbd>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer hint -->
+          <div class="px-6 py-3 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/30">
+            <p class="text-xs text-center text-gray-400 dark:text-gray-500">Press <kbd class="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-xs font-bold text-gray-500 dark:text-gray-300">?</kbd> anytime to open this</p>
+          </div>
+        </div>
+      </div>
+    </transition>
 
     <!-- Lock Confirmation Modal -->
     <transition
@@ -259,6 +331,7 @@ import { AwsClient } from "aws4fetch";
 
 const isUnlocked = ref(false);
 const showLockModal = ref(false);
+const showShortcutsModal = ref(false);
 const route = useRoute();
 const router = useRouter();
 const theme = useThemeStore();
@@ -335,6 +408,29 @@ const confirmLock = () => {
   location.reload();
 };
 
+const shortcutGroups = [
+  {
+    label: "Global",
+    shortcuts: [
+      { description: "New note",              keys: ["Ctrl", "K"] },
+      { description: "Open shortcuts",        keys: ["?"] },
+    ],
+  },
+  {
+    label: "Dashboard",
+    shortcuts: [
+      { description: "New note",              keys: ["N"] },
+      { description: "Focus search",          keys: ["/"] },
+    ],
+  },
+  {
+    label: "Note Editor",
+    shortcuts: [
+      { description: "Save note",             keys: ["Ctrl", "S"] },
+    ],
+  },
+];
+
 const onGlobalKeydown = (e) => {
   if (!isUnlocked.value) return;
   const tag = String(e.target?.tagName || "").toLowerCase();
@@ -345,9 +441,16 @@ const onGlobalKeydown = (e) => {
     router.push(`/notes/${generateRandomId()}/edit`);
     return;
   }
-  // Escape → close lock modal
-  if (e.key === "Escape" && showLockModal.value) {
-    showLockModal.value = false;
+  // `?` → open shortcuts modal
+  if (e.key === "?" && !isEditing) {
+    e.preventDefault();
+    showShortcutsModal.value = !showShortcutsModal.value;
+    return;
+  }
+  // Escape → close any open modal
+  if (e.key === "Escape") {
+    if (showShortcutsModal.value) { showShortcutsModal.value = false; return; }
+    if (showLockModal.value) { showLockModal.value = false; }
   }
 };
 

@@ -377,8 +377,6 @@ const getCardAccentColor = (note) => {
 onMounted(() => {
   loadNotes();
   window.addEventListener("keydown", onGlobalKeydown);
-  // Auto-focus search so users can start typing immediately
-  requestAnimationFrame(() => searchInputRef.value?.focus());
 });
 
 onBeforeUnmount(() => {
