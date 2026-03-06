@@ -20,9 +20,11 @@
              <button 
                 class="w-full sm:w-auto px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition-all shadow-lg shadow-blue-900/20 active:scale-95 flex items-center justify-center gap-2"
                 @click="startNewNote"
+                title="New Note (N)"
              >
                 <Plus class="w-4 h-4" />
                 <span class="hidden md:inline">Create Note</span>
+                <kbd class="hidden lg:inline-flex items-center px-1.5 py-0.5 rounded bg-blue-500 border border-blue-400 text-[10px] font-bold text-blue-100">N</kbd>
              </button>
           </div>
         </div>
@@ -44,7 +46,7 @@
                 <span v-if="filteredNotes.length > 0" class="text-xs font-bold text-slate-400 uppercase tracking-widest dark:text-slate-500">
                    {{ filteredNotes.length }} RESULTS
                 </span>
-                <kbd class="hidden md:inline-block px-2 py-1 rounded-lg bg-slate-100 border border-slate-200 text-xs font-bold text-slate-400 dark:bg-slate-800 dark:border-slate-700">
+                <kbd class="hidden md:inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-100 border border-slate-200 text-xs font-bold text-slate-400 dark:bg-slate-800 dark:border-slate-700">
                    /
                 </kbd>
              </div>
@@ -375,6 +377,8 @@ const getCardAccentColor = (note) => {
 onMounted(() => {
   loadNotes();
   window.addEventListener("keydown", onGlobalKeydown);
+  // Auto-focus search so users can start typing immediately
+  requestAnimationFrame(() => searchInputRef.value?.focus());
 });
 
 onBeforeUnmount(() => {
@@ -382,12 +386,22 @@ onBeforeUnmount(() => {
 });
 
 const onGlobalKeydown = (e) => {
-  if (e.key !== "/") return;
   const target = e.target;
   const tag = String(target?.tagName || "").toLowerCase();
-  if (tag === "input" || tag === "textarea" || target?.isContentEditable) return;
-  e.preventDefault();
-  searchInputRef.value?.focus?.();
+  const isEditing = tag === "input" || tag === "textarea" || target?.isContentEditable;
+
+  // `/` focuses search
+  if (e.key === "/" && !isEditing) {
+    e.preventDefault();
+    searchInputRef.value?.focus?.();
+    return;
+  }
+
+  // `n` or `N` creates a new note (not when typing)
+  if ((e.key === "n" || e.key === "N") && !isEditing && !e.ctrlKey && !e.metaKey) {
+    e.preventDefault();
+    startNewNote();
+  }
 };
 const availableSupertags = computed(() => supertagRegistry.getAllSupertags());
 

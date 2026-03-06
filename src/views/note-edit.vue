@@ -115,7 +115,7 @@
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <h3 class="text-sm font-semibold text-gray-900 dark:text-slate-100">Content</h3>
-              <span class="text-xs text-gray-500 dark:text-slate-400">{{ noteContent.length }} characters</span>
+              <span class="text-xs text-gray-500 dark:text-slate-400">{{ wordCount }} words · {{ noteContent.length }} chars</span>
               <a
                 href="https://www.markdownguide.org/cheat-sheet/"
                 target="_blank"
@@ -188,7 +188,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useToastStore } from "@/stores/toast";
 import { fetchNoteById, addNote, updateNote, addAttachments } from "@/db";
@@ -206,6 +206,24 @@ const isLoaded = ref(false);
 const textareaRef = ref(null);
 const attachments = ref([]);
 const tagSearch = ref("");
+
+// Word & character count
+const wordCount = computed(() => {
+  const text = noteContent.value.trim();
+  if (!text) return 0;
+  return text.split(/\s+/).filter(Boolean).length;
+});
+
+// Ctrl+S → save shortcut
+const onKeydown = (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+    e.preventDefault();
+    if (noteContent.value.trim()) handleSaveClick();
+  }
+};
+
+onMounted(() => window.addEventListener("keydown", onKeydown));
+onBeforeUnmount(() => window.removeEventListener("keydown", onKeydown));
 
 // Get all supertags from registry
 const allTags = computed(() => supertagRegistry.getAllSupertags());

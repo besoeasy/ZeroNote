@@ -121,10 +121,8 @@
               v-if="isDashboard"
               @click="handleNewNote"
               class="group relative h-12 px-3 rounded-xl bg-linear-to-r from-indigo-600 via-blue-600 to-fuchsia-600 text-white flex items-center justify-center hover:brightness-110 transition-all duration-300 shadow-md hover:shadow-2xl active:scale-[0.98] overflow-hidden"
-              title="New Note"
+              title="New Note (Ctrl+K)"
             >
-              <span class="absolute inset-0 bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 animate-shimmer-slide"></span>
-              <Plus class="w-5 h-5 relative z-10 shrink-0" />
             </button>
 
             <router-link
@@ -183,7 +181,7 @@
             <button
               @click="handleLogout"
               class="h-12 px-3 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100/80 transition-all duration-300 active:scale-[0.98] dark:text-gray-300 dark:hover:bg-gray-900/60"
-              title="Lock App"
+              title="Lock App (or press Escape when modal open)"
             >
               <Lock class="w-5 h-5 shrink-0" />
             </button>
@@ -196,6 +194,54 @@
       </main>
     </div>
 
+
+    <!-- Lock Confirmation Modal -->
+    <transition
+      enter-active-class="transition-all duration-200"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-all duration-150"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="showLockModal"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+        @click.self="showLockModal = false"
+      >
+        <transition
+          enter-active-class="transition-all duration-200"
+          enter-from-class="opacity-0 scale-95"
+          enter-to-class="opacity-100 scale-100"
+        >
+          <div class="w-full max-w-sm bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl p-6 space-y-4">
+            <div class="flex items-center gap-3">
+              <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800">
+                <Lock class="w-5 h-5 text-gray-700 dark:text-gray-300" />
+              </div>
+              <div>
+                <h3 class="text-base font-black text-gray-900 dark:text-gray-100">Lock the app?</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Your notes stay safe. You'll need your password to unlock.</p>
+              </div>
+            </div>
+            <div class="flex gap-3 pt-1">
+              <button
+                @click="showLockModal = false"
+                class="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 active:scale-[0.98]"
+              >
+                Cancel
+              </button>
+              <button
+                @click="confirmLock"
+                class="flex-1 px-4 py-2.5 rounded-xl bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-sm font-semibold hover:bg-gray-700 dark:hover:bg-white transition-all duration-200 active:scale-[0.98]"
+              >
+                Lock
+              </button>
+            </div>
+          </div>
+        </transition>
+      </div>
+    </transition>
 
     <ToastHost />
   </div>
@@ -212,6 +258,7 @@ import { db, getAllNotes, getPurgedNotes, isNotePurged } from "@/db";
 import { AwsClient } from "aws4fetch";
 
 const isUnlocked = ref(false);
+const showLockModal = ref(false);
 const route = useRoute();
 const router = useRouter();
 const theme = useThemeStore();
@@ -279,9 +326,28 @@ const handleNewNote = () => {
 };
 
 const handleLogout = () => {
-  if (confirm("Are you sure you want to lock the app?")) {
-    sessionStorage.clear();
-    location.reload();
+  showLockModal.value = true;
+};
+
+const confirmLock = () => {
+  showLockModal.value = false;
+  sessionStorage.clear();
+  location.reload();
+};
+
+const onGlobalKeydown = (e) => {
+  if (!isUnlocked.value) return;
+  const tag = String(e.target?.tagName || "").toLowerCase();
+  const isEditing = tag === "input" || tag === "textarea" || e.target?.isContentEditable;
+  // Ctrl/Cmd+K → new note
+  if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+    e.preventDefault();
+    router.push(`/notes/${generateRandomId()}/edit`);
+    return;
+  }
+  // Escape → close lock modal
+  if (e.key === "Escape" && showLockModal.value) {
+    showLockModal.value = false;
   }
 };
 
@@ -710,6 +776,7 @@ onMounted(() => {
   }, 15 * 60 * 1000);
 
   window.addEventListener("s3-config-updated", reloadConfigFromStorage);
+  window.addEventListener("keydown", onGlobalKeydown);
 });
 
 onBeforeUnmount(() => {
@@ -717,6 +784,7 @@ onBeforeUnmount(() => {
   if (intervalId) clearInterval(intervalId);
   cleanupDbHooks();
   window.removeEventListener("s3-config-updated", reloadConfigFromStorage);
+  window.removeEventListener("keydown", onGlobalKeydown);
 });
 
 watch(
