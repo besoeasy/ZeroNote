@@ -12,6 +12,7 @@ const csvHeaders = ref([]);
 const csvData = ref([]);
 const isLoading = ref(false);
 const error = ref("");
+const importSummary = ref(null);
 
 // Universal column mapping: array of { supertag, column }
 const columnMappings = ref([]);
@@ -52,8 +53,9 @@ const parseCSV = () => {
 
       // Reset mappings when new file is uploaded
       columnMappings.value = [];
+      importSummary.value = null;
       
-      importStatus.value = "CSV parsed. Map supertags to columns and start import.";
+      importStatus.value = `CSV parsed. ${csvData.value.length} rows ready to import.`;
     },
     error: (error) => {
       error.value = `Error parsing CSV: ${error.message}`;
@@ -96,16 +98,21 @@ const importData = async () => {
     error.value = "";
     importStatus.value = "Importing...";
     importProgress.value = 0;
+    importSummary.value = null;
 
     const totalRows = csvData.value.length;
     let importedCount = 0;
+    let skippedCount = 0;
+    const failedRows = [];
     const batchSize = 50;
 
     for (let i = 0; i < totalRows; i += batchSize) {
       const batch = csvData.value.slice(i, i + batchSize);
 
       await Promise.all(
-        batch.map(async (row) => {
+        batch.map(async (row, batchIndex) => {
+          const rowNumber = i + batchIndex + 2;
+
           try {
             // Build note content from mappings
             const lines = [];
@@ -132,9 +139,15 @@ const importData = async () => {
               
               await addNote(content);
               importedCount++;
+                          } else {
+                            skippedCount++;
             }
           } catch (err) {
             console.error(`Error importing row:`, err);
+                          failedRows.push({
+                            rowNumber,
+                            message: err?.message || "Unknown error",
+                          });
           }
         })
       );
@@ -142,7 +155,15 @@ const importData = async () => {
       importProgress.value = Math.round(((i + batch.length) / totalRows) * 100);
     }
 
-    importStatus.value = `Import complete. ${importedCount} notes imported.`;
+                  importSummary.value = {
+                    totalRows,
+                    importedCount,
+                    skippedCount,
+                    failedCount: failedRows.length,
+                    failedRows: failedRows.slice(0, 10),
+                  };
+
+                  importStatus.value = `Import complete. ${importedCount} imported, ${skippedCount} skipped, ${failedRows.length} failed.`;
   } catch (err) {
     error.value = `Import failed: ${err.message}`;
   } finally {
@@ -197,7 +218,7 @@ const isReadyToImport = computed(() => {
 
         <!-- Error Display -->
         <div v-if="error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start dark:bg-red-950/30 dark:border-red-500/30">
-          <AlertCircle class="w-5 h-5 text-red-500 mr-2 flex-shrink-0 mt-0.5 dark:text-red-300" />
+          <AlertCircle class="w-5 h-5 text-red-500 mr-2 shrink-0 mt-0.5 dark:text-red-300" />
           <p class="text-red-700 text-sm dark:text-red-100">{{ error }}</p>
         </div>
 
@@ -305,6 +326,36 @@ const isReadyToImport = computed(() => {
 
           <div v-if="importStatus" class="text-sm text-gray-600 dark:text-slate-300">
             {{ importStatus }}
+          </div>
+
+          <div v-if="importSummary" class="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-slate-800 dark:bg-slate-900">
+            <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div class="rounded-lg bg-white p-3 dark:bg-slate-950">
+                <p class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-slate-400">Rows</p>
+                <p class="mt-1 text-xl font-black text-gray-900 dark:text-slate-100">{{ importSummary.totalRows }}</p>
+              </div>
+              <div class="rounded-lg bg-white p-3 dark:bg-slate-950">
+                <p class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-slate-400">Imported</p>
+                <p class="mt-1 text-xl font-black text-emerald-600 dark:text-emerald-300">{{ importSummary.importedCount }}</p>
+              </div>
+              <div class="rounded-lg bg-white p-3 dark:bg-slate-950">
+                <p class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-slate-400">Skipped</p>
+                <p class="mt-1 text-xl font-black text-amber-600 dark:text-amber-300">{{ importSummary.skippedCount }}</p>
+              </div>
+              <div class="rounded-lg bg-white p-3 dark:bg-slate-950">
+                <p class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-slate-400">Failed</p>
+                <p class="mt-1 text-xl font-black text-red-600 dark:text-red-300">{{ importSummary.failedCount }}</p>
+              </div>
+            </div>
+
+            <div v-if="importSummary.failedRows.length > 0" class="mt-4 rounded-lg border border-red-200 bg-white p-3 dark:border-red-500/30 dark:bg-slate-950">
+              <p class="text-xs font-bold uppercase tracking-wider text-red-600 dark:text-red-300">Sample Failures</p>
+              <ul class="mt-2 space-y-1 text-sm text-gray-700 dark:text-slate-300">
+                <li v-for="failure in importSummary.failedRows" :key="failure.rowNumber">
+                  Row {{ failure.rowNumber }}: {{ failure.message }}
+                </li>
+              </ul>
+            </div>
           </div>
 
           <div v-if="importProgress > 0" class="space-y-2">

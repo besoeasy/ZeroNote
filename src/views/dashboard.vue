@@ -305,8 +305,20 @@ const showGuptPromo = ref(true);
 const loadNotes = async () => {
   isLoading.value = true;
   try {
-    const loadedNotes = await fetchNotes(1, "", "all");
-    notes.value = loadedNotes;
+      const loadedNotes = [];
+      let page = 1;
+
+      while (true) {
+         const batch = await fetchNotes(page, "", "all");
+         if (!batch.length) break;
+
+         loadedNotes.push(...batch);
+
+         if (batch.length < 60) break;
+         page += 1;
+      }
+
+      notes.value = loadedNotes;
   } catch (error) {
     console.error("Error loading notes:", error);
   } finally {
