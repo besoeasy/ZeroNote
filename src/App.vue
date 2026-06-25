@@ -1,12 +1,47 @@
 <template>
-  <div class="min-h-screen w-full flex flex-col bg-gray-50 text-gray-900 transition-colors duration-300 dark:bg-gray-950 dark:text-gray-100">
+  <div :class="['min-h-screen w-full flex flex-col bg-gray-50 text-gray-900 transition-colors duration-300 dark:bg-gray-950 dark:text-gray-100', showGuptPromo ? 'pt-[44px]' : '']">
+    
+    <!-- Top Notification Bar -->
+    <div v-if="showGuptPromo" class="fixed top-0 left-0 right-0 z-[100] h-[44px] bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 text-white shadow-md flex items-center justify-center px-4 sm:px-6">
+       <div class="w-full max-w-7xl flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3 truncate">
+            <span class="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 shrink-0">
+              <MessageCircle class="h-3 w-3 text-white" />
+            </span>
+            <p class="text-xs sm:text-sm font-medium text-white/90 truncate">
+              <strong class="text-white font-bold tracking-wide hidden sm:inline">New from the same builder:</strong> 
+              Try <span class="font-bold text-white">Gupt</span> for encrypted chat. ZeroNote stays focused on notes.
+            </p>
+          </div>
+          <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+            <a
+              href="https://github.com/besoeasy/gupt"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 rounded-full bg-white/20 hover:bg-white/30 px-3 py-1 text-[10px] sm:text-xs font-bold text-white transition-all active:scale-95 shadow-sm backdrop-blur-md whitespace-nowrap"
+            >
+              <span class="hidden sm:inline">View on GitHub</span>
+              <span class="sm:hidden">GitHub</span>
+              <Github class="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+            </a>
+            <button
+              @click="dismissGuptPromo"
+              class="inline-flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-full text-white/70 hover:bg-white/20 hover:text-white transition-colors"
+              title="Dismiss"
+            >
+              <X class="h-3 w-3 sm:h-4 sm:w-4" />
+            </button>
+          </div>
+       </div>
+    </div>
+
     <RouterView v-if="isPublicShareRoute" />
 
     <LockScreen v-else-if="!isUnlocked" @unlock="handleUnlock" />
 
     <div v-else class="min-h-screen bg-white flex flex-col md:flex-row transition-colors duration-300 dark:bg-gray-950">
       <!-- Mobile Navbar (visible on small screens) -->
-      <nav class="md:hidden sticky top-0 z-50 w-full bg-white/80 backdrop-blur-xl border-b border-gray-200/70 dark:bg-gray-950/80 dark:border-gray-800/70">
+      <nav class="md:hidden sticky z-50 w-full bg-white/80 backdrop-blur-xl border-b border-gray-200/70 dark:bg-gray-950/80 dark:border-gray-800/70" :class="showGuptPromo ? 'top-[44px]' : 'top-0'">
         <div class="flex items-center justify-between px-4 py-3">
           <!-- Mobile Actions -->
           <div class="flex items-center gap-2">
@@ -87,7 +122,7 @@
       </nav>
 
       <!-- Desktop Sidebar (visible on md and up) -->
-      <aside class="hidden md:flex fixed left-0 top-0 h-screen w-20 flex-col border-r border-gray-200/70 bg-white/80 backdrop-blur-xl transition-all duration-300 z-50 dark:border-gray-800/70 dark:bg-gray-950/70">
+      <aside class="hidden md:flex fixed left-0 w-20 flex-col border-r border-gray-200/70 bg-white/80 backdrop-blur-xl transition-all duration-300 z-50 dark:border-gray-800/70 dark:bg-gray-950/70" :class="showGuptPromo ? 'top-[44px] h-[calc(100vh-44px)]' : 'top-0 h-screen'">
         <div class="flex flex-col h-full p-4">
           <!-- Navigation Items -->
           <nav class="flex-1 flex flex-col gap-2">
@@ -290,7 +325,7 @@ import { ref, onMounted, onBeforeUnmount, computed, reactive, watch } from "vue"
 import { useRoute, useRouter } from "vue-router";
 import LockScreen from "@/components/LockScreen.vue";
 import ToastHost from "@/components/ToastHost.vue";
-import { Plus, Lock, Database, BarChart3, ArrowLeft, Sun, Moon, Cloud } from "lucide-vue-next";
+import { Plus, Lock, Database, BarChart3, ArrowLeft, Sun, Moon, Cloud, MessageCircle, Github, X } from "lucide-vue-next";
 import { useThemeStore } from "@/stores/theme.js";
 import { db, getAllNotes, getPurgedNotes, isNotePurged } from "@/db";
 import { AwsClient } from "aws4fetch";
@@ -298,6 +333,14 @@ import { AwsClient } from "aws4fetch";
 const isUnlocked = ref(false);
 const showLockModal = ref(false);
 const showShortcutsModal = ref(false);
+const GUPT_PROMO_DISMISSED_KEY = "zeronote-gupt-promo-dismissed";
+const showGuptPromo = ref(true);
+
+const dismissGuptPromo = () => {
+   showGuptPromo.value = false;
+   window.localStorage.setItem(GUPT_PROMO_DISMISSED_KEY, "1");
+};
+
 const route = useRoute();
 const router = useRouter();
 const theme = useThemeStore();
@@ -828,6 +871,8 @@ function cleanupDbHooks() {
 }
 
 onMounted(() => {
+  showGuptPromo.value = window.localStorage.getItem(GUPT_PROMO_DISMISSED_KEY) !== "1";
+
   if (sessionStorage.getItem("ENCRYPTION_KEY")) {
     isUnlocked.value = true;
   }

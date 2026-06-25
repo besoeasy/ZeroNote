@@ -61,35 +61,45 @@
 
             <div
                v-if="showGuptPromo"
-               class="group relative mb-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500 dark:border-slate-800 dark:bg-slate-950"
+               class="group relative mb-8 overflow-hidden rounded-3xl animate-in fade-in slide-in-from-bottom-4 duration-500 shadow-xl shadow-blue-500/10 dark:shadow-blue-900/20"
             >
-               <div class="relative backdrop-blur-xl">
-                  <div class="relative flex flex-col gap-5 p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
-                     <div class="pr-8 sm:pr-12 lg:pr-0">
-                         <div class="mb-3 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+               <!-- Radiant Gradient Background -->
+               <div class="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-700 opacity-95 transition-transform duration-1000 group-hover:scale-105"></div>
+               
+               <!-- Glass overlay -->
+               <div class="absolute inset-0 bg-white/10 backdrop-blur-md border border-white/20 dark:bg-black/10"></div>
+               
+               <!-- Ambient Glow effects -->
+               <div class="absolute -top-24 -left-24 w-48 h-48 bg-white/20 blur-3xl rounded-full"></div>
+               <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-purple-400/20 blur-3xl rounded-full"></div>
+
+               <div class="relative">
+                  <div class="relative flex flex-col gap-6 p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between">
+                     <div class="pr-8 sm:pr-12 lg:pr-0 relative z-10">
+                         <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/20 backdrop-blur-lg px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-white shadow-sm transition-transform hover:scale-105 duration-300">
                            <MessageCircle class="h-3.5 w-3.5" />
                            New from the same builder
                         </div>
-                        <h2 class="max-w-2xl text-2xl font-black tracking-tight text-slate-900 dark:text-white sm:text-3xl">
+                        <h2 class="max-w-2xl text-2xl font-black tracking-tight text-white sm:text-3xl drop-shadow-sm">
                            Need private chat beside your private notes?
                         </h2>
-                        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300 sm:text-base">
-                           Try Gupt.app for encrypted conversations, groups, and direct messaging. ZeroNote stays focused on notes. Gupt handles the chat layer.
+                        <p class="mt-3 max-w-2xl text-base leading-relaxed text-white/90 sm:text-lg font-medium">
+                           Try <span class="font-bold text-white">Gupt</span> for encrypted conversations, groups, and direct messaging. ZeroNote stays focused on notes. Gupt handles the chat layer.
                         </p>
                      </div>
 
-                     <div class="flex flex-col gap-3 sm:flex-row lg:shrink-0">
+                     <div class="flex flex-col gap-3 sm:flex-row lg:shrink-0 relative z-10">
                         <a
-                           href="https://gupt.app"
+                           href="https://github.com/besoeasy/gupt"
                            target="_blank"
                            rel="noopener noreferrer"
-                           class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-900 hover:shadow-xl dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100"
+                           class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-sm font-bold text-slate-900 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-white/20 hover:scale-[1.02] active:scale-95"
                         >
-                           Open Gupt
-                           <ExternalLink class="h-4 w-4" />
+                           View on GitHub
+                           <Github class="h-4 w-4" />
                         </a>
                         <button
-                           class="inline-flex w-full items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition-all duration-300 hover:-translate-y-0.5 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
+                           class="inline-flex w-full items-center justify-center rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md px-6 py-3.5 text-sm font-bold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:border-white/30 hover:shadow-xl hover:scale-[1.02] active:scale-95"
                            @click="dismissGuptPromo"
                         >
                            Dismiss
@@ -97,7 +107,7 @@
                      </div>
 
                      <button
-                        class="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-colors duration-200 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-500 dark:hover:bg-slate-900 dark:hover:text-slate-200"
+                        class="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/70 backdrop-blur-md transition-all duration-300 hover:bg-white/20 hover:text-white hover:scale-110 active:scale-90"
                         @click="dismissGuptPromo"
                         aria-label="Dismiss Gupt promotion"
                         title="Dismiss"
@@ -283,12 +293,11 @@
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import { fetchNotes, db } from "@/db";
-import { Search, Plus, Pin, Trash2, RotateCcw, MessageCircle, ExternalLink, X } from "lucide-vue-next";
+import { Search, Plus, Pin, Trash2, RotateCcw, MessageCircle, Github, X } from "lucide-vue-next";
 import { format } from "timeago.js";
 import { supertagRegistry } from "@/supertags";
 
 const router = useRouter();
-const GUPT_PROMO_DISMISSED_KEY = "zeronote-gupt-promo-dismissed";
 
 // State
 const searchQuery = ref("");
@@ -299,7 +308,6 @@ const pinnedOnly = ref(false);
 const filesOnly = ref(false); // Renamed from hasAttachmentsOnly for brevity in this view
 const trashOnly = ref(false); 
 const searchInputRef = ref(null);
-const showGuptPromo = ref(true);
 
 // Reuse core logic
 const loadNotes = async () => {
@@ -437,14 +445,8 @@ const getCardAccentColor = (note) => {
   return accentColors[note.id.charCodeAt(0) % accentColors.length];
 };
 
-const dismissGuptPromo = () => {
-   showGuptPromo.value = false;
-   window.localStorage.setItem(GUPT_PROMO_DISMISSED_KEY, "1");
-};
-
 onMounted(() => {
   loadNotes();
-   showGuptPromo.value = window.localStorage.getItem(GUPT_PROMO_DISMISSED_KEY) !== "1";
   window.addEventListener("keydown", onGlobalKeydown);
 });
 
