@@ -1,3 +1,5 @@
+> **Notice:** ZeroNote is not completely replaced by [Gupt](https://github.com/besoeasy/gupt). Development and support for ZeroNote continue, and it remains a separate, actively maintained project.
+
 # ZeroNote: One Notes App for Everything
 
 ZeroNote is an open-source, offline-first unified app that replaces your password manager, bookmark manager, notes app, and 2FA authenticator with a single encrypted note-taking system powered by smart tags, where everything is stored locally on your device with zero-knowledge encryption and optional peer-to-peer or S3 sync.
