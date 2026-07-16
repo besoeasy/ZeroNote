@@ -1,4 +1,4 @@
-> **Notice:** ZeroNote is not completely replaced by [Gupt](https://github.com/besoeasy/gupt). Development and support for ZeroNote continue, and it remains a separate, actively maintained project.
+> **Notice:** ZeroNote is no longer maintained. It is not completely replaced by [Gupt](https://github.com/besoeasy/gupt), but development and support for ZeroNote have stopped. Consider [Gupt](https://github.com/besoeasy/gupt) as the successor project.
 
 # ZeroNote: One Notes App for Everything
 
