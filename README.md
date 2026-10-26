@@ -2,6 +2,8 @@
 
 # ZeroNote: One Notes App for Everything
 
+[![Star History Rank](https://api.star-history.com/badge?repo=besoeasy/ZeroNote&type=rank)](https://www.star-history.com/besoeasy/ZeroNote)
+
 ZeroNote is an open-source, offline-first unified app that replaces your password manager, bookmark manager, notes app, and 2FA authenticator with a single encrypted note-taking system powered by smart tags, where everything is stored locally on your device with zero-knowledge encryption and optional peer-to-peer or S3 sync.
 
 **Stop juggling multiple apps.** One password manager. One bookmark manager. One notes app. One cloud service. One subscription. One privacy concern after another.
@@ -278,3 +280,8 @@ Below is a detailed comparison of **ZeroNote** with other popular note-taking an
 > - ❌\* = Usage limits on free plan
 
 **ZeroNote** stands out for its unified approach (notes, passwords, bookmarks, and more in one place), strong privacy, offline-first design, and unique peer-to-peer sync with optional S3/MinIO cloud backup. For a full breakdown of tag-based features, see [TAGS.md](src/supertags/README.md).
+
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/chart?repos=besoeasy/ZeroNote&type=date&legend=top-left)](https://www.star-history.com/?repos=besoeasy%2FZeroNote&type=date&legend=top-left)
